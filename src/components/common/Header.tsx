@@ -8,6 +8,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import LoginDialog from "../dialogs/LoginDialog";
 
 const Header = () => {
   return (
@@ -72,12 +73,14 @@ const Header = () => {
               className="hidden group-active:block text-red-500"
             />
           </Button>
-          <Avatar className="h-[40px] w-[40px]">
-            <AvatarImage src="" alt="Profile" />
-            <AvatarFallback>
-              <User size={20} />
-            </AvatarFallback>
-          </Avatar>
+          <LoginDialog>
+            <Avatar className="h-[40px] w-[40px] cursor-pointer">
+              <AvatarImage src="" alt="Profile" />
+              <AvatarFallback>
+                <User size={20} />
+              </AvatarFallback>
+            </Avatar>
+          </LoginDialog>
         </div>
       </div>
     </header>
