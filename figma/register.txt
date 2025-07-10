@@ -1,0 +1,636 @@
+/* Group 181 */
+
+position: absolute;
+width: 1180px;
+height: 600.5px;
+left: calc(50% - 1180px/2);
+top: calc(50% - 600.5px/2 - 31.25px);
+
+
+
+/* Rectangle 17514 */
+
+position: absolute;
+width: 1180px;
+height: 600px;
+left: calc(50% - 1180px/2);
+top: 289.5px;
+
+background: #FFFFFF;
+box-shadow: 8px 8px 50px rgba(0, 0, 0, 0.15);
+
+
+/* Rectangle 17515 */
+
+position: absolute;
+width: 700px;
+height: 600px;
+left: calc(50% - 700px/2 - 240px);
+top: 289px;
+
+background: #E6E6E6;
+
+
+/* Mask group */
+
+position: absolute;
+width: 700px;
+height: 600px;
+left: 370px;
+top: 289px;
+
+
+
+/* Rectangle 17516 */
+
+position: absolute;
+width: 700px;
+height: 600px;
+left: calc(50% - 700px/2 - 240px);
+top: 289px;
+
+background: #282828;
+
+
+/* Group 180 */
+
+position: absolute;
+width: 529px;
+height: 40px;
+left: 449px;
+top: 570px;
+
+
+
+/* Fashion Week */
+
+position: absolute;
+visibility: hidden;
+width: 411px;
+height: 55px;
+left: 550px;
+top: 434px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 60px;
+line-height: 55px;
+/* 상자 높이와 동일 또는 92% */
+
+color: #000000;
+
+
+
+/* 서비스 관련 이미지 or 애니매이션 */
+
+position: absolute;
+width: 529px;
+height: 40px;
+left: 449px;
+top: 570px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 38px;
+line-height: 40px;
+/* 상자 높이와 동일 또는 105% */
+
+color: #000000;
+
+
+
+/* Sign up */
+
+position: absolute;
+width: 147px;
+height: 40px;
+left: 1115px;
+top: 329px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 40px;
+line-height: 40px;
+/* 상자 높이와 동일 또는 100% */
+
+color: #000000;
+
+
+
+/* form */
+
+position: absolute;
+width: 400px;
+height: 373px;
+left: 1115px;
+top: 399px;
+
+
+
+/* 01 */
+
+position: absolute;
+width: 400px;
+height: 50px;
+left: 1115px;
+top: 399px;
+
+
+
+/* Rectangle 56 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 400px;
+height: 50px;
+left: 1115px;
+top: 399px;
+
+background: #FFFFFF;
+opacity: 0.3;
+border: 1px solid #5C5C5C;
+box-shadow: 4px 4px 13px rgba(242, 113, 144, 0.15);
+
+
+/* Your name */
+
+position: absolute;
+width: 73px;
+height: 17px;
+left: 1136px;
+top: 415px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+letter-spacing: 0.02em;
+
+color: #5C5C5C;
+
+
+
+/* 2 */
+
+position: absolute;
+width: 400px;
+height: 50px;
+left: 1115px;
+top: 469px;
+
+
+
+/* Rectangle 56 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 400px;
+height: 50px;
+left: 1115px;
+top: 469px;
+
+background: #FFFFFF;
+opacity: 0.3;
+border: 1px solid #5C5C5C;
+box-shadow: 4px 4px 13px rgba(242, 113, 144, 0.15);
+
+
+/* Mobile number */
+
+position: absolute;
+width: 103px;
+height: 17px;
+left: 1136px;
+top: 485px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+letter-spacing: 0.02em;
+
+color: #5C5C5C;
+
+
+
+/* 3 */
+
+position: absolute;
+width: 400px;
+height: 50px;
+left: 1115px;
+top: 539px;
+
+
+
+/* Rectangle 56 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 400px;
+height: 50px;
+left: 1115px;
+top: 539px;
+
+background: #FFFFFF;
+opacity: 0.3;
+border: 1px solid #5C5C5C;
+box-shadow: 4px 4px 13px rgba(242, 113, 144, 0.15);
+
+
+/* Email */
+
+position: absolute;
+width: 37px;
+height: 17px;
+left: 1136px;
+top: 555px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+letter-spacing: 0.02em;
+
+color: #5C5C5C;
+
+
+
+/* 4 */
+
+position: absolute;
+width: 400px;
+height: 50px;
+left: 1115px;
+top: 609px;
+
+
+
+/* Rectangle 56 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 400px;
+height: 50px;
+left: 1115px;
+top: 609px;
+
+background: #FFFFFF;
+opacity: 0.3;
+border: 1px solid #5C5C5C;
+box-shadow: 4px 4px 13px rgba(242, 113, 144, 0.15);
+
+
+/* Password */
+
+position: absolute;
+width: 67px;
+height: 17px;
+left: 1136px;
+top: 625px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+letter-spacing: 0.02em;
+
+color: #5C5C5C;
+
+
+
+/* button */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 14px 40px;
+
+position: absolute;
+width: 400px;
+height: 48px;
+left: 1115px;
+top: 689px;
+
+background: #333333;
+
+
+/* VIEW MORE */
+
+width: 85px;
+height: 20px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 700;
+font-size: 16px;
+line-height: 20px;
+/* 상자 높이와 동일 또는 125% */
+text-transform: uppercase;
+
+color: #FFFFFF;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Already have an account? Sign in */
+
+position: absolute;
+width: 229px;
+height: 20px;
+left: 1115px;
+top: 752px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 20px;
+/* 상자 높이와 동일 또는 143% */
+letter-spacing: 0.02em;
+
+color: #5C5C5C;
+
+
+
+/* social media */
+
+position: absolute;
+width: 258.17px;
+height: 17px;
+left: 1146px;
+top: 832px;
+
+opacity: 0.4;
+
+
+/* youtube 1 */
+
+position: absolute;
+width: 18.62px;
+height: 13.76px;
+left: 1385.55px;
+top: 833.62px;
+
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 6.48px;
+height: 13.76px;
+left: 1146px;
+top: 833.62px;
+
+background: #282828;
+
+
+/* Group */
+
+position: absolute;
+left: 69.36%;
+right: 29.96%;
+top: 67.17%;
+bottom: 31.72%;
+
+
+
+/* Vector */
+
+position: absolute;
+width: 8.57px;
+height: 6.4px;
+left: 1332.65px;
+top: 833.62px;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 5.3px;
+height: 4.81px;
+left: 1339.44px;
+top: 838.09px;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 6.78px;
+height: 12.81px;
+left: 1331.7px;
+top: 834.09px;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 8.57px;
+height: 6.4px;
+left: 1332.65px;
+top: 840.98px;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 15.38px;
+height: 12.95px;
+left: 1208.67px;
+top: 833.62px;
+
+background: #282828;
+
+
+/* Group 81 */
+
+position: absolute;
+width: 14.57px;
+height: 13.76px;
+left: 1193.29px;
+top: 833.62px;
+
+
+
+/* Vector */
+
+position: absolute;
+width: 3.24px;
+height: 8.9px;
+left: 1193.29px;
+top: 838.48px;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 3.24px;
+height: 3.24px;
+left: 1193.29px;
+top: 833.62px;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 9.71px;
+height: 9.51px;
+left: 1198.14px;
+top: 837.87px;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 13.76px;
+height: 13.76px;
+left: 1264.86px;
+top: 833.62px;
+
+background: #282828;
+
+
+/* Group */
+
+position: absolute;
+left: 66.64%;
+right: 32.77%;
+top: 67.17%;
+bottom: 31.72%;
+
+
+
+/* Vector */
+
+position: absolute;
+width: 11.47px;
+height: 10.54px;
+left: 1279.43px;
+top: 836.84px;
+
+background: #282828;
+
+
+/* Vector */
+
+position: absolute;
+width: 2.77px;
+height: 3.31px;
+left: 1284.93px;
+top: 833.62px;
+
+background: #282828;
+
+
+/* Rectangle 18 */
+
+position: absolute;
+width: 0.81px;
+height: 17px;
+left: 1172.48px;
+top: 832px;
+
+background: #282828;
+
+
+/* Rectangle 19 */
+
+position: absolute;
+width: 0.81px;
+height: 17px;
+left: 1187.86px;
+top: 832px;
+
+background: #282828;
+
+
+/* Rectangle 20 */
+
+position: absolute;
+width: 0.81px;
+height: 17px;
+left: 1244.05px;
+top: 832px;
+
+background: #282828;
+
+
+/* Rectangle 21 */
+
+position: absolute;
+width: 0.81px;
+height: 17px;
+left: 1298.62px;
+top: 832px;
+
+background: #282828;
+
+
+/* Rectangle 22 */
+
+position: absolute;
+width: 0.81px;
+height: 17px;
+left: 1310.89px;
+top: 832px;
+
+background: #282828;
+
+
+/* Rectangle 23 */
+
+position: absolute;
+width: 0.81px;
+height: 17px;
+left: 1364.74px;
+top: 832px;
+
+background: #282828;
