@@ -25,7 +25,7 @@ const Header = () => {
           Download App
         </Button>
       </div>
-      <div className="flex justify-between items-center w-full h-[88px] px-20">
+      <div className="flex justify-between items-center w-full h-[88px] px-20 ">
         {/* Navigation */}
         <div className="flex items-center h-[88px]">
           <NavigationMenu>
