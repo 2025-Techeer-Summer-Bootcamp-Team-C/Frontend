@@ -27,7 +27,7 @@ const UsageSection = () => {
           {/* Step 1 */}
           <div className="flex items-center gap-[48px]">
             <div className="flex-1">
-              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] mb-[28px] relative">
+              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] relative">
                 <div className="absolute -top-[15px] left-[24px] bg-[#D9D9D9] border border-[#000000] rounded-[14.5px] w-[29px] h-[29px] flex items-center justify-center">
                   <span className="text-[#000000] text-[17px] font-inter font-bold leading-[22.5px] tracking-[-0.011em] text-center">
                     1
@@ -117,7 +117,7 @@ const UsageSection = () => {
           {/* Step 2 */}
           <div className="flex items-center gap-[48px]">
             <div className="flex-1">
-              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] mb-[28px] relative">
+              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] relative">
                 <div className="absolute -top-[15px] left-[24px] bg-[#D9D9D9] border border-[#000000] rounded-[14.5px] w-[29px] h-[29px] flex items-center justify-center">
                   <span className="text-[#000000] text-[17px] font-inter font-bold leading-[22.5px] tracking-[-0.011em] text-center">
                     2
@@ -165,7 +165,7 @@ const UsageSection = () => {
           {/* Step 3 */}
           <div className="flex items-center gap-[48px]">
             <div className="flex-1">
-              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] mb-[28px] relative">
+              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] relative">
                 <div className="absolute -top-[15px] left-[24px] bg-[#D9D9D9] border border-[#000000] rounded-[14.5px] w-[29px] h-[29px] flex items-center justify-center">
                   <span className="text-[#000000] text-[17px] font-inter font-bold leading-[22.5px] tracking-[-0.011em] text-center">
                     3
@@ -219,7 +219,7 @@ const UsageSection = () => {
           {/* Step 4 */}
           <div className="flex items-center gap-[48px]">
             <div className="flex-1">
-              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] mb-[28px] relative">
+              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] relative">
                 <div className="absolute -top-[15px] left-[24px] bg-[#D9D9D9] border border-[#000000] rounded-[14.5px] w-[29px] h-[29px] flex items-center justify-center">
                   <span className="text-[#000000] text-[17px] font-inter font-bold leading-[22.5px] tracking-[-0.011em] text-center">
                     4
