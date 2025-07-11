@@ -1,4 +1,9 @@
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import {
   FaFacebook,
@@ -30,13 +35,16 @@ const LoginDialog = ({ children }: LoginDialogProps) => {
     setCurrentForm("login");
   };
   return (
-    <Dialog onOpenChange={(open) => {
-      if (open) {
-        setCurrentForm("login");
-      }
-    }}>
+    <Dialog
+      onOpenChange={(open) => {
+        if (open) {
+          setCurrentForm("login");
+        }
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="w-[480px] max-w-[480px] max-h-[600px] bg-white shadow-[8px_8px_50px_rgba(0,0,0,0.15)] p-0 overflow-hidden">
+        <DialogTitle className="sr-only">Login</DialogTitle>
         <div className="h-full">
           {/* Scrollable Form Area */}
           <div className="max-h-[90vh] overflow-y-auto px-8 pt-8">
