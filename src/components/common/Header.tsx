@@ -1,86 +1,70 @@
-import { Download, Heart, User } from "lucide-react";
-import { FaHeart } from "react-icons/fa";
+import { Heart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
 import LoginDialog from "../dialogs/LoginDialog";
 
 const Header = () => {
   return (
-    <header className="w-full h-[134px] bg-white shadow-[0_4px_4px_rgba(0,0,0,0.08)]">
-      {/* Top bar */}
-      <div className="flex justify-between items-center w-full h-[46px] bg-[#F1F1F1] px-20">
-        <div className="font-inter font-medium text-[15px] leading-[18px] text-black">
-          2025 Techeer Summer Boot camp | Team : C
+    <header className="w-full bg-white shadow-[0_3px_3px_rgba(0,0,0,0.08)] h-[100.5px]">
+      {/* Top Banner */}
+      <div className="flex justify-center items-center w-full bg-[#F1F1F1] h-[34.5px]">
+        <div className="w-[1320px] h-[13.5px] flex justify-between items-center">
+          <div className="w-[240px] h-[13.5px] flex items-center">
+            <span className="text-[#000000] text-[11.25px] font-inter font-medium leading-[13.61px]">
+              2025 Techeer Summer Boot camp | Team : C
+            </span>
+          </div>
+          <div className="w-[78.75px] h-[13.5px] flex items-center">
+            <span className="text-[#000000] text-[11.25px] font-inter font-medium leading-[13.61px]">
+              Download App
+            </span>
+          </div>
         </div>
-        <Button
-          variant="ghost"
-          className="h-[18px] p-0 font-inter font-medium text-[15px] leading-[18px] text-black hover:text-gray-700 hover:bg-transparent"
-        >
-          <Download size={16} className="mr-1" />
-          Download App
-        </Button>
       </div>
-      <div className="flex justify-between items-center w-full h-[88px] px-20 ">
-        {/* Navigation */}
-        <div className="flex items-center h-[88px]">
-          <NavigationMenu>
-            <NavigationMenuList className="flex gap-[90px]">
-              <NavigationMenuItem>
-                <NavigationMenuLink className="font-inter font-bold text-2xl leading-6 text-[#333333] hover:bg-transparent cursor-pointer">
-                  Logo
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink className="font-inter font-medium text-xl leading-6 text-[#333333] hover:bg-transparent cursor-pointer">
-                  Home
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink className="font-inter font-medium text-xl leading-6 text-[#333333] hover:bg-transparent cursor-pointer">
-                  Service
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink className="font-inter font-medium text-xl leading-6 text-[#333333] hover:bg-transparent cursor-pointer">
-                  Team
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
 
-        {/* Start Button bar */}
-        <div className="flex gap-4">
-          <Button
-            variant="outline"
-            className="h-[40px] w-[120px] border-black rounded-4xl active:bg-black active:text-white"
-          >
-            GET START
-          </Button>
-          <Button
-            variant="outline"
-            className="h-[40px] w-[40px] p-0 border-none shadow-none group hover:bg-transparent"
-          >
-            <Heart size={20} className="group-active:hidden" />
-            <FaHeart
-              size={20}
-              className="hidden group-active:block text-red-500"
-            />
-          </Button>
-          <LoginDialog>
-            <Avatar className="h-[40px] w-[40px] cursor-pointer">
-              <AvatarImage src="" alt="Profile" />
-              <AvatarFallback>
-                <User size={20} />
-              </AvatarFallback>
-            </Avatar>
-          </LoginDialog>
+      {/* Main Header */}
+      <div className="w-full h-[51px] flex items-center justify-center gap-[15.75px] relative">
+        <div className="w-[1309.5px] h-[36px] relative">
+          {/* Logo */}
+          <div className="absolute left-0 top-0 w-[52.5px] h-[30.75px]">
+            <span className="text-[#000000] text-[19.5px] font-inter font-bold leading-[29.25px]">
+              Logo
+            </span>
+          </div>
+
+          {/* Navigation */}
+          <div className="absolute left-[97.5px] top-[9px] flex items-center gap-[61.5px]">
+            <span className="text-[#333333] text-[15px] font-inter font-medium leading-[18.15px]">
+              Home
+            </span>
+            <span className="text-[#333333] text-[15px] font-inter font-medium leading-[18.15px]">
+              Service
+            </span>
+          </div>
+
+          {/* GET START Button */}
+          <div className="absolute left-[1052.25px] top-0">
+            <Button
+              variant="outline"
+              className="group h-auto px-[30px] py-[10.5px] border-[#333333] border-[0.75px] rounded-[9px] bg-white hover:bg-[#333333] transition-colors"
+            >
+              <span className="text-[12px] font-inter font-bold leading-[15px] text-[#333333] group-hover:text-white transition-colors">
+                GET START
+              </span>
+            </Button>
+          </div>
+
+          {/* Right Section - Heart and User */}
+          <div className="absolute left-[1234.5px] top-0 w-[75px] h-[36px] flex items-center justify-between gap-[24px]">
+            <Heart className="w-[20px] h-[20px] text-[#333333] stroke-[1.5px] hover:fill-[#E74C3C] hover:text-[#E74C3C] transition-colors cursor-pointer" />
+
+            <LoginDialog>
+              <div className="w-[36px] h-[36px] bg-white rounded-[18px] p-[3px] flex items-center justify-center cursor-pointer">
+                <div className="w-[30px] h-[30px] bg-[#D9D9D9] rounded-full opacity-80 flex items-center justify-center">
+                  <User className="w-[11.78px] h-[15px] text-[#939393]" />
+                </div>
+              </div>
+            </LoginDialog>
+          </div>
         </div>
       </div>
     </header>
