@@ -2,41 +2,46 @@ import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
   return (
-    <section className="relative w-full h-[600px] flex flex-col shadow-[0_4px_4px_rgba(0,0,0,0.08)] bg-[#E6E6E6] overflow-hidden">
-      {/* Center circle */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute mr-[400px] w-[1000px] h-[1000px] bg-gradient-to-br from-[#F5C6C7] to-[#D2AAA8] rounded-full top-1/2 -translate-y-1/2 -right-96 z-0"></div>
-      </div>
-      {/* Main content area */}
-      <div className="flex flex-1 relative z-10">
-        {/* Main content */}
-        <div className="flex-1 flex flex-col justify-center px-20 py-20 relative z-10">
-          {/* Title */}
-          <h1 className="font-inter font-normal text-[60px] leading-[60px] text-black mb-[10px] relative z-10">
-            AI가상 피팅 서비스 <span className="font-bold">FITIN</span>
-          </h1>
+    <section className="w-full flex flex-col items-center bg-white mb-[250px] mt-[132px]">
+      {/* Hero Content Container */}
+      <div className="flex flex-col items-center gap-[96px] w-full">
+        {/* Badge */}
+        <div className="flex items-center justify-center bg-[#D9D9D9] rounded-[22.5px] px-[9px] py-[8.25px] gap-[7.5px] w-[300px] h-[42px]">
+          <span className="text-[rgba(0,0,0,0.5)] text-[15px] font-inter font-bold leading-[22.5px] tracking-[0.05em] text-center">
+            온라인 의류 구매의 새로운 패러다임
+          </span>
+        </div>
 
-          {/* Subtitle */}
-          <p className="font-inter font-normal text-[24px] leading-[150%] text-black/50 mb-[18px] max-w-[800px] tracking-[-0.011em] relative z-10">
-            클릭만으로 완성하는 가상의류 피팅. 3초만에 완성되는 가상 의류
-            피팅으로 새로운 온라인 쇼핑을 경험해보세요.
-          </p>
+        {/* Main Title */}
+        <h1 className="text-[#000000] text-[112.5px] font-inter font-bold leading-[75px] text-center w-[1437.75px]">
+          가상 의류 피팅 <span className="text-[#B7B7B7]">AI</span>
+        </h1>
 
-          {/* Buttons */}
-          <div className="flex gap-6 relative z-10">
-            <Button
-              variant="outline"
-              className="h-[40px] w-[150px] bg-[#e6e6e6] border-[#333333] rounded-[30px] font-inter font-bold text-[16px] leading-[20px] text-[#333333] hover:bg-[#333333] hover:text-white transition-colors"
-            >
+        {/* Empty Text Element */}
+        <div className="w-full text-center">
+          <span className="text-[rgba(0,0,0,0.5)] text-[30px] font-inter font-normal leading-[45px] tracking-[-0.011em] text-center">
+            {" "}
+          </span>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex gap-[23.25px]">
+          <Button
+            variant="outline"
+            className="group h-[63.75px] w-[226.5px] border-[#333333] border-[0.75px] rounded-[9px] bg-white hover:bg-[#333333] transition-colors px-[30px] py-[10.5px]"
+          >
+            <span className="text-[18.75px] font-inter font-bold leading-[15px] text-[#333333] group-hover:text-white transition-colors">
               GET START
-            </Button>
-            <Button
-              variant="outline"
-              className="h-[40px] w-[150px] bg-[#e6e6e6] border-[#333333] rounded-[30px] font-inter font-bold text-[16px] leading-[20px] text-[#333333] hover:bg-[#333333] hover:text-white transition-colors"
-            >
+            </span>
+          </Button>
+          <Button
+            variant="outline"
+            className="group h-[62.25px] w-[225.75px] border-[#333333] border-[0.75px] rounded-[9px] bg-white hover:bg-[#333333] transition-colors px-[30px] py-[10.5px]"
+          >
+            <span className="text-[18.75px] font-inter font-bold leading-[15px] text-[#333333] group-hover:text-white transition-colors">
               VIEW MORE
-            </Button>
-          </div>
+            </span>
+          </Button>
         </div>
       </div>
     </section>
