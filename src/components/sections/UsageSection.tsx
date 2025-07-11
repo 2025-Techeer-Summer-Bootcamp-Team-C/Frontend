@@ -1,3 +1,5 @@
+import { Heart } from "lucide-react";
+
 const UsageSection = () => {
   return (
     <section className="w-full bg-white mb-[308px]">
@@ -261,7 +263,7 @@ const UsageSection = () => {
                   >
                     <div className="bg-[#D9D9D9] h-[150px] relative">
                       <div className="absolute top-[9px] left-[9px] w-[20px] h-[20px] bg-[#FFFEFE] rounded-full flex items-center justify-center">
-                        <div className="w-[8px] h-[8px] bg-[#333333] rounded-full"></div>
+                        <Heart size={16} className="text-[rgba(0,0,0,0.5)]" />
                       </div>
                     </div>
                     <div className="p-[12px]">

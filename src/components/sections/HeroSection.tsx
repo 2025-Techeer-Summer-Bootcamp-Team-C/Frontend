@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
   return (
-    <section className="w-full flex flex-col items-center bg-white mb-[250px] mt-[132px]">
+    <section className="w-full flex flex-col items-center bg-white my-[240px] ">
       {/* Hero Content Container */}
       <div className="flex flex-col items-center gap-[96px] w-full">
         {/* Badge */}
@@ -13,16 +13,9 @@ const HeroSection = () => {
         </div>
 
         {/* Main Title */}
-        <h1 className="text-[#000000] text-[112.5px] font-inter font-bold leading-[75px] text-center w-[1437.75px]">
+        <h1 className="text-[#000000] text-[112.5px] font-inter font-bold leading-[75px] text-center w-[1437.75px] mb-[50px]">
           가상 의류 피팅 <span className="text-[#B7B7B7]">AI</span>
         </h1>
-
-        {/* Empty Text Element */}
-        <div className="w-full text-center">
-          <span className="text-[rgba(0,0,0,0.5)] text-[30px] font-inter font-normal leading-[45px] tracking-[-0.011em] text-center">
-            {" "}
-          </span>
-        </div>
 
         {/* Buttons */}
         <div className="flex gap-[23.25px]">

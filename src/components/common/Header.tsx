@@ -4,7 +4,7 @@ import LoginDialog from "../dialogs/LoginDialog";
 
 const Header = () => {
   return (
-    <header className="w-full bg-white shadow-[0_3px_3px_rgba(0,0,0,0.08)] h-[100.5px]">
+    <header className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
       {/* Top Banner */}
       <div className="flex justify-center items-center w-full bg-[#F1F1F1] h-[34.5px]">
         <div className="w-[1320px] h-[13.5px] flex justify-between items-center">
@@ -22,27 +22,18 @@ const Header = () => {
       </div>
 
       {/* Main Header */}
-      <div className="w-full h-[51px] flex items-center justify-center gap-[15.75px] relative">
-        <div className="w-[1309.5px] h-[36px] relative">
+      <div className="w-full h-[70px] flex items-center justify-center">
+        <div className="w-[1309.5px] h-[36px] flex items-center justify-between">
           {/* Logo */}
-          <div className="absolute left-0 top-0 w-[52.5px] h-[30.75px]">
-            <span className="text-[#000000] text-[19.5px] font-inter font-bold leading-[29.25px]">
+          <div className="flex items-center">
+            <span className="text-[#000000] text-[25px] font-inter font-bold leading-[29.25px]">
               Logo
             </span>
           </div>
 
-          {/* Navigation */}
-          <div className="absolute left-[97.5px] top-[9px] flex items-center gap-[61.5px]">
-            <span className="text-[#333333] text-[15px] font-inter font-medium leading-[18.15px]">
-              Home
-            </span>
-            <span className="text-[#333333] text-[15px] font-inter font-medium leading-[18.15px]">
-              Service
-            </span>
-          </div>
-
-          {/* GET START Button */}
-          <div className="absolute left-[1052.25px] top-0">
+          {/* Right Section - Button, Heart and User */}
+          <div className="flex items-center gap-[24px]">
+            {/* GET START Button */}
             <Button
               variant="outline"
               className="group h-auto px-[30px] py-[10.5px] border-[#333333] border-[0.75px] rounded-[9px] bg-white hover:bg-[#333333] transition-colors"
@@ -51,10 +42,7 @@ const Header = () => {
                 GET START
               </span>
             </Button>
-          </div>
 
-          {/* Right Section - Heart and User */}
-          <div className="absolute left-[1234.5px] top-0 w-[75px] h-[36px] flex items-center justify-between gap-[24px]">
             <Heart className="w-[20px] h-[20px] text-[#333333] stroke-[1.5px] hover:fill-[#E74C3C] hover:text-[#E74C3C] transition-colors cursor-pointer" />
 
             <LoginDialog>
