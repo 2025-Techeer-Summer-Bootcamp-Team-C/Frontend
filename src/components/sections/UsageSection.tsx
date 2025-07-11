@@ -1,3 +1,5 @@
+import { Heart } from "lucide-react";
+
 const UsageSection = () => {
   return (
     <section className="w-full bg-white mb-[308px]">
@@ -27,7 +29,7 @@ const UsageSection = () => {
           {/* Step 1 */}
           <div className="flex items-center gap-[48px]">
             <div className="flex-1">
-              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] mb-[28px] relative">
+              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] relative">
                 <div className="absolute -top-[15px] left-[24px] bg-[#D9D9D9] border border-[#000000] rounded-[14.5px] w-[29px] h-[29px] flex items-center justify-center">
                   <span className="text-[#000000] text-[17px] font-inter font-bold leading-[22.5px] tracking-[-0.011em] text-center">
                     1
@@ -117,7 +119,7 @@ const UsageSection = () => {
           {/* Step 2 */}
           <div className="flex items-center gap-[48px]">
             <div className="flex-1">
-              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] mb-[28px] relative">
+              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] relative">
                 <div className="absolute -top-[15px] left-[24px] bg-[#D9D9D9] border border-[#000000] rounded-[14.5px] w-[29px] h-[29px] flex items-center justify-center">
                   <span className="text-[#000000] text-[17px] font-inter font-bold leading-[22.5px] tracking-[-0.011em] text-center">
                     2
@@ -165,7 +167,7 @@ const UsageSection = () => {
           {/* Step 3 */}
           <div className="flex items-center gap-[48px]">
             <div className="flex-1">
-              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] mb-[28px] relative">
+              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] relative">
                 <div className="absolute -top-[15px] left-[24px] bg-[#D9D9D9] border border-[#000000] rounded-[14.5px] w-[29px] h-[29px] flex items-center justify-center">
                   <span className="text-[#000000] text-[17px] font-inter font-bold leading-[22.5px] tracking-[-0.011em] text-center">
                     3
@@ -219,7 +221,7 @@ const UsageSection = () => {
           {/* Step 4 */}
           <div className="flex items-center gap-[48px]">
             <div className="flex-1">
-              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] mb-[28px] relative">
+              <div className="bg-[#D9D9D9] rounded-[20px] p-[30px] relative">
                 <div className="absolute -top-[15px] left-[24px] bg-[#D9D9D9] border border-[#000000] rounded-[14.5px] w-[29px] h-[29px] flex items-center justify-center">
                   <span className="text-[#000000] text-[17px] font-inter font-bold leading-[22.5px] tracking-[-0.011em] text-center">
                     4
@@ -261,7 +263,7 @@ const UsageSection = () => {
                   >
                     <div className="bg-[#D9D9D9] h-[150px] relative">
                       <div className="absolute top-[9px] left-[9px] w-[20px] h-[20px] bg-[#FFFEFE] rounded-full flex items-center justify-center">
-                        <div className="w-[8px] h-[8px] bg-[#333333] rounded-full"></div>
+                        <Heart size={16} className="text-[rgba(0,0,0,0.5)]" />
                       </div>
                     </div>
                     <div className="p-[12px]">
