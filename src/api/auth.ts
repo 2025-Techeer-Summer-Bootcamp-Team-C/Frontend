@@ -1,10 +1,25 @@
 import axiosInstance from "./axiosInstance";
-import type { SignUpRequest, SignUpResponse } from "../types/user";
+import type {
+  LoginRequest,
+  LoginResponse,
+  SignUpRequest,
+  SignUpResponse,
+} from "../types/user";
 
 // 회원가입 API 요청 함수
-export const signUp = async (
-  request: SignUpRequest
-): Promise<SignUpResponse> => {
-  const response = await axiosInstance.post("/users/signup", request);
+export const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
+  const response = await axiosInstance.post<SignUpResponse>(
+    "/users/signup",
+    data
+  );
+  return response.data;
+};
+
+// 로그인 API 요청 함수
+export const login = async (data: LoginRequest): Promise<LoginResponse> => {
+  const response = await axiosInstance.post<LoginResponse>(
+    "/users/login",
+    data
+  );
   return response.data;
 };

@@ -35,5 +35,11 @@ export const signUpSchema = z
     path: ["password2"], // 에러를 password2 필드에 표시
   });
 
+export const loginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
 // 타입 추출
 export type SignUpFormData = z.infer<typeof signUpSchema>;
+export type LoginFormData = z.infer<typeof loginSchema>;

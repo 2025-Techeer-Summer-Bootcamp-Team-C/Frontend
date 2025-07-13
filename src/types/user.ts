@@ -10,3 +10,14 @@ export interface SignUpResponse {
   status: number;
   message: string;
 }
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  status: number;
+  access_token: string;
+  message: string;
+}
