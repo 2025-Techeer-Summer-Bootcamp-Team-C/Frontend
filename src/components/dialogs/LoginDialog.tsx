@@ -15,7 +15,7 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 import LoginForm from "../forms/LoginForm";
-import RegisterForm from "../forms/RegisterForm";
+import SignupForm from "../forms/SignupForm";
 import { useState } from "react";
 
 interface LoginDialogProps {
@@ -53,7 +53,7 @@ const LoginDialog = ({ children }: LoginDialogProps) => {
               {currentForm === "login" ? (
                 <LoginForm onSwitchToRegister={handleSwitchToRegister} />
               ) : (
-                <RegisterForm onSwitchToLogin={handleSwitchToLogin} />
+                <SignupForm onSwitchToLogin={handleSwitchToLogin} />
               )}
 
               {/* Social Media Icons - Fixed at bottom */}
