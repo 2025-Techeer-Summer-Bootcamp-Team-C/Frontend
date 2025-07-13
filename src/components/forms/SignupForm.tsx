@@ -17,7 +17,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSignUpMutation } from "@/hooks/useAuth";
-import { signUpSchema, type SignUpFormData } from "@/schemas/signUpSchema";
+import { signUpSchema, type SignUpFormData } from "@/schemas/authSchema";
 import { toast } from "sonner"; // 또는 사용하는 토스트 라이브러리
 import { Loader2 } from "lucide-react";
 import { AxiosError } from "axios";
