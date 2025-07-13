@@ -5,6 +5,7 @@ import type {
   SignUpResponse,
   LoginRequest,
   LoginResponse,
+  AuthErrorResponse,
 } from "../types/user";
 import { AxiosError } from "axios";
 
@@ -25,7 +26,11 @@ export const useSignUpMutation = () => {
 };
 
 export const useLoginMutation = () => {
-  return useMutation<LoginResponse, AxiosError, LoginRequest>({
+  return useMutation<
+    LoginResponse,
+    AxiosError<AuthErrorResponse>,
+    LoginRequest
+  >({
     mutationFn: (userData: LoginRequest) => login(userData),
     onSuccess: (data) => {
       // 로그인 성공 시
@@ -36,8 +41,14 @@ export const useLoginMutation = () => {
     },
     onError: (error) => {
       // 로그인 실패 시
-      console.log("로그인 실패", error);
-      alert("아이디 또는 비밀번호를 확인해주세요.");
+      if (error.response && error.response.data) {
+        const errorMessage = error.response.data.message;
+        console.log("로그인 실패", errorMessage);
+        alert(errorMessage);
+      } else {
+        console.log("로그인 실패", error.message);
+        alert("로그인 중 알 수 없는 오류가 발생했습니다.");
+      }
     },
   });
 };
