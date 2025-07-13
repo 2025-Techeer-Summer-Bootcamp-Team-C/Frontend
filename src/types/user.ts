@@ -21,3 +21,8 @@ export interface LoginResponse {
   access_token: string;
   message: string;
 }
+
+export interface AuthErrorResponse {
+  status: number;
+  message: string;
+}
