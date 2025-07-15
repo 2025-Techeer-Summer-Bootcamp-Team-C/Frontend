@@ -1,12 +1,11 @@
 import { useState } from "react";
+import type { Product } from "@/types/product";
 
 type ProductCardVariant = "default" | "viewed" | "cart";
 
 interface ProductCardProps {
   variant?: ProductCardVariant;
-  productName: string;
-  price: number;
-  imageUrl: string;
+  product: Product;
   colorOptions?: number;
   quantity?: number;
   onQuantityChange?: (quantity: number) => void;
@@ -15,9 +14,7 @@ interface ProductCardProps {
 
 const ProductCard = ({
   variant = "default",
-  productName,
-  price,
-  imageUrl,
+  product,
   colorOptions = 1,
   quantity = 1,
   onQuantityChange,
@@ -44,8 +41,8 @@ const ProductCard = ({
         onClick={onProductClick}
       >
         <img 
-          src={imageUrl} 
-          alt={productName}
+          src="" 
+          alt={product.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
         />
       </div>
@@ -56,12 +53,12 @@ const ProductCard = ({
           /* Cart Layout */
           <div className="h-20 flex flex-col justify-center">
             {/* Product Info Section */}
-            <div className="w-full sm:w-[90px] h-10 flex flex-col justify-center gap-1.5">
+            <div className="w-fit min-w-full h-10 flex flex-col justify-center gap-1.5">
               <div className="flex flex-col justify-end gap-0.5 h-10">
                 {/* Product Name and Color Options */}
                 <div className="flex items-center justify-between">
-                  <span className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()} truncate max-w-[120px] sm:max-w-none`}>
-                    {productName}
+                  <span className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}>
+                    {product.name}
                   </span>
                   {colorOptions > 1 && (
                     <div className="flex items-center gap-0.5 ml-2">
@@ -79,7 +76,7 @@ const ProductCard = ({
                 
                 {/* Price */}
                 <span className={`text-[11px] sm:text-[13px] font-inter leading-tight font-medium ${getTextColor()}`}>
-                  ₩ {price.toLocaleString()}
+                  ₩ {product.price.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -107,12 +104,12 @@ const ProductCard = ({
           </div>
         ) : (
           /* Default and Viewed Layout */
-          <div className="w-full sm:w-[90px] h-10 flex flex-col justify-center gap-1.5">
+          <div className="w-fit min-w-full h-10 flex flex-col justify-center gap-1.5">
             <div className="flex flex-col justify-end gap-0.5 h-10">
               {/* Product Name and Color Options */}
               <div className="flex items-center justify-between">
-                <span className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()} truncate max-w-[140px] sm:max-w-none`}>
-                  {productName}
+                <span className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}>
+                  {product.name}
                 </span>
                 {colorOptions > 1 && (
                   <div className="flex items-center gap-0.5 ml-2">
@@ -130,7 +127,7 @@ const ProductCard = ({
               
               {/* Price */}
               <span className={`text-[11px] sm:text-[13px] font-inter leading-tight font-medium ${getTextColor()}`}>
-                ₩ {price.toLocaleString()}
+                ₩ {product.price.toLocaleString()}
               </span>
             </div>
           </div>

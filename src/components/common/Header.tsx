@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import LoginDialog from "@/components/dialogs/LoginDialog";
 
 type HeaderVariant = "기본" | "상세페이지" | "장바구니" | "주문";
 
@@ -100,9 +101,11 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
                 {/* User Actions */}
                 {showUserActions && (
                   <div className="flex items-center gap-3 md:gap-5">
-                    <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-6 md:w-8 h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
-                      로그인
-                    </span>
+                    <LoginDialog>
+                      <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-6 md:w-8 h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
+                        로그인
+                      </span>
+                    </LoginDialog>
                     <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-6 md:w-8 h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
                       도움말
                     </span>
