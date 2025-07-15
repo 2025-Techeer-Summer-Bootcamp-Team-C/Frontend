@@ -17,21 +17,21 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const scrollDirection = currentScrollY > lastScrollY ? 1 : -1;
-      
+
       // 스크롤 진행도 계산 (0~200px 구간에서 0~1로 매핑)
-      const maxScrollDistance = 200;
+      const maxScrollDistance = 100;
       const rawProgress = Math.min(currentScrollY / maxScrollDistance, 1);
-      
+
       // 스크롤 방향에 따른 가속도 적용
       let adjustedProgress;
       if (scrollDirection > 0) {
         // 아래로 스크롤 시 조금 더 빠르게
-        adjustedProgress = Math.min(rawProgress * 1.2, 1);
+        adjustedProgress = Math.min(rawProgress * 1, 1);
       } else {
         // 위로 스크롤 시 조금 더 천천히
-        adjustedProgress = Math.max(rawProgress * 0.8, 0);
+        adjustedProgress = Math.max(rawProgress * 1, 0);
       }
-      
+
       setScrollProgress(adjustedProgress);
       setLastScrollY(currentScrollY);
     };
@@ -65,9 +65,9 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
   const filterItems = ["보기", "2", "3", "필터"];
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-transparent z-50">
+    <header className="fixed top-0 left-0 w-full bg-transparent z-50 hover:bg-white/70 group">
       {/* Main Header */}
-      <div className="flex items-center justify-center py-5">
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-[1329px] px-4 lg:px-8 xl:px-0">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -118,12 +118,12 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
           {/* Navigation Menu */}
           {showNavigation && (
             <div
-              className="mt-[60px] md:mt-[99px] transition-all duration-300 ease-out overflow-hidden"
+              className="mt-[60px] md:mt-[99px] transition-all duration-300 ease-out overflow-hidden group-hover:!transform-none group-hover:!opacity-100 group-hover:!max-h-[100px]"
               style={{
                 transform: `translateY(-${scrollProgress * 100}%)`,
                 opacity: 1 - scrollProgress,
-                maxHeight: `${(1 - scrollProgress) * 80}px`,
-                marginTop: `${60 - (scrollProgress * 30)}px`,
+                maxHeight: `${(1 - scrollProgress) * 100}px`,
+                // marginTop: `${60 - scrollProgress * 30}px`,
               }}
             >
               <div className="w-full max-w-[1200px] py-2">
