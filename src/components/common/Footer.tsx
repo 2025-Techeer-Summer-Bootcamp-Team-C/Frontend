@@ -24,7 +24,7 @@ const Footer = ({
     const containerWidth = isCart ? "max-w-[1239px]" : "w-[286px]";
 
     return (
-      <footer className="w-full bg-white">
+      <footer className="fixed bottom-0 w-full bg-white">
         <div
           className={`w-full h-[96px] flex items-center ${containerClass} px-4`}
         >
