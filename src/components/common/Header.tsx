@@ -67,7 +67,7 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
   return (
     <header className="fixed top-0 left-0 w-full bg-transparent z-50 hover:bg-white/70 group">
       {/* Main Header */}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center py-5">
         <div className="w-full max-w-[1329px] px-4 lg:px-8 xl:px-0">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -118,7 +118,7 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
           {/* Navigation Menu */}
           {showNavigation && (
             <div
-              className="mt-[60px] md:mt-[99px] transition-all duration-300 ease-out overflow-hidden group-hover:!transform-none group-hover:!opacity-100 group-hover:!max-h-[100px]"
+              className="mt-[60px] md:mt-[80px] transition-all duration-300 ease-out overflow-hidden group-hover:!transform-none group-hover:!opacity-100 group-hover:!max-h-[100px]"
               style={{
                 transform: `translateY(-${scrollProgress * 100}%)`,
                 opacity: 1 - scrollProgress,
