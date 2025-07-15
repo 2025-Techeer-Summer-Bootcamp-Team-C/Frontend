@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 type HeaderVariant = "기본" | "상세페이지" | "장바구니" | "주문";
@@ -10,6 +10,38 @@ interface HeaderProps {
 const Header = ({ variant = "기본" }: HeaderProps) => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>("모두 보기");
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDirection = currentScrollY > lastScrollY ? 1 : -1;
+      
+      // 스크롤 진행도 계산 (0~200px 구간에서 0~1로 매핑)
+      const maxScrollDistance = 200;
+      const rawProgress = Math.min(currentScrollY / maxScrollDistance, 1);
+      
+      // 스크롤 방향에 따른 가속도 적용
+      let adjustedProgress;
+      if (scrollDirection > 0) {
+        // 아래로 스크롤 시 조금 더 빠르게
+        adjustedProgress = Math.min(rawProgress * 1.2, 1);
+      } else {
+        // 위로 스크롤 시 조금 더 천천히
+        adjustedProgress = Math.max(rawProgress * 0.8, 0);
+      }
+      
+      setScrollProgress(adjustedProgress);
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
 
   const handleLogoClick = () => {
     navigate("/");
@@ -33,7 +65,7 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
   const filterItems = ["보기", "2", "3", "필터"];
 
   return (
-    <header className="w-full bg-white">
+    <header className="fixed top-0 left-0 w-full bg-transparent z-50">
       {/* Main Header */}
       <div className="flex items-center justify-center py-5">
         <div className="w-full max-w-[1329px] px-4 lg:px-8 xl:px-0">
@@ -85,7 +117,15 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
 
           {/* Navigation Menu */}
           {showNavigation && (
-            <div className="mt-[60px] md:mt-[99px]">
+            <div
+              className="mt-[60px] md:mt-[99px] transition-all duration-300 ease-out overflow-hidden"
+              style={{
+                transform: `translateY(-${scrollProgress * 100}%)`,
+                opacity: 1 - scrollProgress,
+                maxHeight: `${(1 - scrollProgress) * 80}px`,
+                marginTop: `${60 - (scrollProgress * 30)}px`,
+              }}
+            >
               <div className="w-full max-w-[1200px] py-2">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
                   {/* Category Menu */}
