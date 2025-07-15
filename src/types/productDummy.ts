@@ -3,7 +3,7 @@ import type { Product } from "./product";
 export const productDummy: Product[] = [
   {
     product_id: 1,
-    category_id: 101,
+    category_id: 1,
     name: "베이직 화이트 티셔츠",
     content: "부드러운 면 소재의 기본 화이트 반팔 티셔츠입니다.",
     price: 12000,
@@ -14,7 +14,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 2,
-    category_id: 102,
+    category_id: 2,
     name: "슬림핏 데님 팬츠",
     content:
       "트렌디한 슬림핏의 데님 청바지. 다양한 스타일에 매치하기 좋습니다.",
@@ -26,7 +26,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 3,
-    category_id: 103,
+    category_id: 3,
     name: "오버핏 체크 셔츠",
     content: "여유로운 오버핏과 클래식한 체크 패턴의 셔츠입니다.",
     price: 27000,
@@ -37,7 +37,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 4,
-    category_id: 104,
+    category_id: 1,
     name: "라이트 그레이 맨투맨",
     content: "간절기에 입기 좋은 라이트 그레이 컬러의 맨투맨입니다.",
     price: 25000,
@@ -48,7 +48,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 5,
-    category_id: 105,
+    category_id: 2,
     name: "블랙 하프 팬츠",
     content: "활동성이 좋은 블랙 컬러의 반바지입니다.",
     price: 18000,
@@ -59,7 +59,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 6,
-    category_id: 106,
+    category_id: 3,
     name: "린넨 스트라이프 셔츠",
     content: "시원한 린넨 소재의 스트라이프 셔츠입니다.",
     price: 32000,
@@ -70,7 +70,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 7,
-    category_id: 107,
+    category_id: 1,
     name: "네이비 집업 후드",
     content: "간편하게 걸치기 좋은 네이비 컬러의 집업 후드입니다.",
     price: 34000,
@@ -81,7 +81,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 8,
-    category_id: 108,
+    category_id: 2,
     name: "크롭 니트 가디건",
     content: "여성스러운 무드의 크롭 니트 가디건입니다.",
     price: 28000,
@@ -92,7 +92,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 9,
-    category_id: 109,
+    category_id: 3,
     name: "와이드 카고 팬츠",
     content: "실용적인 포켓이 많은 와이드핏 카고 팬츠입니다.",
     price: 35000,
@@ -103,7 +103,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 10,
-    category_id: 110,
+    category_id: 1,
     name: "베이지 트렌치코트",
     content: "클래식한 디자인의 베이지 트렌치코트입니다.",
     price: 69000,
@@ -114,7 +114,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 11,
-    category_id: 101,
+    category_id: 2,
     name: "라운드넥 니트 스웨터",
     content: "포근한 착용감의 라운드넥 니트 스웨터입니다.",
     price: 26000,
@@ -125,7 +125,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 12,
-    category_id: 102,
+    category_id: 3,
     name: "하이웨스트 슬랙스",
     content: "다리가 길어보이는 하이웨스트 슬랙스입니다.",
     price: 41000,
@@ -136,7 +136,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 13,
-    category_id: 103,
+    category_id: 1,
     name: "플리츠 미니 스커트",
     content: "러블리한 플리츠 디자인의 미니 스커트입니다.",
     price: 22000,
@@ -147,7 +147,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 14,
-    category_id: 104,
+    category_id: 2,
     name: "오버사이즈 블레이저",
     content: "트렌디한 오버사이즈 핏의 블레이저 자켓입니다.",
     price: 54000,
@@ -158,7 +158,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 15,
-    category_id: 105,
+    category_id: 3,
     name: "코튼 조거 팬츠",
     content: "편안한 착용감의 코튼 조거 팬츠입니다.",
     price: 24000,
@@ -169,7 +169,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 16,
-    category_id: 106,
+    category_id: 1,
     name: "스트레이트 진",
     content: "베이직한 스트레이트 핏의 데님 진입니다.",
     price: 33000,
@@ -180,7 +180,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 17,
-    category_id: 107,
+    category_id: 2,
     name: "크림 컬러 셋업 자켓",
     content: "고급스러운 크림 컬러의 셋업 자켓입니다.",
     price: 60000,
@@ -191,7 +191,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 18,
-    category_id: 108,
+    category_id: 3,
     name: "브이넥 니트 베스트",
     content: "레이어드하기 좋은 브이넥 니트 베스트입니다.",
     price: 21000,
@@ -202,7 +202,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 19,
-    category_id: 109,
+    category_id: 1,
     name: "플리스 집업 아우터",
     content: "보온성이 뛰어난 플리스 소재의 집업 아우터입니다.",
     price: 37000,
@@ -213,7 +213,7 @@ export const productDummy: Product[] = [
   },
   {
     product_id: 20,
-    category_id: 110,
+    category_id: 2,
     name: "스탠다드 싱글 코트",
     content: "깔끔한 실루엣의 스탠다드 싱글 코트입니다.",
     price: 72000,

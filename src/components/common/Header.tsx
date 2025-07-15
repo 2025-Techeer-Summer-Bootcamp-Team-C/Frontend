@@ -13,6 +13,7 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string>("모두 보기");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,13 +24,13 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
       const maxScrollDistance = 100;
       const rawProgress = Math.min(currentScrollY / maxScrollDistance, 1);
 
-      // 스크롤 방향에 따른 가속도 적용
+      // 스크롤 방향에 따른 가속도 적용(지금은 그대로임)
       let adjustedProgress;
       if (scrollDirection > 0) {
-        // 아래로 스크롤 시 조금 더 빠르게
+        // 아래로 스크롤 시
         adjustedProgress = Math.min(rawProgress * 1, 1);
       } else {
-        // 위로 스크롤 시 조금 더 천천히
+        // 위로 스크롤 시
         adjustedProgress = Math.max(rawProgress * 1, 0);
       }
 
@@ -37,8 +38,10 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
       setLastScrollY(currentScrollY);
     };
 
+    // 스크롤 이벤트 리스너 등록
     window.addEventListener("scroll", handleScroll, { passive: true });
 
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -50,8 +53,7 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-    // 여기에 카테고리별 페이지 이동 로직 추가 가능
-    // navigate(`/category/${category}`);
+    // 이제 .filter를 사용해서 카테고리별 상품 목록 표시
   };
 
   // 각 변형별 표시 여부 결정
@@ -102,8 +104,11 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
                 {showUserActions && (
                   <div className="flex items-center gap-3 md:gap-5">
                     <LoginDialog>
-                      <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-6 md:w-8 h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
-                        로그인
+                      <span
+                        className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
+                        onClick={() => setIsLogin(!isLogin)}
+                      >
+                        {isLogin ? "로그아웃" : "로그인"}
                       </span>
                     </LoginDialog>
                     <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-6 md:w-8 h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
