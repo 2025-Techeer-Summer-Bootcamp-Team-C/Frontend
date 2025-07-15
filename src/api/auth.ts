@@ -9,7 +9,7 @@ import type {
 // 회원가입 API 요청 함수
 export const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
   const response = await axiosInstance.post<SignUpResponse>(
-    "/users/signup",
+    "api/v1/users/signup",
     data
   );
   return response.data;
@@ -18,7 +18,7 @@ export const signUp = async (data: SignUpRequest): Promise<SignUpResponse> => {
 // 로그인 API 요청 함수
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await axiosInstance.post<LoginResponse>(
-    "/users/login",
+    "api/v1/users/login",
     data
   );
   return response.data;

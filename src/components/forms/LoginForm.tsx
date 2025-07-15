@@ -14,13 +14,14 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { loginSchema, type LoginFormData } from "@/schemas/authSchema";
 import { AxiosError } from "axios";
+import type { AuthErrorResponse } from "@/types/user";
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
 }
 
 const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
-  const { mutate: login, isPending, error } = useLoginMutation();
+  const { mutate: login, isPending, error, isError } = useLoginMutation();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -117,14 +118,9 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
           </Button>
 
           {/* Global Error Display */}
-          {error &&
-            (error as AxiosError<{ detail: string }>)?.response?.data
-              ?.detail && (
+          {isError && (
               <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                {
-                  (error as AxiosError<{ detail: string }>)?.response?.data
-                    ?.detail
-                }
+                {error?.response?.data?.message || "로그인 중 오류가 발생했습니다"}
               </div>
             )}
 
