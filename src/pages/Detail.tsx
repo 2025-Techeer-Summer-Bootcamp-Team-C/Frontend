@@ -11,6 +11,8 @@ const Detail = () => {
   const navigate = useNavigate();
   const { setDirectPurchaseProduct } = useCart();
   const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
+  const [purchaseQuantity, setPurchaseQuantity] = useState(1);
+  const [showQuantitySelector, setShowQuantitySelector] = useState(false);
   const currentProduct = productDummy.find(
     (product) => product.id === Number(id) && !product.is_deleted
   );
@@ -19,6 +21,28 @@ const Detail = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  const handlePurchaseClick = () => {
+    if (showQuantitySelector) {
+      // 수량 선택 완료 후 주문 페이지로 이동
+      if (currentProduct) {
+        setDirectPurchaseProduct({
+          ...currentProduct,
+          quantity: purchaseQuantity,
+        });
+        navigate("/order");
+      }
+    } else {
+      // 수량 선택 UI 표시
+      setShowQuantitySelector(true);
+    }
+  };
+
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity >= 1) {
+      setPurchaseQuantity(newQuantity);
+    }
+  };
 
   if (!currentProduct) {
     return <div>상품을 찾을 수 없습니다.</div>;
@@ -78,13 +102,45 @@ const Detail = () => {
                 {/* Action Buttons */}
                 <div className="flex items-center gap-0 w-full">
                   <button
-                    className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[89px] w-[215px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
-                    onClick={() => {
-                      setDirectPurchaseProduct(currentProduct);
-                      navigate("/order");
-                    }}
+                    className="bg-white border border-black text-black text-[10px] font-inter py-[13px] w-[215px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
+                    onClick={handlePurchaseClick}
                   >
-                    구매하기
+                    {showQuantitySelector ? (
+                      <div className="flex items-center justify-between w-full px-4">
+                        <span>수량</span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleQuantityChange(purchaseQuantity - 1);
+                            }}
+                            className="w-5 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
+                          >
+                            -
+                          </button>
+                          <span className="min-w-[20px] text-center">
+                            {purchaseQuantity}
+                          </span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleQuantityChange(purchaseQuantity + 1);
+                            }}
+                            className="w-5 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          onClick={handlePurchaseClick}
+                          className="w-10 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
+                        >
+                          확인
+                        </button>
+                      </div>
+                    ) : (
+                      "구매하기"
+                    )}
                   </button>
                   <button
                     className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[62px] w-[207px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
