@@ -4,6 +4,9 @@ import Home from "./pages/Home";
 import Detail from "./pages/Detail";
 import Layout from "./components/common/Layout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import OrderInformation from "./pages/OrderInformation";
+import OrderSummary from "./pages/OrderSummary";
+import OrderHistory from "./pages/OrderHistory";
 
 function App() {
   const queryClient = new QueryClient();
@@ -14,6 +17,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/product/:id" element={<Detail />} />
+          <Route path="/order" element={<OrderInformation />} />
+          <Route path="/summary" element={<OrderSummary />} />
+          <Route path="/history" element={<OrderHistory />} />
         </Routes>
       </Layout>
     </QueryClientProvider>

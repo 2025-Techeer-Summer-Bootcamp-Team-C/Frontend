@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
 import { productDummy } from "@/types/productDummy";
+import { useNavigate } from "react-router-dom";
 
 const Detail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const currentProduct = productDummy.find(
     (product) => product.product_id === Number(id) && !product.is_deleted
   );
@@ -65,7 +67,10 @@ const Detail = () => {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-0 w-full">
-                  <button className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[89px] w-[215px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap">
+                  <button
+                    className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[89px] w-[215px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
+                    onClick={() => navigate("/order")}
+                  >
                     구매하기
                   </button>
                   <button className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[62px] w-[207px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap">
