@@ -3,13 +3,17 @@ import { cartDummy } from "@/dummys/cartDummy";
 import type { CartItem } from "@/types/cart";
 import type { Product } from "@/types/product";
 
+interface DirectPurchaseProduct extends Product {
+  quantity: number;
+}
+
 interface CartContextType {
   cartData: CartItem;
   totalPrice: number;
   updateCart: (newCartData: CartItem) => void;
   updateQuantity: (productId: number, quantity: number) => void;
-  directPurchaseProduct: Product | null;
-  setDirectPurchaseProduct: (product: Product | null) => void;
+  directPurchaseProduct: DirectPurchaseProduct | null;
+  setDirectPurchaseProduct: (product: DirectPurchaseProduct | null) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -20,7 +24,7 @@ interface CartProviderProps {
 
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [cartData, setCartData] = useState<CartItem>(cartDummy);
-  const [directPurchaseProduct, setDirectPurchaseProduct] = useState<Product | null>(null);
+  const [directPurchaseProduct, setDirectPurchaseProduct] = useState<DirectPurchaseProduct | null>(null);
 
   const totalPrice = cartData.total_price;
 

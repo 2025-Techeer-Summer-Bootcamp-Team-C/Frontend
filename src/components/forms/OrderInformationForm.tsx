@@ -3,6 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { UnderlineInput } from "@/components/ui/UnderlineInput";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import DaumPostcode from "react-daum-postcode";
 
 // 2단 레이아웃에 맞춰 'region' 필드를 다시 추가합니다.
 const orderInformationSchema = z.object({
@@ -18,9 +20,12 @@ const orderInformationSchema = z.object({
 type OrderInformationFormData = z.infer<typeof orderInformationSchema>;
 
 function OrderInformationForm() {
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+  
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<OrderInformationFormData>({
     resolver: zodResolver(orderInformationSchema),
@@ -38,6 +43,12 @@ function OrderInformationForm() {
 
   const onSubmit = (data: OrderInformationFormData) => {
     console.log("Form submitted:", data);
+  };
+
+  const handlePostcodeComplete = (data: any) => {
+    setValue("postalCode", data.zonecode);
+    setValue("address", data.roadAddress || data.jibunAddress);
+    setIsPostcodeOpen(false);
   };
 
   return (
@@ -67,6 +78,7 @@ function OrderInformationForm() {
               type="button"
               variant="outline"
               className="px-4 py-2 text-sm shrink-0 h-auto"
+              onClick={() => setIsPostcodeOpen(true)}
             >
               우편번호 찾기
             </Button>
@@ -115,6 +127,27 @@ function OrderInformationForm() {
           />
         </div>
       </div>
+
+      {/* 우편번호 검색 모달 */}
+      {isPostcodeOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg max-w-md w-full mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">우편번호 검색</h3>
+              <button
+                onClick={() => setIsPostcodeOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            <DaumPostcode
+              onComplete={handlePostcodeComplete}
+              style={{ width: "100%", height: "400px" }}
+            />
+          </div>
+        </div>
+      )}
     </form>
   );
 }

@@ -6,9 +6,9 @@ function OrderSummary() {
   // 직접 구매 상품이 있으면 그것만, 없으면 장바구니 상품들 사용
   const isDirectPurchase = !!directPurchaseProduct;
   const displayPrice = isDirectPurchase 
-    ? directPurchaseProduct.price 
+    ? directPurchaseProduct.price * directPurchaseProduct.quantity
     : cartData.total_price;
-  const displayProductCount = isDirectPurchase ? 1 : cartData.cart_product.length;
+  const displayProductCount = isDirectPurchase ? directPurchaseProduct.quantity : cartData.cart_product.length;
   
   // 사용자 크레딧 정보
   const userCredit = 1000000;

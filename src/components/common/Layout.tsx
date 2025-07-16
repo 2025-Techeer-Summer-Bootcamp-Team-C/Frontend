@@ -65,9 +65,9 @@ const Layout = ({
       return cartTotalPrice;
     }
     
-    // 주문 관련 페이지에서는 직접 구매 상품이 있으면 그 가격, 없으면 장바구니 총액
+    // 주문 관련 페이지에서는 직접 구매 상품이 있으면 그 가격 × 수량, 없으면 장바구니 총액
     if (location.pathname.includes("/order") || location.pathname.includes("/summary")) {
-      return directPurchaseProduct ? directPurchaseProduct.price : cartTotalPrice;
+      return directPurchaseProduct ? directPurchaseProduct.price * directPurchaseProduct.quantity : cartTotalPrice;
     }
     
     return cartTotalPrice;
