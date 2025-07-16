@@ -1,11 +1,13 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import type { FooterVariant } from "@/types/types";
+import { PaymentDialog } from "@/components/dialogs/PaymentDialog";
 
 interface FooterProps {
   variant?: FooterVariant;
   buttonText?: string;
   totalPrice?: number;
   onAddGift?: () => void;
+  onContinue?: () => void;
 }
 
 const Footer = ({
@@ -13,6 +15,7 @@ const Footer = ({
   buttonText = "계속",
   totalPrice = 0,
   onAddGift,
+  onContinue,
 }: FooterProps) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,17 +87,33 @@ const Footer = ({
             </div>
 
             {/* Continue Button */}
-            <button
-              onClick={() => {
-                if (path.includes("/order")) navigate("/order-summary");
-                else navigate("/order");
-              }}
-              className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors"
-            >
-              <span className="text-white text-4 font-inter leading-tight">
-                {buttonText}
-              </span>
-            </button>
+            {path.includes("/order-summary") ? (
+              <PaymentDialog
+                totalPrice={totalPrice}
+                onConfirm={() => {
+                  navigate("/order-summary");
+                }}
+              >
+                <button className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors">
+                  <span className="text-white text-4 font-inter leading-tight">
+                    {buttonText}
+                  </span>
+                </button>
+              </PaymentDialog>
+            ) : (
+              <button
+                onClick={() => {
+                  if (onContinue) onContinue();
+                  else if (path.includes("/order")) navigate("/order-summary");
+                  else navigate("/order");
+                }}
+                className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors"
+              >
+                <span className="text-white text-4 font-inter leading-tight">
+                  {buttonText}
+                </span>
+              </button>
+            )}
           </div>
         </div>
       </footer>
