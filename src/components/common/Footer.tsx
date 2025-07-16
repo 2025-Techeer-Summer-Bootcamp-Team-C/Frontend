@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import type { FooterVariant } from "@/types/variants";
 import { PaymentDialog } from "@/components/dialogs/PaymentDialog";
+import { useCart } from "@/contexts/CartContext";
 
 interface FooterProps {
   variant?: FooterVariant;
@@ -19,6 +20,7 @@ const Footer = ({
 }: FooterProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setDirectPurchaseProduct } = useCart();
   const path = location.pathname;
 
   const formatPrice = (price: number) => {
@@ -103,9 +105,17 @@ const Footer = ({
                 ) : (
                   <button
                     onClick={() => {
-                      if (onContinue) onContinue();
-                      else if (path.includes("/order")) navigate("/summary");
-                      else navigate("/order");
+                      if (onContinue) {
+                        onContinue();
+                      } else if (path.includes("/order")) {
+                        navigate("/summary");
+                      } else {
+                        // 장바구니에서 주문으로 넘어갈 때 직접 구매 상품 초기화
+                        if (path.includes("/cart")) {
+                          setDirectPurchaseProduct(null);
+                        }
+                        navigate("/order");
+                      }
                     }}
                     className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors"
                   >

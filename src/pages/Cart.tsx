@@ -1,13 +1,10 @@
 import Header from "@/components/common/Header";
-import Footer from "@/components/common/Footer";
 import ProductCard from "@/components/common/ProductCard";
-import { cartDummy } from "@/dummys/cartDummy";
+import { useCart } from "@/contexts/CartContext";
 
 function Cart() {
-  // Use cartDummy data
-  const cartData = cartDummy;
+  const { cartData, updateQuantity } = useCart();
   const cartItems = cartData.cart_product;
-  const totalPrice = cartData.total_price;
 
   return (
     <div className="min-h-screen bg-white">
@@ -29,34 +26,32 @@ function Cart() {
           {/* Products Grid */}
           <div className="w-full bg-white">
             <div className="flex flex-col gap-[100px]">
-              {/* First Row */}
-              <div className="flex items-center justify-between gap-[85px]">
-                {cartItems.slice(0, 4).map((item) => (
-                  <ProductCard
-                    key={item.id}
-                    variant="cart"
-                    product={item.product}
-                  />
-                ))}
-              </div>
-
-              {/* Second Row */}
-              <div className="flex items-center justify-between gap-[85px]">
-                {cartItems.slice(4, 8).map((item) => (
-                  <ProductCard
-                    key={item.id}
-                    variant="cart"
-                    product={item.product}
-                  />
-                ))}
-              </div>
+              {(() => {
+                const cartRows = [];
+                for (let i = 0; i < cartItems.length; i += 4) {
+                  cartRows.push(cartItems.slice(i, i + 4));
+                }
+                return cartRows.map((row, rowIndex) => (
+                  <div
+                    key={rowIndex}
+                    className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[85px] justify-items-center"
+                  >
+                    {row.map((item) => (
+                      <ProductCard
+                        key={item.id}
+                        variant="cart"
+                        product={item.product}
+                        quantity={item.quantity}
+                        onQuantityChange={(quantity) => updateQuantity(item.product.id, quantity)}
+                      />
+                    ))}
+                  </div>
+                ));
+              })()}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Footer - cart 속성 */}
-      <Footer variant="cart" totalPrice={totalPrice} />
     </div>
   );
 }

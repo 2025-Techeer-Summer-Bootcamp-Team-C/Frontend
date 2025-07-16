@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Product } from "@/types/product";
 import type { ProductCardVariant } from "@/types/variants";
 
@@ -18,6 +18,10 @@ const ProductCard = ({
   onProductClick,
 }: ProductCardProps) => {
   const [currentQuantity, setCurrentQuantity] = useState(quantity);
+
+  useEffect(() => {
+    setCurrentQuantity(quantity);
+  }, [quantity]);
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1) {

@@ -1,4 +1,18 @@
+import { useCart } from "@/contexts/CartContext";
+
 function OrderSummary() {
+  const { cartData, directPurchaseProduct } = useCart();
+  
+  // 직접 구매 상품이 있으면 그것만, 없으면 장바구니 상품들 사용
+  const isDirectPurchase = !!directPurchaseProduct;
+  const displayPrice = isDirectPurchase 
+    ? directPurchaseProduct.price 
+    : cartData.total_price;
+  const displayProductCount = isDirectPurchase ? 1 : cartData.cart_product.length;
+  
+  // 사용자 크레딧 정보
+  const userCredit = 1000000;
+  const remainingCredit = userCredit - displayPrice;
   return (
     <div className="min-h-screen w-[1216px] mx-auto bg-white">
       <div className="flex pt-[149px] px-4 gap-[100px]">
@@ -20,7 +34,7 @@ function OrderSummary() {
           <div className="mb-8">
             <span className="flex items-center gap-2 text-xl font-medium text-black">
               상품 수 -
-              <div className="text-xl font-medium text-gray-500">1</div>
+              <div className="text-xl font-medium text-gray-500">{displayProductCount}</div>
             </span>
           </div>
 
@@ -52,7 +66,7 @@ function OrderSummary() {
               <div className="space-y-3">
                 <p className="text-[17px] font-medium text-black">크레딧</p>
                 <p className="text-[17px] font-medium text-black">
-                  ₩1,000,000 - ₩49,000= ₩951,000
+                  ₩{userCredit.toLocaleString()} - ₩{displayPrice.toLocaleString()}= ₩{remainingCredit.toLocaleString()}
                 </p>
                 <p className="text-[13px] font-medium text-black">
                   현재 크레딧 - 사용 크레딧 = 크레딧 잔액
