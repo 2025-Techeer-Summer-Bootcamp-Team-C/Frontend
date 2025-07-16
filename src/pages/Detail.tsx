@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
-import { productDummy } from "@/types/productDummy";
+import { productDummy } from "@/dummys/productDummy";
 import { useNavigate } from "react-router-dom";
 
 const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const currentProduct = productDummy.find(
-    (product) => product.product_id === Number(id) && !product.is_deleted
+    (product) => product.id === Number(id) && !product.is_deleted
   );
 
   if (!currentProduct) {
@@ -188,7 +188,7 @@ const Detail = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center">
               {productDummy.slice(0, 4).map((product) => (
                 <ProductCard
-                  key={product.product_id}
+                  key={product.id}
                   variant="viewed"
                   product={product}
                   colorOptions={3}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "@/components/dialogs/LoginDialog";
-import type { HeaderVariant } from "@/types/types";
+import type { HeaderVariant } from "@/types/variants";
 
 interface HeaderProps {
   variant?: HeaderVariant;
@@ -113,8 +113,11 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                     <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-6 md:w-8 h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
                       도움말
                     </span>
-                    <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
-                      장바구니(0)
+                    <span
+                      className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
+                      onClick={() => navigate("/cart")}
+                    >
+                      장바구니(4)
                     </span>
                   </div>
                 )}

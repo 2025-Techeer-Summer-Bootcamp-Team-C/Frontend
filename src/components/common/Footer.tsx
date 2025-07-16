@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import type { FooterVariant } from "@/types/types";
+import type { FooterVariant } from "@/types/variants";
 import { PaymentDialog } from "@/components/dialogs/PaymentDialog";
 
 interface FooterProps {
@@ -29,7 +29,7 @@ const Footer = ({
   if (variant === "cart" || variant === "order") {
     const isCart = variant === "cart";
     const containerClass = isCart ? "justify-center" : "justify-end";
-    const containerWidth = isCart ? "max-w-[1216px]" : "w-[340px]";
+    const containerWidth = isCart ? "w-full" : "w-[340px]";
 
     // 주문 요약 페이지에서는 버튼 텍스트 변경
     if (path.includes("/summary")) {
@@ -39,81 +39,83 @@ const Footer = ({
     return (
       <footer className="fixed bottom-0 w-full bg-white">
         <div
-          className={`w-full h-[96px] flex items-center ${containerClass} px-30`}
+          className={`w-full min-h-[96px] flex items-center ${containerClass} px-25`}
         >
-          <div className={`${containerWidth} h-[44px] relative`}>
-            {/* Terms Text - Cart Only */}
-            {isCart && (
-              <div className="absolute left-0 top-[15px] w-[475px] h-[12px]">
-                <span className="text-black text-[10px] font-inter leading-tight">
-                  계속 진행함으로써 본인은 구매 조건을 읽고 이에 동의하며 자사의
-                  개인정보 및 쿠키 정책을 이해했음을 선언합니다.
-                </span>
-              </div>
-            )}
+          <div className={`${containerWidth} h-[44px]`}>
+            {/* Left Section - Cart Only */}
+            <div className="flex justify-between items-center">
+              {/* Terms Text - Cart Only */}
+              {isCart && (
+                <div className="w-auto">
+                  <span className="text-black text-[10px] font-inter leading-tight">
+                    계속 진행함으로써 본인은 구매 조건을 읽고 이에 동의하며
+                    자사의 개인정보 및 쿠키 정책을 이해했음을 선언합니다.
+                  </span>
+                </div>
+              )}
 
-            {/* Gift Option - Cart Only */}
-            {isCart && (
-              <div className="absolute left-[541px] top-[16px] flex items-center gap-[19px]">
-                <span className="text-black text-[10px] font-inter leading-tight">
-                  선물용으로 주문하시겠습니까?
-                </span>
-                <button
-                  onClick={onAddGift}
-                  className="text-black text-[10px] font-inter leading-tight hover:opacity-70 transition-opacity cursor-pointer"
-                >
-                  추가
-                </button>
-              </div>
-            )}
+              {/* Gift Option - Cart Only */}
+              {isCart && (
+                <div className="flex items-center gap-[19px]">
+                  <span className="text-black text-[10px] font-inter leading-tight">
+                    선물용으로 주문하시겠습니까?
+                  </span>
+                  <button
+                    onClick={onAddGift}
+                    className="text-black text-[10px] font-inter leading-tight hover:opacity-70 transition-opacity cursor-pointer"
+                  >
+                    추가
+                  </button>
+                </div>
+              )}
 
-            {/* Total Price */}
-            <div
-              className={`absolute ${
-                isCart ? "right-[286px]" : "left-0"
-              } top-0 w-auto flex justify-between items-center gap-6`}
-            >
-              <span className="text-black text-4 font-inter leading-tight">
-                총
-              </span>
-              <div className="w-auto flex flex-col gap-2">
-                <span className="text-black text-4 font-inter leading-tight">
-                  ₩ {formatPrice(totalPrice)}
-                </span>
-                <span className="text-black text-3 font-inter leading-tight">
-                  *부가세 포함
-                </span>
+              {/* Bottom Section */}
+              <div className="flex justify-between items-center w-[340px] h-[44px]">
+                {/* Total Price */}
+                <div className="flex justify-between items-center gap-6">
+                  <span className="text-black text-4 font-inter leading-tight">
+                    총
+                  </span>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-black text-4 font-inter leading-tight">
+                      ₩ {formatPrice(totalPrice)}
+                    </span>
+                    <span className="text-black text-3 font-inter leading-tight">
+                      *부가세 포함
+                    </span>
+                  </div>
+                </div>
+
+                {/* Continue Button */}
+                {path.includes("/summary") ? (
+                  <PaymentDialog
+                    totalPrice={totalPrice}
+                    onConfirm={() => {
+                      navigate("/summary");
+                    }}
+                  >
+                    <button className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors">
+                      <span className="text-white text-4 font-inter leading-tight">
+                        {buttonText}
+                      </span>
+                    </button>
+                  </PaymentDialog>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (onContinue) onContinue();
+                      else if (path.includes("/order")) navigate("/summary");
+                      else navigate("/order");
+                    }}
+                    className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors"
+                  >
+                    <span className="text-white text-4 font-inter leading-tight">
+                      {buttonText}
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
-
-            {/* Continue Button */}
-            {path.includes("/summary") ? (
-              <PaymentDialog
-                totalPrice={totalPrice}
-                onConfirm={() => {
-                  navigate("/summary");
-                }}
-              >
-                <button className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors">
-                  <span className="text-white text-4 font-inter leading-tight">
-                    {buttonText}
-                  </span>
-                </button>
-              </PaymentDialog>
-            ) : (
-              <button
-                onClick={() => {
-                  if (onContinue) onContinue();
-                  else if (path.includes("/order")) navigate("/summary");
-                  else navigate("/order");
-                }}
-                className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors"
-              >
-                <span className="text-white text-4 font-inter leading-tight">
-                  {buttonText}
-                </span>
-              </button>
-            )}
           </div>
         </div>
       </footer>

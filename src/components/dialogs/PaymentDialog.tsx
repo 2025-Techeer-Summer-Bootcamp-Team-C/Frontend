@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { PaymentDialogVariant } from "@/types/types";
+import type { PaymentDialogVariant } from "@/types/variants";
 import { X } from "lucide-react";
 
 interface PaymentDialogProps {

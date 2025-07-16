@@ -2,7 +2,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import React from "react";
 import { useLocation } from "react-router-dom";
-import type { HeaderVariant, FooterVariant } from "@/types/types";
+import type { HeaderVariant, FooterVariant } from "@/types/variants";
 
 interface LayoutProps {
   children: React.ReactNode;
