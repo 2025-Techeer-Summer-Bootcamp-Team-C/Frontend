@@ -1,17 +1,24 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "@/components/common/ProductCard";
 import { productDummy } from "@/dummys/productDummy";
 import { useNavigate } from "react-router-dom";
 import CartAddDialog from "@/components/dialogs/CartAddDialog";
+import { useCart } from "@/contexts/CartContext";
 
 const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { setDirectPurchaseProduct } = useCart();
   const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const currentProduct = productDummy.find(
     (product) => product.id === Number(id) && !product.is_deleted
   );
+
+  // 컴포넌트 마운트 시 스크롤을 맨 위로 이동
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   if (!currentProduct) {
     return <div>상품을 찾을 수 없습니다.</div>;
@@ -72,7 +79,10 @@ const Detail = () => {
                 <div className="flex items-center gap-0 w-full">
                   <button
                     className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[89px] w-[215px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
-                    onClick={() => navigate("/order")}
+                    onClick={() => {
+                      setDirectPurchaseProduct(currentProduct);
+                      navigate("/order");
+                    }}
                   >
                     구매하기
                   </button>
