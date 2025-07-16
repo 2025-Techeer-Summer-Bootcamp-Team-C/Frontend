@@ -1,3 +1,16 @@
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+  user_gender: "M" | "F";
+  created_at: string;
+  updated_at: string;
+  is_deleted: boolean;
+  image: string;
+  credit: number;
+}
+
 export interface SignUpRequest {
   username: string;
   password: string;
