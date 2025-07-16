@@ -5,7 +5,6 @@ import type { ProductCardVariant } from "@/types/variants";
 interface ProductCardProps {
   variant?: ProductCardVariant;
   product: Product;
-  colorOptions?: number;
   quantity?: number;
   onQuantityChange?: (quantity: number) => void;
   onProductClick?: () => void;
@@ -14,7 +13,6 @@ interface ProductCardProps {
 const ProductCard = ({
   variant = "default",
   product,
-  colorOptions = 1,
   quantity = 1,
   onQuantityChange,
   onProductClick,
@@ -61,20 +59,6 @@ const ProductCard = ({
                   >
                     {product.name}
                   </span>
-                  {colorOptions > 1 && (
-                    <div className="flex items-center gap-0.5 ml-2">
-                      <div className="flex flex-col gap-2.5 w-[30px]">
-                        <div className="flex items-center justify-between gap-0.5">
-                          <div className="w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] bg-[#D9D9D9] rounded-sm"></div>
-                          <span
-                            className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}
-                          >
-                            +{colorOptions - 1}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Price */}
@@ -120,20 +104,6 @@ const ProductCard = ({
                 >
                   {product.name}
                 </span>
-                {colorOptions > 1 && (
-                  <div className="flex items-center gap-0.5 ml-2">
-                    <div className="flex flex-col gap-2.5 w-[30px]">
-                      <div className="flex items-center justify-between gap-0.5">
-                        <div className="w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] bg-[#D9D9D9] rounded-sm"></div>
-                        <span
-                          className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}
-                        >
-                          +{colorOptions - 1}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Price */}

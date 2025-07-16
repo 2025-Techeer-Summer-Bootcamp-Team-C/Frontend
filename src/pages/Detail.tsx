@@ -1,11 +1,14 @@
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 import ProductCard from "@/components/common/ProductCard";
 import { productDummy } from "@/dummys/productDummy";
 import { useNavigate } from "react-router-dom";
+import CartAddDialog from "@/components/dialogs/CartAddDialog";
 
 const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const currentProduct = productDummy.find(
     (product) => product.id === Number(id) && !product.is_deleted
   );
@@ -73,7 +76,10 @@ const Detail = () => {
                   >
                     구매하기
                   </button>
-                  <button className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[62px] w-[207px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap">
+                  <button
+                    className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[62px] w-[207px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
+                    onClick={() => setIsCartDialogOpen(true)}
+                  >
                     장바구니 추가하기
                   </button>
                 </div>
@@ -191,14 +197,22 @@ const Detail = () => {
                   key={product.id}
                   variant="viewed"
                   product={product}
-                  colorOptions={3}
-                  onProductClick={() => {}}
+                  onProductClick={() => {
+                    navigate(`/product/${product.id}`);
+                  }}
                 />
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Cart Add Dialog */}
+      <CartAddDialog
+        isOpen={isCartDialogOpen}
+        onClose={() => setIsCartDialogOpen(false)}
+        product={currentProduct}
+      />
     </div>
   );
 };
