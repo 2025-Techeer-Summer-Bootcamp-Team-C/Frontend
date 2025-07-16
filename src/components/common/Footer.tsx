@@ -32,7 +32,7 @@ const Footer = ({
     const containerWidth = isCart ? "max-w-[1216px]" : "w-[340px]";
 
     // 주문 요약 페이지에서는 버튼 텍스트 변경
-    if (path.includes("/order-summary")) {
+    if (path.includes("/summary")) {
       buttonText = "결제 승인";
     }
 
@@ -87,11 +87,11 @@ const Footer = ({
             </div>
 
             {/* Continue Button */}
-            {path.includes("/order-summary") ? (
+            {path.includes("/summary") ? (
               <PaymentDialog
                 totalPrice={totalPrice}
                 onConfirm={() => {
-                  navigate("/order-summary");
+                  navigate("/summary");
                 }}
               >
                 <button className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors">
@@ -104,7 +104,7 @@ const Footer = ({
               <button
                 onClick={() => {
                   if (onContinue) onContinue();
-                  else if (path.includes("/order")) navigate("/order-summary");
+                  else if (path.includes("/order")) navigate("/summary");
                   else navigate("/order");
                 }}
                 className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors"

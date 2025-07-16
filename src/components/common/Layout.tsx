@@ -30,7 +30,12 @@ const Layout = ({
     // 경로별 헤더 variant 매핑
     if (path.includes("/product/")) return "detail";
     if (path.includes("/cart")) return "cart";
-    if (path.includes("/order")) return "order";
+    if (
+      path.includes("/order") ||
+      path.includes("/summary") ||
+      path.includes("/history")
+    )
+      return "order";
 
     return "default";
   };
@@ -43,7 +48,8 @@ const Layout = ({
 
     // 경로별 푸터 variant 매핑
     if (path.includes("/cart")) return "cart";
-    if (path.includes("/order")) return "order";
+    if (path.includes("/order") || path.includes("/summary")) return "order";
+    if (path.includes("/history")) return "default";
 
     return "default";
   };

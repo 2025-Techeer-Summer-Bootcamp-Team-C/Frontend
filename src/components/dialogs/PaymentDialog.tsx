@@ -7,6 +7,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { PaymentDialogVariant } from "@/types/types";
 import { X } from "lucide-react";
 
@@ -25,6 +26,7 @@ export const PaymentDialog = ({
   onConfirm,
   onClose,
 }: PaymentDialogProps) => {
+  const navigate = useNavigate();
   const [currentVariant, setCurrentVariant] =
     useState<PaymentDialogVariant>("confirm");
 
@@ -35,6 +37,11 @@ export const PaymentDialog = ({
   const handleConfirm = () => {
     setCurrentVariant("complete");
     onConfirm?.();
+  };
+
+  const handleComplete = () => {
+    navigate("/history");
+    if (onClose) onClose();
   };
 
   const dialogClassName =
@@ -182,7 +189,7 @@ export const PaymentDialog = ({
             </p>
             <DialogClose asChild>
               <button
-                onClick={onClose}
+                onClick={handleComplete}
                 className="bg-black text-white text-[15px] font-medium leading-6 h-10 px-12 flex items-center justify-center"
               >
                 확인
