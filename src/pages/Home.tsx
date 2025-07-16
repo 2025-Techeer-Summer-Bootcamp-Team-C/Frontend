@@ -36,7 +36,6 @@ const Home = () => {
                     key={product.id}
                     variant="default"
                     product={product}
-                    colorOptions={3}
                     onProductClick={() => handleProductClick(product.id)}
                   />
                 ))}
