@@ -33,13 +33,11 @@ const Home = () => {
               >
                 {row.map((product) => (
                   <ProductCard
-                    key={product.product_id}
+                    key={product.id}
                     variant="default"
                     product={product}
                     colorOptions={3}
-                    onProductClick={() =>
-                      handleProductClick(product.product_id)
-                    }
+                    onProductClick={() => handleProductClick(product.id)}
                   />
                 ))}
               </div>

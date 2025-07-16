@@ -87,7 +87,7 @@ const ProductCard = ({
             </div>
 
             {/* Quantity Control */}
-            <div className="w-16 sm:w-20 h-8 flex flex-col justify-end gap-2.5 mt-2">
+            <div className="w-30 h-8 flex flex-col justify-end gap-2.5 mt-2">
               <div className="flex items-center justify-between gap-4 sm:gap-[29px] bg-gray-50 rounded-md px-2 py-1">
                 <button
                   onClick={() => handleQuantityChange(currentQuantity - 1)}

@@ -117,7 +117,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                       className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
                       onClick={() => navigate("/cart")}
                     >
-                      장바구니(0)
+                      장바구니(4)
                     </span>
                   </div>
                 )}
