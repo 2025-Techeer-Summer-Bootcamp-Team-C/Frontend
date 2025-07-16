@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
-import { productDummy } from "@/types/productDummy";
+import { productDummy } from "@/dummys/productDummy";
 import { useNavigate } from "react-router-dom";
 
 const Detail = () => {

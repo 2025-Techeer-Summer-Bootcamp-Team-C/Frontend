@@ -16,7 +16,7 @@ export interface SignUpRequest {
   password: string;
   password2: string;
   email: string;
-  user_gender: "M" | "F";
+  image: string;
 }
 
 export interface SignUpResponse {

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import type { FooterVariant } from "@/types/types";
+import type { FooterVariant } from "@/types/variants";
 import { PaymentDialog } from "@/components/dialogs/PaymentDialog";
 
 interface FooterProps {

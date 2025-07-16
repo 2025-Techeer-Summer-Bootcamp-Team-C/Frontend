@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { Product } from "@/types/product";
-
-type ProductCardVariant = "default" | "viewed" | "cart";
+import type { ProductCardVariant } from "@/types/variants";
 
 interface ProductCardProps {
   variant?: ProductCardVariant;
@@ -36,12 +35,12 @@ const ProductCard = ({
   return (
     <div className="w-full max-w-[240px] min-w-[180px] sm:w-[240px]">
       {/* Product Image */}
-      <div 
+      <div
         className="w-full h-[270px] sm:h-[360px] bg-gray-200 mb-2 cursor-pointer overflow-hidden rounded-lg hover:shadow-lg transition-shadow"
         onClick={onProductClick}
       >
-        <img 
-          src="" 
+        <img
+          src=""
           alt={product.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
         />
@@ -57,7 +56,9 @@ const ProductCard = ({
               <div className="flex flex-col justify-end gap-0.5 h-10">
                 {/* Product Name and Color Options */}
                 <div className="flex items-center justify-between">
-                  <span className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}>
+                  <span
+                    className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}
+                  >
                     {product.name}
                   </span>
                   {colorOptions > 1 && (
@@ -65,7 +66,9 @@ const ProductCard = ({
                       <div className="flex flex-col gap-2.5 w-[30px]">
                         <div className="flex items-center justify-between gap-0.5">
                           <div className="w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] bg-[#D9D9D9] rounded-sm"></div>
-                          <span className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}>
+                          <span
+                            className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}
+                          >
                             +{colorOptions - 1}
                           </span>
                         </div>
@@ -73,9 +76,11 @@ const ProductCard = ({
                     </div>
                   )}
                 </div>
-                
+
                 {/* Price */}
-                <span className={`text-[11px] sm:text-[13px] font-inter leading-tight font-medium ${getTextColor()}`}>
+                <span
+                  className={`text-[11px] sm:text-[13px] font-inter leading-tight font-medium ${getTextColor()}`}
+                >
                   ₩ {product.price.toLocaleString()}
                 </span>
               </div>
@@ -84,16 +89,18 @@ const ProductCard = ({
             {/* Quantity Control */}
             <div className="w-16 sm:w-20 h-8 flex flex-col justify-end gap-2.5 mt-2">
               <div className="flex items-center justify-between gap-4 sm:gap-[29px] bg-gray-50 rounded-md px-2 py-1">
-                <button 
+                <button
                   onClick={() => handleQuantityChange(currentQuantity - 1)}
                   className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()} cursor-pointer hover:opacity-70 transition-opacity w-4 h-4 flex items-center justify-center`}
                 >
                   -
                 </button>
-                <span className={`text-[11px] sm:text-[13px] font-inter leading-tight text-center ${getTextColor()} min-w-[12px]`}>
+                <span
+                  className={`text-[11px] sm:text-[13px] font-inter leading-tight text-center ${getTextColor()} min-w-[12px]`}
+                >
                   {currentQuantity}
                 </span>
-                <button 
+                <button
                   onClick={() => handleQuantityChange(currentQuantity + 1)}
                   className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()} cursor-pointer hover:opacity-70 transition-opacity w-4 h-4 flex items-center justify-center`}
                 >
@@ -108,7 +115,9 @@ const ProductCard = ({
             <div className="flex flex-col justify-end gap-0.5 h-10">
               {/* Product Name and Color Options */}
               <div className="flex items-center justify-between">
-                <span className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}>
+                <span
+                  className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}
+                >
                   {product.name}
                 </span>
                 {colorOptions > 1 && (
@@ -116,7 +125,9 @@ const ProductCard = ({
                     <div className="flex flex-col gap-2.5 w-[30px]">
                       <div className="flex items-center justify-between gap-0.5">
                         <div className="w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] bg-[#D9D9D9] rounded-sm"></div>
-                        <span className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}>
+                        <span
+                          className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}
+                        >
                           +{colorOptions - 1}
                         </span>
                       </div>
@@ -124,9 +135,11 @@ const ProductCard = ({
                   </div>
                 )}
               </div>
-              
+
               {/* Price */}
-              <span className={`text-[11px] sm:text-[13px] font-inter leading-tight font-medium ${getTextColor()}`}>
+              <span
+                className={`text-[11px] sm:text-[13px] font-inter leading-tight font-medium ${getTextColor()}`}
+              >
                 ₩ {product.price.toLocaleString()}
               </span>
             </div>
