@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "@/components/dialogs/LoginDialog";
-
-type HeaderVariant = "기본" | "상세페이지" | "장바구니" | "주문";
+import type { HeaderVariant } from "@/types/types";
 
 interface HeaderProps {
   variant?: HeaderVariant;
 }
 
-const Header = ({ variant = "기본" }: HeaderProps) => {
+const Header = ({ variant = "default" }: HeaderProps) => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>("모두 보기");
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -57,10 +56,10 @@ const Header = ({ variant = "기본" }: HeaderProps) => {
   };
 
   // 각 변형별 표시 여부 결정
-  const showNavigation = variant === "기본";
+  const showNavigation = variant === "default";
   const showSearch =
-    variant === "기본" || variant === "상세페이지" || variant === "장바구니";
-  const showUserActions = variant === "기본" || variant === "상세페이지";
+    variant === "default" || variant === "detail" || variant === "cart";
+  const showUserActions = variant === "default" || variant === "detail";
 
   // 카테고리 메뉴 아이템들
   const categoryItems = ["모두 보기", "상의", "하의", "아우터"];

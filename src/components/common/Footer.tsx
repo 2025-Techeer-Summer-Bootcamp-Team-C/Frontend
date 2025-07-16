@@ -1,18 +1,23 @@
-type FooterVariant = "default" | "cart" | "order";
+import { useNavigate, useLocation } from "react-router-dom";
+import type { FooterVariant } from "@/types/types";
 
 interface FooterProps {
   variant?: FooterVariant;
+  buttonText?: string;
   totalPrice?: number;
-  onContinue?: () => void;
   onAddGift?: () => void;
 }
 
 const Footer = ({
   variant = "default",
+  buttonText = "계속",
   totalPrice = 0,
-  onContinue,
   onAddGift,
 }: FooterProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const path = location.pathname;
+
   const formatPrice = (price: number) => {
     return price.toLocaleString("ko-KR");
   };
@@ -21,12 +26,17 @@ const Footer = ({
   if (variant === "cart" || variant === "order") {
     const isCart = variant === "cart";
     const containerClass = isCart ? "justify-center" : "justify-end";
-    const containerWidth = isCart ? "max-w-[1239px]" : "w-[286px]";
+    const containerWidth = isCart ? "max-w-[1216px]" : "w-[340px]";
+
+    // 주문 요약 페이지에서는 버튼 텍스트 변경
+    if (path.includes("/order-summary")) {
+      buttonText = "결제 승인";
+    }
 
     return (
       <footer className="fixed bottom-0 w-full bg-white">
         <div
-          className={`w-full h-[96px] flex items-center ${containerClass} px-4`}
+          className={`w-full h-[96px] flex items-center ${containerClass} px-30`}
         >
           <div className={`${containerWidth} h-[44px] relative`}>
             {/* Terms Text - Cart Only */}
@@ -58,16 +68,16 @@ const Footer = ({
             <div
               className={`absolute ${
                 isCart ? "right-[286px]" : "left-0"
-              } top-[6px] w-[88px] flex justify-between items-center gap-[29px]`}
+              } top-0 w-auto flex justify-between items-center gap-6`}
             >
-              <span className="text-black text-[10px] font-inter leading-tight">
+              <span className="text-black text-4 font-inter leading-tight">
                 총
               </span>
-              <div className="w-[49px] flex flex-col gap-2">
-                <span className="text-black text-[10px] font-inter leading-tight">
+              <div className="w-auto flex flex-col gap-2">
+                <span className="text-black text-4 font-inter leading-tight">
                   ₩ {formatPrice(totalPrice)}
                 </span>
-                <span className="text-black text-[9px] font-inter leading-tight">
+                <span className="text-black text-3 font-inter leading-tight">
                   *부가세 포함
                 </span>
               </div>
@@ -75,11 +85,14 @@ const Footer = ({
 
             {/* Continue Button */}
             <button
-              onClick={onContinue}
-              className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-[71px] py-4 hover:bg-gray-800 transition-colors"
+              onClick={() => {
+                if (path.includes("/order")) navigate("/order-summary");
+                else navigate("/order");
+              }}
+              className="absolute right-0 top-0 w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors"
             >
-              <span className="text-white text-[10px] font-inter leading-tight">
-                계속
+              <span className="text-white text-4 font-inter leading-tight">
+                {buttonText}
               </span>
             </button>
           </div>
