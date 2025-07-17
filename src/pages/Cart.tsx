@@ -1,16 +1,13 @@
-import Header from "@/components/common/Header";
 import ProductCard from "@/components/common/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 
 function Cart() {
-  const { cartData, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
+  const { cartData, increaseQuantity, decreaseQuantity, removeFromCart } =
+    useCart();
   const cartItems = cartData.cart_product;
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header - cart 속성 */}
-      <Header variant="cart" />
-
       {/* Main Content */}
       <div className="pt-[149px] px-4 pb-[96px]">
         <div className="mx-[112px]">
@@ -42,8 +39,12 @@ function Cart() {
                         variant="cart"
                         product={item.product}
                         quantity={item.quantity}
-                        onQuantityIncrease={() => increaseQuantity(item.product.id)}
-                        onQuantityDecrease={() => decreaseQuantity(item.product.id)}
+                        onQuantityIncrease={() =>
+                          increaseQuantity(item.product.id)
+                        }
+                        onQuantityDecrease={() =>
+                          decreaseQuantity(item.product.id)
+                        }
                         onRemove={() => removeFromCart(item.product.id)}
                       />
                     ))}

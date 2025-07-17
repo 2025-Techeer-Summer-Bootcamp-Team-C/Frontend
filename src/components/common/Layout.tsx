@@ -2,23 +2,15 @@ import Header from "./Header";
 import Footer from "./Footer";
 import React from "react";
 import { useLocation } from "react-router-dom";
-import type { HeaderVariant, FooterVariant } from "@/types/variants";
 import { useCart } from "@/contexts/CartContext";
 import { getLayoutConfig } from "@/config/layoutConfig";
 
 interface LayoutProps {
   children: React.ReactNode;
-  headerVariant?: HeaderVariant;
-  footerVariant?: FooterVariant;
   totalPrice?: number;
 }
 
-const Layout = ({
-  children,
-  headerVariant,
-  footerVariant,
-  totalPrice: propTotalPrice,
-}: LayoutProps) => {
+const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
   const location = useLocation();
   const { totalPrice: cartTotalPrice, directPurchaseProduct } = useCart();
 
@@ -28,11 +20,20 @@ const Layout = ({
   // }, []);
 
   const layoutConfig = getLayoutConfig(location.pathname);
+  
+  // 디버깅용 로그 (개발 환경에서만)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 Layout Debug:', {
+      pathname: location.pathname,
+      layoutConfig,
+      showSearch: layoutConfig.showSearch,
+      showUserActions: layoutConfig.showUserActions,
+      showNavigation: layoutConfig.showNavigation
+    });
+  }
 
-  const finalHeaderVariant: HeaderVariant =
-    headerVariant ?? layoutConfig.header;
-  const finalFooterVariant: FooterVariant =
-    footerVariant ?? layoutConfig.footer;
+  const finalHeaderVariant = layoutConfig.header;
+  const finalFooterVariant = layoutConfig.footer;
 
   // totalPrice 우선순위: prop으로 전달된 값 > 경로별 로직
   const getTotalPrice = () => {
@@ -60,7 +61,12 @@ const Layout = ({
 
   return (
     <div>
-      <Header variant={finalHeaderVariant} />
+      <Header
+        variant={finalHeaderVariant}
+        showSearch={layoutConfig.showSearch}
+        showUserActions={layoutConfig.showUserActions}
+        showNavigation={layoutConfig.showNavigation}
+      />
       <main className="mb-16">{children}</main>
       <Footer variant={finalFooterVariant} totalPrice={totalPrice} />
     </div>

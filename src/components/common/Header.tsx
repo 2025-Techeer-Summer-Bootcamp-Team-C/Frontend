@@ -3,23 +3,34 @@ import { useNavigate } from "react-router-dom";
 import LoginDialog from "@/components/dialogs/LoginDialog";
 import { useFilter } from "@/contexts/FilterContext";
 import type { HeaderVariant } from "@/types/variants";
+import { useCart } from "@/contexts/CartContext";
 
 interface HeaderProps {
   variant?: HeaderVariant;
   showSearch?: boolean;
   showUserActions?: boolean;
+  showNavigation?: boolean;
 }
 
 const Header = ({
-  variant = "default",
-  showSearch = true,
-  showUserActions = true,
+  variant,
+  showSearch,
+  showUserActions,
+  showNavigation,
 }: HeaderProps) => {
   const navigate = useNavigate();
-  const { inputValue, setInputValue, handleSearch, selectedCategory, setSelectedCategory } = useFilter();
+  const {
+    inputValue,
+    setInputValue,
+    handleSearch,
+    selectedCategory,
+    setSelectedCategory,
+  } = useFilter();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
+  const { cartData } = useCart();
+  const cartCount = cartData.cart_product.length;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,9 +72,6 @@ const Header = ({
     setSelectedCategory(category);
   };
 
-  // 각 변형별 표시 여부 결정
-  const showNavigation = variant === "default";
-
   // 카테고리 메뉴 아이템들
   const categoryItems = ["모두 보기", "상의", "하의", "아우터"];
 
@@ -100,7 +108,7 @@ const Header = ({
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
+                        if (e.key === "Enter") {
                           handleSearch();
                         }
                       }}
@@ -127,7 +135,7 @@ const Header = ({
                       className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
                       onClick={() => navigate("/cart")}
                     >
-                      장바구니(4)
+                      장바구니({cartCount})
                     </span>
                   </div>
                 )}
