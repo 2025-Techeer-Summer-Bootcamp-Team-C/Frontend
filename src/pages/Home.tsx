@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
 import { productDummy } from "@/dummys/productDummy";
+import { categoryDummy } from "@/dummys/categoryDummy";
+import { useFilter } from "@/contexts/FilterContext";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { searchQuery, selectedCategory } = useFilter();
 
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
@@ -13,10 +16,21 @@ const Home = () => {
     (product) => !product.is_deleted
   );
 
-  // 상품을 4개씩 그룹화하여 행으로 나눔
+  // 검색어와 카테고리로 상품 필터링
+  const filteredProducts = availableProducts.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // 카테고리 매칭: category_id를 통해 카테고리 이름 찾기
+    const productCategory = categoryDummy.find(cat => cat.id === product.category_id)?.name;
+    const matchesCategory = selectedCategory === "모두 보기" || productCategory === selectedCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
+
+  // 필터링된 상품을 4개씩 그룹화하여 행으로 나눔
   const productRows = [];
-  for (let i = 0; i < availableProducts.length; i += 4) {
-    productRows.push(availableProducts.slice(i, i + 4));
+  for (let i = 0; i < filteredProducts.length; i += 4) {
+    productRows.push(filteredProducts.slice(i, i + 4));
   }
 
   return (

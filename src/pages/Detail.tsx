@@ -9,10 +9,11 @@ import { useCart } from "@/contexts/CartContext";
 const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { setDirectPurchaseProduct } = useCart();
+  const { setDirectPurchaseProduct, addToCart } = useCart();
   const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
+  const [cartQuantity, setCartQuantity] = useState(1);
   const currentProduct = productDummy.find(
     (product) => product.id === Number(id) && !product.is_deleted
   );
@@ -41,6 +42,13 @@ const Detail = () => {
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity >= 1) {
       setPurchaseQuantity(newQuantity);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (currentProduct) {
+      addToCart(currentProduct, cartQuantity);
+      setIsCartDialogOpen(true);
     }
   };
 
@@ -144,7 +152,7 @@ const Detail = () => {
                   </button>
                   <button
                     className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[62px] w-[207px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
-                    onClick={() => setIsCartDialogOpen(true)}
+                    onClick={handleAddToCart}
                   >
                     장바구니 추가하기
                   </button>

@@ -3,7 +3,7 @@ import ProductCard from "@/components/common/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 
 function Cart() {
-  const { cartData, updateQuantity } = useCart();
+  const { cartData, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
   const cartItems = cartData.cart_product;
 
   return (
@@ -42,7 +42,9 @@ function Cart() {
                         variant="cart"
                         product={item.product}
                         quantity={item.quantity}
-                        onQuantityChange={(quantity) => updateQuantity(item.product.id, quantity)}
+                        onQuantityIncrease={() => increaseQuantity(item.product.id)}
+                        onQuantityDecrease={() => decreaseQuantity(item.product.id)}
+                        onRemove={() => removeFromCart(item.product.id)}
                       />
                     ))}
                   </div>

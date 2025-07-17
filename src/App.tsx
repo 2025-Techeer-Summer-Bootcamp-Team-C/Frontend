@@ -9,24 +9,27 @@ import OrderSummary from "./pages/OrderSummary";
 import OrderHistory from "./pages/OrderHistory";
 import Cart from "./pages/Cart";
 import { CartProvider } from "./contexts/CartContext";
+import { FilterProvider } from "./contexts/FilterContext";
 
 function App() {
   const queryClient = new QueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/product/:id" element={<Detail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/order" element={<OrderInformation />} />
-            <Route path="/summary" element={<OrderSummary />} />
-            <Route path="/history" element={<OrderHistory />} />
-          </Routes>
-        </Layout>
-      </CartProvider>
+      <FilterProvider>
+        <CartProvider>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/product/:id" element={<Detail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/order" element={<OrderInformation />} />
+              <Route path="/summary" element={<OrderSummary />} />
+              <Route path="/history" element={<OrderHistory />} />
+            </Routes>
+          </Layout>
+        </CartProvider>
+      </FilterProvider>
     </QueryClientProvider>
   );
 }

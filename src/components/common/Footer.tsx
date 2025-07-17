@@ -7,7 +7,6 @@ interface FooterProps {
   variant?: FooterVariant;
   buttonText?: string;
   totalPrice?: number;
-  onAddGift?: () => void;
   onContinue?: () => void;
 }
 
@@ -15,7 +14,6 @@ const Footer = ({
   variant = "default",
   buttonText = "계속",
   totalPrice = 0,
-  onAddGift,
   onContinue,
 }: FooterProps) => {
   const navigate = useNavigate();
@@ -63,7 +61,7 @@ const Footer = ({
                     선물용으로 주문하시겠습니까?
                   </span>
                   <button
-                    onClick={onAddGift}
+                    onClick={() => {}}
                     className="text-black text-[10px] font-inter leading-tight hover:opacity-70 transition-opacity cursor-pointer"
                   >
                     추가

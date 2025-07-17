@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "@/components/dialogs/LoginDialog";
+import { useFilter } from "@/contexts/FilterContext";
 import type { HeaderVariant } from "@/types/variants";
 
 interface HeaderProps {
   variant?: HeaderVariant;
+  showSearch?: boolean;
+  showUserActions?: boolean;
 }
 
-const Header = ({ variant = "default" }: HeaderProps) => {
+const Header = ({
+  variant = "default",
+  showSearch = true,
+  showUserActions = true,
+}: HeaderProps) => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState<string>("모두 보기");
+  const { inputValue, setInputValue, handleSearch, selectedCategory, setSelectedCategory } = useFilter();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
@@ -52,14 +59,10 @@ const Header = ({ variant = "default" }: HeaderProps) => {
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-    // 이제 .filter를 사용해서 카테고리별 상품 목록 표시
   };
 
   // 각 변형별 표시 여부 결정
   const showNavigation = variant === "default";
-  const showSearch =
-    variant === "default" || variant === "detail" || variant === "cart";
-  const showUserActions = variant === "default" || variant === "detail";
 
   // 카테고리 메뉴 아이템들
   const categoryItems = ["모두 보기", "상의", "하의", "아우터"];
@@ -94,6 +97,13 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                     <input
                       type="text"
                       placeholder="검색"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSearch();
+                        }
+                      }}
                       className="w-full bg-transparent border-b-1 border-black outline-none text-black text-[9px] md:text-[10px] font-inter leading-tight pb-1 placeholder-black focus:border-black"
                     />
                   </div>

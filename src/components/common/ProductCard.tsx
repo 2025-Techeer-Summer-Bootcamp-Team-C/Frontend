@@ -7,6 +7,9 @@ interface ProductCardProps {
   product: Product;
   quantity?: number;
   onQuantityChange?: (quantity: number) => void;
+  onQuantityIncrease?: () => void;
+  onQuantityDecrease?: () => void;
+  onRemove?: () => void;
   onProductClick?: () => void;
 }
 
@@ -15,6 +18,9 @@ const ProductCard = ({
   product,
   quantity = 1,
   onQuantityChange,
+  onQuantityIncrease,
+  onQuantityDecrease,
+  onRemove,
   onProductClick,
 }: ProductCardProps) => {
   const [currentQuantity, setCurrentQuantity] = useState(quantity);
@@ -27,6 +33,22 @@ const ProductCard = ({
     if (newQuantity >= 1) {
       setCurrentQuantity(newQuantity);
       onQuantityChange?.(newQuantity);
+    }
+  };
+
+  const handleIncrease = () => {
+    if (onQuantityIncrease) {
+      onQuantityIncrease();
+    } else {
+      handleQuantityChange(currentQuantity + 1);
+    }
+  };
+
+  const handleDecrease = () => {
+    if (onQuantityDecrease) {
+      onQuantityDecrease();
+    } else {
+      handleQuantityChange(currentQuantity - 1);
     }
   };
 
@@ -56,13 +78,21 @@ const ProductCard = ({
             {/* Product Info Section */}
             <div className="w-fit min-w-full h-10 flex flex-col justify-center gap-1.5">
               <div className="flex flex-col justify-end gap-0.5 h-10">
-                {/* Product Name and Color Options */}
+                {/* Product Name and Delete Button */}
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()}`}
                   >
                     {product.name}
                   </span>
+                  {onRemove && (
+                    <button
+                      onClick={onRemove}
+                      className=" hover:text-red-700 transition-colors text-[11px] sm:text-[13px] font-inter leading-tight mr-2"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
 
                 {/* Price */}
@@ -78,7 +108,7 @@ const ProductCard = ({
             <div className="w-30 h-8 flex flex-col justify-end gap-2.5 mt-2">
               <div className="flex items-center justify-between gap-4 sm:gap-[29px] bg-gray-50 rounded-md px-2 py-1">
                 <button
-                  onClick={() => handleQuantityChange(currentQuantity - 1)}
+                  onClick={handleDecrease}
                   className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()} cursor-pointer hover:opacity-70 transition-opacity w-4 h-4 flex items-center justify-center`}
                 >
                   -
@@ -89,7 +119,7 @@ const ProductCard = ({
                   {currentQuantity}
                 </span>
                 <button
-                  onClick={() => handleQuantityChange(currentQuantity + 1)}
+                  onClick={handleIncrease}
                   className={`text-[11px] sm:text-[13px] font-inter leading-tight ${getTextColor()} cursor-pointer hover:opacity-70 transition-opacity w-4 h-4 flex items-center justify-center`}
                 >
                   +
