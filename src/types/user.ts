@@ -16,7 +16,7 @@ export interface SignUpRequest {
   password: string;
   password2: string;
   email: string;
-  image: string;
+  profile_image: File | null;
 }
 
 export interface SignUpResponse {
@@ -32,10 +32,16 @@ export interface LoginRequest {
 export interface LoginResponse {
   status: number;
   access_token: string;
+  refresh_token: string;
   message: string;
 }
 
 export interface AuthErrorResponse {
+  status: number;
+  message: string;
+}
+
+export interface LogoutResponse {
   status: number;
   message: string;
 }

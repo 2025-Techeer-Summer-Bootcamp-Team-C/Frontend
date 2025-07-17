@@ -1,30 +1,19 @@
 import { useMutation } from "@tanstack/react-query";
-import { signUp, login } from "../api/auth";
+import { signUp, login, logout } from "../api/auth";
 import type {
   SignUpRequest,
   SignUpResponse,
   LoginRequest,
   LoginResponse,
+  LogoutResponse,
   AuthErrorResponse,
 } from "../types/user";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
 export const useSignUpMutation = () => {
-  const navigate = useNavigate();
   return useMutation<SignUpResponse, AxiosError, SignUpRequest>({
     mutationFn: (userData: SignUpRequest) => signUp(userData),
-    onSuccess: (data) => {
-      // 성공 시
-      console.log("회원가입 성공", data);
-      alert(data.message);
-      navigate("/login");
-    },
-    onError: (error) => {
-      // 실패 시
-      console.log("회원가입 실패", error);
-      alert("회원가입 중 오류가 발생했습니다.");
-    },
   });
 };
 
@@ -40,8 +29,10 @@ export const useLoginMutation = () => {
       // 로그인 성공 시
       console.log("로그인 성공", data);
       alert(data.message);
-      // 로그인 성공 시 토큰 저장
+      // 로그인 성공 시 토큰 저장 (httpOnly 쿠키가 더 안전하지만, 현재는 localStorage 사용)
       localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
+      window.dispatchEvent(new Event("loginStatusChange"));
       navigate("/");
     },
     onError: (error) => {
@@ -66,6 +57,30 @@ export const useLoginMutation = () => {
         console.log("로그인 실패", error.message);
         alert("로그인 중 알 수 없는 오류가 발생했습니다.");
       }
+    },
+  });
+};
+
+export const useLogoutMutation = () => {
+  const navigate = useNavigate();
+  return useMutation<LogoutResponse, AxiosError<AuthErrorResponse>, void>({
+    mutationFn: () => logout(),
+    onSuccess: (data) => {
+      // 로그아웃 성공 시
+      console.log("로그아웃 성공", data);
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      window.dispatchEvent(new Event("loginStatusChange"));
+      navigate("/");
+    },
+    onError: (error) => {
+      // 로그아웃 실패 시
+      console.log("로그아웃 실패", error);
+      // 실패해도 로컬 토큰은 제거
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      window.dispatchEvent(new Event("loginStatusChange"));
+      navigate("/");
     },
   });
 };

@@ -26,6 +26,7 @@ type FormType = "login" | "register";
 
 const LoginDialog = ({ children }: LoginDialogProps) => {
   const [currentForm, setCurrentForm] = useState<FormType>("login");
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSwitchToRegister = () => {
     setCurrentForm("register");
@@ -34,9 +35,15 @@ const LoginDialog = ({ children }: LoginDialogProps) => {
   const handleSwitchToLogin = () => {
     setCurrentForm("login");
   };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
   return (
     <Dialog
+      open={isOpen}
       onOpenChange={(open) => {
+        setIsOpen(open);
         if (open) {
           setCurrentForm("login");
         }
@@ -51,7 +58,7 @@ const LoginDialog = ({ children }: LoginDialogProps) => {
             <div className="space-y-6">
               {/* Conditional Form Rendering */}
               {currentForm === "login" ? (
-                <LoginForm onSwitchToRegister={handleSwitchToRegister} />
+                <LoginForm onSwitchToRegister={handleSwitchToRegister} onClose={handleClose} />
               ) : (
                 <SignupForm onSwitchToLogin={handleSwitchToLogin} />
               )}
