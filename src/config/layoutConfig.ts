@@ -6,6 +6,7 @@ interface LayoutConfig {
   footer: FooterVariant;
   showSearch?: boolean;
   showUserActions?: boolean;
+  showNavigation?: boolean;
   requiresAuth?: boolean;
   title?: string;
 }
@@ -23,6 +24,7 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     footer: "default",
     showSearch: true,
     showUserActions: true,
+    showNavigation: true,
     title: "홈",
   },
   "/cart": {
@@ -30,6 +32,7 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     footer: "cart",
     showSearch: true,
     showUserActions: false,
+    showNavigation: false,
     title: "장바구니",
   },
   "/order": {
@@ -38,6 +41,7 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     showSearch: false,
     showUserActions: false,
     requiresAuth: true,
+    showNavigation: false,
     title: "주문 정보",
   },
   "/summary": {
@@ -46,6 +50,7 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     showSearch: false,
     showUserActions: false,
     requiresAuth: true,
+    showNavigation: false,
     title: "주문 요약",
   },
   "/history": {
@@ -54,6 +59,7 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     showSearch: false,
     showUserActions: false,
     requiresAuth: true,
+    showNavigation: false,
     title: "주문 내역",
   },
 } as const;
@@ -67,6 +73,7 @@ export const DYNAMIC_LAYOUT_CONFIG: RoutePattern[] = [
       footer: "default",
       showSearch: true,
       showUserActions: true,
+      showNavigation: false,
       title: "상품 상세",
     },
   },
@@ -78,26 +85,56 @@ export const DEFAULT_LAYOUT_CONFIG: LayoutConfig = {
   footer: "default",
   showSearch: true,
   showUserActions: true,
+  showNavigation: true,
   title: "Techeer Fashion",
 } as const;
 
 // Layout 설정을 가져오는 유틸리티 함수
 export const getLayoutConfig = (pathname: string): LayoutConfig => {
+  // pathname 정규화 (trailing slash 제거, query parameter 제거)
+  const normalizedPathname = pathname.split("?")[0].replace(/\/$/, "") || "/";
+
+  // 디버깅용 로그 (개발 환경에서만)
+  if (process.env.NODE_ENV === "development") {
+    console.log("🔍 getLayoutConfig Debug:", {
+      originalPathname: pathname,
+      normalizedPathname,
+      availableStaticRoutes: Object.keys(STATIC_LAYOUT_CONFIG),
+    });
+  }
+
   // 1. 정적 경로 우선 확인
-  if (pathname in STATIC_LAYOUT_CONFIG) {
-    return STATIC_LAYOUT_CONFIG[pathname];
+  if (normalizedPathname in STATIC_LAYOUT_CONFIG) {
+    const config = STATIC_LAYOUT_CONFIG[normalizedPathname];
+    if (process.env.NODE_ENV === "development") {
+      console.log("✅ Found static config:", config);
+    }
+    return config;
   }
 
   // 2. 동적 경로 패턴 매칭
   for (const { pattern, config } of DYNAMIC_LAYOUT_CONFIG) {
     if (typeof pattern === "string") {
-      if (pathname === pattern) return config;
+      if (normalizedPathname === pattern) {
+        if (process.env.NODE_ENV === "development") {
+          console.log("✅ Found dynamic string config:", config);
+        }
+        return config;
+      }
     } else {
-      if (pattern.test(pathname)) return config;
+      if (pattern.test(normalizedPathname)) {
+        if (process.env.NODE_ENV === "development") {
+          console.log("✅ Found dynamic regex config:", config);
+        }
+        return config;
+      }
     }
   }
 
   // 3. 기본 설정 반환
+  if (process.env.NODE_ENV === "development") {
+    console.log("⚠️ Using default config for:", normalizedPathname);
+  }
   return DEFAULT_LAYOUT_CONFIG;
 };
 

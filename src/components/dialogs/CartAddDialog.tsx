@@ -78,7 +78,7 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
 
             {/* Products Grid */}
             <div className="grid grid-cols-3 gap-[26px] w-[455.2px]">
-              {productDummy.slice(0, 6).map((item) => (
+              {productDummy.filter(product => !product.is_deleted).slice(0, 6).map((item) => (
                 <div
                   key={item.id}
                   className="[&>div]:w-[134.4px] [&>div>div:first-child]:!w-[134.4px] [&>div>div:first-child]:!h-[201.6px]"
