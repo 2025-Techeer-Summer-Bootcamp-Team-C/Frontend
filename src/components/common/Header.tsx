@@ -4,6 +4,7 @@ import LoginDialog from "@/components/dialogs/LoginDialog";
 import { useFilter } from "@/contexts/FilterContext";
 import type { HeaderVariant } from "@/types/variants";
 import { useCart } from "@/contexts/CartContext";
+import { useLogoutMutation } from "@/hooks/useAuth";
 
 interface HeaderProps {
   variant?: HeaderVariant;
@@ -29,8 +30,31 @@ const Header = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
+
+  // 로그인 상태 체크
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem("access_token");
+      setIsLogin(!!token);
+    };
+
+    // 컴포넌트 마운트 시 로그인 상태 체크
+    checkLoginStatus();
+
+    // 커스텀 이벤트 리스너 (같은 탭에서 로그인 상태 변경 감지)
+    const handleLoginStatusChange = () => {
+      checkLoginStatus();
+    };
+
+    window.addEventListener("loginStatusChange", handleLoginStatusChange);
+
+    return () => {
+      window.removeEventListener("loginStatusChange", handleLoginStatusChange);
+    };
+  }, []);
   const { cartData } = useCart();
   const cartCount = cartData.cart_product.length;
+  const { mutate: logoutMutation } = useLogoutMutation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,6 +94,10 @@ const Header = ({
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
+  };
+
+  const handleLogout = () => {
+    logoutMutation();
   };
 
   // 카테고리 메뉴 아이템들
@@ -120,14 +148,20 @@ const Header = ({
                 {/* User Actions */}
                 {showUserActions && (
                   <div className="flex items-center gap-3 md:gap-5">
-                    <LoginDialog>
+                    {isLogin ? (
                       <span
                         className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
-                        onClick={() => setIsLogin(!isLogin)}
+                        onClick={handleLogout}
                       >
-                        {isLogin ? "로그아웃" : "로그인"}
+                        로그아웃
                       </span>
-                    </LoginDialog>
+                    ) : (
+                      <LoginDialog>
+                        <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
+                          로그인
+                        </span>
+                      </LoginDialog>
+                    )}
                     <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-6 md:w-8 h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
                       도움말
                     </span>

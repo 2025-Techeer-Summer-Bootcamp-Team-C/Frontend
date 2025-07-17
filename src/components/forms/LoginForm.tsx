@@ -15,14 +15,16 @@ import { Loader2 } from "lucide-react";
 import { loginSchema, type LoginFormData } from "@/schemas/authSchema";
 import { AxiosError } from "axios";
 import type { AuthErrorResponse } from "@/types/user";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
+  onClose?: () => void;
 }
 
-const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
+const LoginForm = ({ onSwitchToRegister, onClose }: LoginFormProps) => {
   const { mutate: login, isPending, error, isError } = useLoginMutation();
-
+  const navigate = useNavigate();
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -38,6 +40,7 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
       onSuccess: () => {
         console.log("로그인 성공");
         toast.success("로그인 성공");
+        onClose?.(); // 다이얼로그 닫기
       },
       onError: (error: any) => {
         if (error.response?.data) {
@@ -106,6 +109,7 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
             type="submit"
             disabled={isPending || !form.formState.isValid}
             className="h-[48px] w-full bg-[#333333] hover:bg-[#444444] text-white font-inter font-bold text-[16px] leading-[20px] uppercase mt-4"
+            onClick={() => {}}
           >
             {isPending ? (
               <>
@@ -119,10 +123,11 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
 
           {/* Global Error Display */}
           {isError && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                {error?.response?.data?.message || "로그인 중 오류가 발생했습니다"}
-              </div>
-            )}
+            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              {error?.response?.data?.message ||
+                "로그인 중 오류가 발생했습니다"}
+            </div>
+          )}
 
           {/* Privacy Notice */}
           <p className="font-inter text-[14px] leading-[22px] text-[#5C5C5C] mt-2">

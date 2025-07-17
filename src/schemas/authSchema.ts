@@ -28,7 +28,17 @@ export const signUpSchema = z
 
     password2: z.string().min(1, "비밀번호 확인은 필수입니다"),
 
-    user_gender: z.enum(["M", "F"]),
+    profile_image: z
+      .any()
+      .optional()
+      .refine(
+        (files) => !files || files?.length === 0 || files?.[0]?.size <= 5000000,
+        "파일 크기는 5MB 이하여야 합니다"
+      )
+      .refine(
+        (files) => !files || files?.length === 0 || ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"].includes(files?.[0]?.type),
+        "jpg, jpeg, png, webp, gif 파일만 업로드 가능합니다"
+      ),
   })
   .refine((data) => data.password === data.password2, {
     message: "비밀번호가 일치하지 않습니다",
@@ -36,8 +46,8 @@ export const signUpSchema = z
   });
 
 export const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  username: z.string().min(1, "사용자 이름은 필수입니다"),
+  password: z.string().min(1, "비밀번호는 필수입니다"),
 });
 
 // 타입 추출

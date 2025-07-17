@@ -6,21 +6,15 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FileUpload } from "@/components/ui/file-upload";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSignUpMutation } from "@/hooks/useAuth";
 import { signUpSchema, type SignUpFormData } from "@/schemas/authSchema";
-import { toast } from "sonner"; // 또는 사용하는 토스트 라이브러리
+import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { AxiosError } from "axios";
 
 interface SignupFormProps {
   onSwitchToLogin: () => void;
@@ -34,45 +28,53 @@ const SignupForm = ({ onSwitchToLogin }: SignupFormProps) => {
       password: "",
       password2: "",
       email: "",
-      user_gender: "M",
+      profile_image: undefined,
     },
     mode: "onChange", // 실시간 검증
   });
 
   // TanStack Query 뮤테이션 훅 사용
-  const { mutate: signUp, isPending, error } = useSignUpMutation();
+  const { mutate: signUp, isPending } = useSignUpMutation();
 
-  const onSubmit = (values: SignUpFormData) => {
-    // API 명세서에 password2가 포함되어 있으므로 전체 데이터 전송
-    signUp(values, {
-      onSuccess: () => {
-        toast.success("회원가입이 완료되었습니다!");
-        form.reset(); // 폼 초기화
-        onSwitchToLogin(); // 로그인 폼으로 전환
-      },
-      onError: (error: any) => {
-        // DRF 에러 처리
-        if (error.response?.data) {
-          const errorData = error.response.data;
+  const onSubmit = async (values: SignUpFormData) => {
+    try {
+      const submitData = {
+        username: values.username,
+        password: values.password,
+        password2: values.password2,
+        email: values.email,
+        profile_image: values.profile_image && values.profile_image.length > 0 ? values.profile_image[0] : null,
+      };
 
-          // 필드별 에러를 폼에 설정
-          Object.entries(errorData).forEach(([field, messages]) => {
-            if (field in values) {
-              form.setError(field as keyof SignUpFormData, {
-                message: Array.isArray(messages) ? messages[0] : messages,
-              });
+      signUp(submitData, {
+        onSuccess: (data) => {
+          toast.success(data.message || "회원가입이 완료되었습니다!");
+          form.reset();
+          onSwitchToLogin();
+        },
+        onError: (error: any) => {
+          if (error.response?.data) {
+            const errorData = error.response.data;
+
+            Object.entries(errorData).forEach(([field, messages]) => {
+              if (field in values) {
+                form.setError(field as keyof SignUpFormData, {
+                  message: Array.isArray(messages) ? messages[0] : messages,
+                });
+              }
+            });
+
+            if (errorData.detail) {
+              toast.error(errorData.detail);
             }
-          });
-
-          // 일반 에러 메시지
-          if (errorData.detail) {
-            toast.error(errorData.detail);
+          } else {
+            toast.error("회원가입 중 오류가 발생했습니다.");
           }
-        } else {
-          toast.error("회원가입 중 오류가 발생했습니다.");
-        }
-      },
-    });
+        },
+      });
+    } catch (error) {
+      toast.error("회원가입 처리 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -166,26 +168,24 @@ const SignupForm = ({ onSwitchToLogin }: SignupFormProps) => {
             )}
           />
 
-          {/* Gender Select - Select 컴포넌트로 개선 */}
+          {/* Profile Image Upload */}
           <FormField
             control={form.control}
-            name="user_gender"
+            name="profile_image"
             render={({ field }) => (
               <FormItem>
+                <FormLabel className="text-black font-inter text-[14px] font-medium">
+                  Profile Image (선택사항)
+                </FormLabel>
                 <FormControl>
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={isPending}
-                  >
-                    <SelectTrigger className="h-[50px] w-full bg-white/30 border border-[#5C5C5C] shadow-[4px_4px_13px_rgba(242,113,144,0.15)] font-inter text-[14px] text-black px-[21px] disabled:opacity-50">
-                      <SelectValue placeholder="Select Gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="M">Male</SelectItem>
-                      <SelectItem value="F">Female</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="bg-white/30 border border-[#5C5C5C] shadow-[4px_4px_13px_rgba(242,113,144,0.15)] rounded-md">
+                    <FileUpload
+                      onChange={(files) => {
+                        field.onChange(files);
+                      }}
+                      disabled={isPending}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -208,17 +208,6 @@ const SignupForm = ({ onSwitchToLogin }: SignupFormProps) => {
             )}
           </Button>
 
-          {/* Global Error Display */}
-          {error &&
-            (error as AxiosError<{ detail: string }>)?.response?.data
-              ?.detail && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                {
-                  (error as AxiosError<{ detail: string }>)?.response?.data
-                    ?.detail
-                }
-              </div>
-            )}
 
           {/* Already have account */}
           <button
