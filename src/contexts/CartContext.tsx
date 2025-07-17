@@ -16,6 +16,7 @@ interface CartContextType {
   removeFromCart: (productId: number) => void;
   increaseQuantity: (productId: number) => void;
   decreaseQuantity: (productId: number) => void;
+  clearCart: () => void;
   directPurchaseProduct: DirectPurchaseProduct | null;
   setDirectPurchaseProduct: (product: DirectPurchaseProduct | null) => void;
 }
@@ -28,7 +29,8 @@ interface CartProviderProps {
 
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [cartData, setCartData] = useState<CartItem>(cartDummy);
-  const [directPurchaseProduct, setDirectPurchaseProduct] = useState<DirectPurchaseProduct | null>(null);
+  const [directPurchaseProduct, setDirectPurchaseProduct] =
+    useState<DirectPurchaseProduct | null>(null);
 
   const totalPrice = cartData.total_price;
 
@@ -37,43 +39,44 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const updateQuantity = (productId: number, quantity: number) => {
-    setCartData(prevCartData => {
-      const updatedCartProducts = prevCartData.cart_product.map(item => 
+    setCartData((prevCartData) => {
+      const updatedCartProducts = prevCartData.cart_product.map((item) =>
         item.product.id === productId ? { ...item, quantity } : item
       );
-      
+
       const newTotalPrice = updatedCartProducts.reduce(
-        (total, item) => total + (item.product.price * item.quantity), 
+        (total, item) => total + item.product.price * item.quantity,
         0
       );
-      
+
       return {
         ...prevCartData,
         cart_product: updatedCartProducts,
-        total_price: newTotalPrice
+        total_price: newTotalPrice,
       };
     });
   };
 
   const addToCart = (product: Product, quantity: number) => {
-    setCartData(prevCartData => {
+    setCartData((prevCartData) => {
       // 이미 장바구니에 있는 상품인지 확인
       const existingItemIndex = prevCartData.cart_product.findIndex(
-        item => item.product.id === product.id
+        (item) => item.product.id === product.id
       );
 
       let updatedCartProducts;
-      
+
       if (existingItemIndex >= 0) {
         // 이미 있는 상품이면 수량만 증가
         updatedCartProducts = prevCartData.cart_product.map((item, index) =>
-          index === existingItemIndex 
+          index === existingItemIndex
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
         // 새 상품이면 장바구니에 추가
-        const newId = Math.max(...prevCartData.cart_product.map(item => item.id), 0) + 1;
+        const newId =
+          Math.max(...prevCartData.cart_product.map((item) => item.id), 0) + 1;
         const newCartProduct = {
           id: newId,
           product,
@@ -84,95 +87,108 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       }
 
       const newTotalPrice = updatedCartProducts.reduce(
-        (total, item) => total + (item.product.price * item.quantity), 
+        (total, item) => total + item.product.price * item.quantity,
         0
       );
 
       return {
         ...prevCartData,
         cart_product: updatedCartProducts,
-        total_price: newTotalPrice
+        total_price: newTotalPrice,
       };
     });
   };
 
   const removeFromCart = (productId: number) => {
-    setCartData(prevCartData => {
+    setCartData((prevCartData) => {
       const updatedCartProducts = prevCartData.cart_product.filter(
-        item => item.product.id !== productId
+        (item) => item.product.id !== productId
       );
-      
+
       const newTotalPrice = updatedCartProducts.reduce(
-        (total, item) => total + (item.product.price * item.quantity), 
+        (total, item) => total + item.product.price * item.quantity,
         0
       );
-      
+
       return {
         ...prevCartData,
         cart_product: updatedCartProducts,
-        total_price: newTotalPrice
+        total_price: newTotalPrice,
       };
     });
   };
 
   const increaseQuantity = (productId: number) => {
-    setCartData(prevCartData => {
-      const updatedCartProducts = prevCartData.cart_product.map(item =>
-        item.product.id === productId ? { ...item, quantity: item.quantity + 1 } : item
+    setCartData((prevCartData) => {
+      const updatedCartProducts = prevCartData.cart_product.map((item) =>
+        item.product.id === productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
       );
-      
+
       const newTotalPrice = updatedCartProducts.reduce(
-        (total, item) => total + (item.product.price * item.quantity), 
+        (total, item) => total + item.product.price * item.quantity,
         0
       );
-      
+
       return {
         ...prevCartData,
         cart_product: updatedCartProducts,
-        total_price: newTotalPrice
+        total_price: newTotalPrice,
       };
     });
   };
 
   const decreaseQuantity = (productId: number) => {
-    setCartData(prevCartData => {
-      const currentItem = prevCartData.cart_product.find(item => item.product.id === productId);
-      
+    setCartData((prevCartData) => {
+      const currentItem = prevCartData.cart_product.find(
+        (item) => item.product.id === productId
+      );
+
       if (!currentItem) return prevCartData;
-      
+
       // 수량이 1이면 상품을 완전히 제거
       if (currentItem.quantity <= 1) {
         const updatedCartProducts = prevCartData.cart_product.filter(
-          item => item.product.id !== productId
+          (item) => item.product.id !== productId
         );
-        
+
         const newTotalPrice = updatedCartProducts.reduce(
-          (total, item) => total + (item.product.price * item.quantity), 
+          (total, item) => total + item.product.price * item.quantity,
           0
         );
-        
+
         return {
           ...prevCartData,
           cart_product: updatedCartProducts,
-          total_price: newTotalPrice
+          total_price: newTotalPrice,
         };
       } else {
         // 수량을 1 감소
-        const updatedCartProducts = prevCartData.cart_product.map(item =>
-          item.product.id === productId ? { ...item, quantity: item.quantity - 1 } : item
+        const updatedCartProducts = prevCartData.cart_product.map((item) =>
+          item.product.id === productId
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
         );
-        
+
         const newTotalPrice = updatedCartProducts.reduce(
-          (total, item) => total + (item.product.price * item.quantity), 
+          (total, item) => total + item.product.price * item.quantity,
           0
         );
-        
+
         return {
           ...prevCartData,
           cart_product: updatedCartProducts,
-          total_price: newTotalPrice
+          total_price: newTotalPrice,
         };
       }
+    });
+  };
+
+  const clearCart = () => {
+    setCartData({
+      cart_product: [],
+      total_price: 0,
     });
   };
 
@@ -185,6 +201,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     removeFromCart,
     increaseQuantity,
     decreaseQuantity,
+    clearCart,
     directPurchaseProduct,
     setDirectPurchaseProduct,
   };

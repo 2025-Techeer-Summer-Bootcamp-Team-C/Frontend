@@ -266,7 +266,7 @@ const Detail = () => {
 
             {/* Related Products Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center">
-              {productDummy.slice(0, 4).map((product) => (
+              {productDummy.filter(product => !product.is_deleted).slice(0, 4).map((product) => (
                 <ProductCard
                   key={product.id}
                   variant="viewed"

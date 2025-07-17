@@ -10,6 +10,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { PaymentDialogVariant } from "@/types/variants";
 import { X } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useOrder } from "@/contexts/OrderContext";
+import type { BuyerInfo } from "@/types/order";
 
 interface PaymentDialogProps {
   children: React.ReactNode; // Dialog를 여는 버튼
@@ -29,14 +32,49 @@ export const PaymentDialog = ({
   const navigate = useNavigate();
   const [currentVariant, setCurrentVariant] =
     useState<PaymentDialogVariant>("confirm");
-
+  const { clearCart, cartData } = useCart();
+  const { addOrder } = useOrder();
   const formatPrice = (price: number) => {
     return price.toLocaleString("ko-KR");
   };
 
+  const generateOrderNumber = () => {
+    const now = new Date();
+    const year = now.getFullYear().toString().slice(-2);
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const time = now.getHours().toString().padStart(2, '0') + 
+                 now.getMinutes().toString().padStart(2, '0') + 
+                 now.getSeconds().toString().padStart(2, '0');
+    return `${year}${month}${day}${time}`;
+  };
+
+  const getDummyBuyerInfo = (): BuyerInfo => ({
+    name: "홍길동",
+    address: "서울특별시 강남구 테헤란로 123",
+    postalCode: "06154",
+    phone: "010-1234-5678"
+  });
+
   const handleConfirm = () => {
+    // 1. 주문 정보 생성 및 저장 (clearCart 전에 실행)
+    const generatedOrderNumber = generateOrderNumber();
+    const orderInfo = {
+      orderNumber: generatedOrderNumber,
+      orderDate: new Date().toISOString(),
+      products: cartData.cart_product,
+      totalPrice: cartData.total_price,
+      buyerInfo: getDummyBuyerInfo(),
+      status: 'completed' as const
+    };
+    addOrder(orderInfo);
+    
+    // 2. UI 상태 변경
     setCurrentVariant("complete");
     onConfirm?.();
+    
+    // 3. 장바구니 클리어
+    clearCart();
   };
 
   const handleComplete = () => {
@@ -53,6 +91,10 @@ export const PaymentDialog = ({
     <Dialog
       onOpenChange={(open) => {
         if (!open) {
+          // 결제 완료 상태에서 다이얼로그를 닫으면 /history로 이동
+          if (currentVariant === "complete") {
+            navigate("/history");
+          }
           setCurrentVariant("confirm");
         }
       }}
