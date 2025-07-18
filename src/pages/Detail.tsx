@@ -5,6 +5,8 @@ import { productDummy } from "@/dummys/productDummy";
 import { useNavigate } from "react-router-dom";
 import CartAddDialog from "@/components/dialogs/CartAddDialog";
 import { useCart } from "@/contexts/CartContext";
+import type { Product } from "@/types/product";
+import { useProductDetailQuery } from "@/hooks/useProducts";
 
 const Detail = () => {
   const { id } = useParams();
@@ -14,9 +16,7 @@ const Detail = () => {
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
   const [cartQuantity, setCartQuantity] = useState(1);
-  const currentProduct = productDummy.find(
-    (product) => product.id === Number(id) && !product.is_deleted
-  );
+  const { data: currentProduct } = useProductDetailQuery(Number(id));
 
   // 컴포넌트 마운트 시 스크롤을 맨 위로 이동
   useEffect(() => {
@@ -30,6 +30,7 @@ const Detail = () => {
         setDirectPurchaseProduct({
           ...currentProduct,
           quantity: purchaseQuantity,
+          image: currentProduct.model_image,
         });
         navigate("/order");
       }
@@ -47,7 +48,7 @@ const Detail = () => {
 
   const handleAddToCart = () => {
     if (currentProduct) {
-      addToCart(currentProduct, cartQuantity);
+      addToCart(currentProduct as unknown as Product, cartQuantity);
       setIsCartDialogOpen(true);
     }
   };
@@ -67,9 +68,9 @@ const Detail = () => {
             <div className="flex-1">
               <div className="flex flex-col gap-4 items-end">
                 {/* Main Product Image */}
-                <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
+                <div className="w-[532px] h-[800px] bg-gray-200 overflow-hidden">
                   <img
-                    src=""
+                    src={currentProduct.model_image}
                     alt={currentProduct.name}
                     className="w-full h-full object-cover"
                   />
@@ -215,7 +216,7 @@ const Detail = () => {
               {/* 구성소재 이미지 영역 */}
               <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src=""
+                  src={currentProduct.product_images[0]}
                   alt="Product Detail 1"
                   className="w-full h-full object-cover"
                 />
@@ -225,14 +226,14 @@ const Detail = () => {
             <div className="w-full flex justify-between">
               <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src=""
+                  src={currentProduct.product_images[1]}
                   alt="Product Detail 1"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src=""
+                  src={currentProduct.product_images[2]}
                   alt="Product Detail 2"
                   className="w-full h-full object-cover"
                 />
@@ -243,14 +244,14 @@ const Detail = () => {
             <div className="w-full flex justify-between">
               <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src=""
+                  src={currentProduct.product_images[3]}
                   alt="Product Detail Full 1"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src=""
+                  src={currentProduct.product_images[4]}
                   alt="Product Detail Full 2"
                   className="w-full h-full object-cover"
                 />
@@ -266,13 +267,13 @@ const Detail = () => {
 
             {/* Related Products Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center">
-              {productDummy.filter(product => !product.is_deleted).slice(0, 4).map((product) => (
+              {productDummy.slice(0, 4).map((product) => (
                 <ProductCard
-                  key={product.id}
+                  key={product.product_id}
                   variant="viewed"
                   product={product}
                   onProductClick={() => {
-                    navigate(`/product/${product.id}`);
+                    navigate(`/product/${product.product_id}`);
                   }}
                 />
               ))}
@@ -285,7 +286,7 @@ const Detail = () => {
       <CartAddDialog
         isOpen={isCartDialogOpen}
         onClose={() => setIsCartDialogOpen(false)}
-        product={currentProduct}
+        product={currentProduct as unknown as Product}
       />
     </div>
   );

@@ -60,11 +60,11 @@ const ProductCard = ({
     <div className="w-full max-w-[240px] min-w-[180px] sm:w-[240px]">
       {/* Product Image */}
       <div
-        className="w-full h-[270px] sm:h-[360px] bg-gray-200 mb-2 cursor-pointer overflow-hidden rounded-lg hover:shadow-lg transition-shadow"
+        className="w-full h-[270px] sm:h-[360px] bg-gray-200 mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow"
         onClick={onProductClick}
       >
         <img
-          src=""
+          src={product.image}
           alt={product.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
         />

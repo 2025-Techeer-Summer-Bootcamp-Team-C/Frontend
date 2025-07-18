@@ -1,37 +1,45 @@
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
-import { productDummy } from "@/dummys/productDummy";
-import { categoryDummy } from "@/dummys/categoryDummy";
 import { useFilter } from "@/contexts/FilterContext";
+// import { useProductsQuery } from "@/hooks/useProducts";
+import { useMemo } from "react";
+import { useProductsQuery } from "@/hooks/useProducts";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { searchQuery, selectedCategory } = useFilter();
-
+  const { searchQuery } = useFilter();
+  const { data: products } = useProductsQuery();
+  // const { data: categories } = useCategoriesQuery();
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
   };
 
-  const availableProducts = productDummy.filter(
-    (product) => !product.is_deleted
+  const availableProducts = useMemo(() => products?.products ?? [], [products]);
+  // 검색어와 카테고리로 상품 필터링
+  const filteredProducts = useMemo(
+    () =>
+      availableProducts?.filter((product) => {
+        const matchesSearch = product.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+
+        // 카테고리 매칭: category_id를 통해 카테고리 이름 찾기
+        // const productCategory = categories?.find(cat => cat.categoryName === product.category_name)?.name;
+        // const matchesCategory = selectedCategory === "모두 보기" || productCategory === selectedCategory;
+
+        return matchesSearch;
+      }),
+    [availableProducts, searchQuery]
   );
 
-  // 검색어와 카테고리로 상품 필터링
-  const filteredProducts = availableProducts.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // 카테고리 매칭: category_id를 통해 카테고리 이름 찾기
-    const productCategory = categoryDummy.find(cat => cat.id === product.category_id)?.name;
-    const matchesCategory = selectedCategory === "모두 보기" || productCategory === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
-
   // 필터링된 상품을 4개씩 그룹화하여 행으로 나눔
-  const productRows = [];
-  for (let i = 0; i < filteredProducts.length; i += 4) {
-    productRows.push(filteredProducts.slice(i, i + 4));
-  }
+  const productRows = useMemo(() => {
+    const rows = [];
+    for (let i = 0; i < filteredProducts?.length; i += 4) {
+      rows.push(filteredProducts?.slice(i, i + 4));
+    }
+    return rows;
+  }, [filteredProducts]);
 
   return (
     <div className="w-full bg-white">
@@ -47,10 +55,12 @@ const Home = () => {
               >
                 {row.map((product) => (
                   <ProductCard
-                    key={product.id}
+                    key={product.product_id}
                     variant="default"
                     product={product}
-                    onProductClick={() => handleProductClick(product.id)}
+                    onProductClick={() =>
+                      handleProductClick(product.product_id)
+                    }
                   />
                 ))}
               </div>
@@ -58,6 +68,11 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* 피팅하기 플로팅 버튼 */}
+      <button className="fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors z-50 font-inter text-sm">
+        피팅하기
+      </button>
     </div>
   );
 };

@@ -22,13 +22,16 @@ const cartProducts = [
   },
   {
     id: 4,
-    product: productDummy[10],
+    product: productDummy[7],
     quantity: 1,
-    main_image: productDummy[10].image,
+    main_image: productDummy[7].image,
   },
 ];
 
 export const cartDummy: CartItem = {
   cart_product: cartProducts,
-  total_price: cartProducts.reduce((total, item) => total + (item.product.price * item.quantity), 0),
+  total_price: cartProducts.reduce(
+    (total, item) => total + item.product.price * item.quantity,
+    0
+  ),
 };
