@@ -2,14 +2,16 @@ import { useCart } from "@/contexts/CartContext";
 
 function OrderSummary() {
   const { cartData, directPurchaseProduct } = useCart();
-  
+
   // 직접 구매 상품이 있으면 그것만, 없으면 장바구니 상품들 사용
   const isDirectPurchase = !!directPurchaseProduct;
-  const displayPrice = isDirectPurchase 
+  const displayPrice = isDirectPurchase
     ? directPurchaseProduct.price * directPurchaseProduct.quantity
     : cartData.total_price;
-  const displayProductCount = isDirectPurchase ? directPurchaseProduct.quantity : cartData.cart_product.length;
-  
+  const displayProductCount = isDirectPurchase
+    ? directPurchaseProduct.quantity
+    : cartData.cart_product.length;
+
   // 사용자 크레딧 정보
   const userCredit = 1000000;
   const remainingCredit = userCredit - displayPrice;
@@ -34,16 +36,20 @@ function OrderSummary() {
           <div className="mb-8">
             <span className="flex items-center gap-2 text-xl font-medium text-black">
               상품 수 -
-              <div className="text-xl font-medium text-gray-500">{displayProductCount}</div>
+              <div className="text-xl font-medium text-gray-500">
+                {displayProductCount}
+              </div>
             </span>
           </div>
 
           {/* 상품 이미지들 */}
           <div className="flex gap-10 mb-16">
-            {[1, 2, 3, 4].map((index) => (
-              <div
-                key={index}
+            {cartData.cart_product.map((product) => (
+              <img
+                key={product.id}
                 className="w-[118px] h-[178px] bg-gray-200 rounded"
+                src={product.main_image}
+                alt={product.product.name}
               />
             ))}
           </div>
@@ -66,7 +72,9 @@ function OrderSummary() {
               <div className="space-y-3">
                 <p className="text-[17px] font-medium text-black">크레딧</p>
                 <p className="text-[17px] font-medium text-black">
-                  ₩{userCredit.toLocaleString()} - ₩{displayPrice.toLocaleString()}= ₩{remainingCredit.toLocaleString()}
+                  ₩{userCredit.toLocaleString()} - ₩
+                  {displayPrice.toLocaleString()}= ₩
+                  {remainingCredit.toLocaleString()}
                 </p>
                 <p className="text-[13px] font-medium text-black">
                   현재 크레딧 - 사용 크레딧 = 크레딧 잔액
