@@ -17,7 +17,6 @@ const Detail = () => {
   const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
-  const [cartQuantity, setCartQuantity] = useState(1);
   // API calls commented out for dummy data testing
   // const { data: currentProduct } = useProductDetailQuery(Number(id));
   
@@ -54,7 +53,7 @@ const Detail = () => {
 
   const handleAddToCart = () => {
     if (currentProduct) {
-      addToCart(currentProduct as unknown as Product, cartQuantity);
+      addToCart(currentProduct as unknown as Product, purchaseQuantity);
       setIsCartDialogOpen(true);
     }
   };
