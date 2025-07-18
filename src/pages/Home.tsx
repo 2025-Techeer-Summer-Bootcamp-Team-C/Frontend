@@ -1,15 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
 import { useFilter } from "@/contexts/FilterContext";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 // API calls commented out for dummy data testing
 import { useProductsQuery } from "@/hooks/useProducts";
 
 const Home = () => {
   const navigate = useNavigate();
   const { searchQuery } = useFilter();
+  const [showFitting, setShowFitting] = useState(false);
   // API calls commented out for dummy data testing
-  const { data: products } = useProductsQuery();
+  const { data: products } = useProductsQuery(showFitting);
   // const { data: categories } = useCategoriesQuery();
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
@@ -72,7 +73,10 @@ const Home = () => {
       </div>
 
       {/* 피팅하기 플로팅 버튼 */}
-      <button className="fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors z-50 font-inter text-sm">
+      <button
+        className="fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors z-50 font-inter text-sm"
+        onClick={() => setShowFitting(!showFitting)}
+      >
         피팅하기
       </button>
     </div>
