@@ -41,7 +41,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const updateQuantity = (productId: number, quantity: number) => {
     setCartData((prevCartData) => {
       const updatedCartProducts = prevCartData.cart_product.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
+        item.product.product_id === productId ? { ...item, quantity } : item
       );
 
       const newTotalPrice = updatedCartProducts.reduce(
@@ -61,7 +61,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     setCartData((prevCartData) => {
       // 이미 장바구니에 있는 상품인지 확인
       const existingItemIndex = prevCartData.cart_product.findIndex(
-        (item) => item.product.id === product.id
+        (item) => item.product.product_id === product.product_id
       );
 
       let updatedCartProducts;
@@ -102,7 +102,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const removeFromCart = (productId: number) => {
     setCartData((prevCartData) => {
       const updatedCartProducts = prevCartData.cart_product.filter(
-        (item) => item.product.id !== productId
+        (item) => item.product.product_id !== productId
       );
 
       const newTotalPrice = updatedCartProducts.reduce(
@@ -121,7 +121,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const increaseQuantity = (productId: number) => {
     setCartData((prevCartData) => {
       const updatedCartProducts = prevCartData.cart_product.map((item) =>
-        item.product.id === productId
+        item.product.product_id === productId
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
@@ -142,7 +142,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const decreaseQuantity = (productId: number) => {
     setCartData((prevCartData) => {
       const currentItem = prevCartData.cart_product.find(
-        (item) => item.product.id === productId
+        (item) => item.product.product_id === productId
       );
 
       if (!currentItem) return prevCartData;
@@ -150,7 +150,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       // 수량이 1이면 상품을 완전히 제거
       if (currentItem.quantity <= 1) {
         const updatedCartProducts = prevCartData.cart_product.filter(
-          (item) => item.product.id !== productId
+          (item) => item.product.product_id !== productId
         );
 
         const newTotalPrice = updatedCartProducts.reduce(
@@ -166,7 +166,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       } else {
         // 수량을 1 감소
         const updatedCartProducts = prevCartData.cart_product.map((item) =>
-          item.product.id === productId
+          item.product.product_id === productId
             ? { ...item, quantity: item.quantity - 1 }
             : item
         );

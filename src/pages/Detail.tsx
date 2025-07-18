@@ -2,11 +2,13 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ProductCard from "@/components/common/ProductCard";
 import { productDummy } from "@/dummys/productDummy";
+import { detailDummy } from "@/dummys/detailDummy";
 import { useNavigate } from "react-router-dom";
 import CartAddDialog from "@/components/dialogs/CartAddDialog";
 import { useCart } from "@/contexts/CartContext";
 import type { Product } from "@/types/product";
-import { useProductDetailQuery } from "@/hooks/useProducts";
+// API calls commented out for dummy data testing
+// import { useProductDetailQuery } from "@/hooks/useProducts";
 
 const Detail = () => {
   const { id } = useParams();
@@ -16,7 +18,11 @@ const Detail = () => {
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
   const [cartQuantity, setCartQuantity] = useState(1);
-  const { data: currentProduct } = useProductDetailQuery(Number(id));
+  // API calls commented out for dummy data testing
+  // const { data: currentProduct } = useProductDetailQuery(Number(id));
+  
+  // Using dummy data instead of API
+  const currentProduct = detailDummy.find(product => product.product_id === Number(id));
 
   // 컴포넌트 마운트 시 스크롤을 맨 위로 이동
   useEffect(() => {

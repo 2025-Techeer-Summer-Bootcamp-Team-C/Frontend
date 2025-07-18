@@ -1,20 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
 import { useFilter } from "@/contexts/FilterContext";
-// import { useProductsQuery } from "@/hooks/useProducts";
 import { useMemo } from "react";
+// API calls commented out for dummy data testing
 import { useProductsQuery } from "@/hooks/useProducts";
 
 const Home = () => {
   const navigate = useNavigate();
   const { searchQuery } = useFilter();
+  // API calls commented out for dummy data testing
   const { data: products } = useProductsQuery();
   // const { data: categories } = useCategoriesQuery();
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
   };
 
-  const availableProducts = useMemo(() => products?.products ?? [], [products]);
+  // Using dummy data instead of API
+  const availableProducts = useMemo(() => products?.products, [products]);
   // 검색어와 카테고리로 상품 필터링
   const filteredProducts = useMemo(
     () =>
@@ -35,7 +37,7 @@ const Home = () => {
   // 필터링된 상품을 4개씩 그룹화하여 행으로 나눔
   const productRows = useMemo(() => {
     const rows = [];
-    for (let i = 0; i < filteredProducts?.length; i += 4) {
+    for (let i = 0; i < (filteredProducts?.length ?? 0); i += 4) {
       rows.push(filteredProducts?.slice(i, i + 4));
     }
     return rows;
@@ -53,7 +55,7 @@ const Home = () => {
                 key={rowIndex}
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center"
               >
-                {row.map((product) => (
+                {row?.map((product) => (
                   <ProductCard
                     key={product.product_id}
                     variant="default"

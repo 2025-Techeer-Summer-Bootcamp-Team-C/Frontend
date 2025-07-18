@@ -35,17 +35,17 @@ function Cart() {
                   >
                     {row.map((item) => (
                       <ProductCard
-                        key={item.id}
+                        key={item.product.product_id}
                         variant="cart"
                         product={item.product}
                         quantity={item.quantity}
                         onQuantityIncrease={() =>
-                          increaseQuantity(item.product.id)
+                          increaseQuantity(item.product.product_id)
                         }
                         onQuantityDecrease={() =>
-                          decreaseQuantity(item.product.id)
+                          decreaseQuantity(item.product.product_id)
                         }
-                        onRemove={() => removeFromCart(item.product.id)}
+                        onRemove={() => removeFromCart(item.product.product_id)}
                       />
                     ))}
                   </div>

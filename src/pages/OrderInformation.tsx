@@ -1,18 +1,16 @@
 import { OrderInformationForm } from "@/components/forms/OrderInformationForm";
-import Header from "@/components/common/Header";
 
 function OrderInformation() {
   return (
     <div className="min-h-screen bg-white">
-      <Header variant="주문" />
 
       <div className="pt-[149px] px-4 pb-[96px]">
         <div className="w-full max-w-4xl mx-auto">
           {/* 헤더 섹션 */}
           <div className="mb-8">
-            <div className="w-full max-w-md mb-2">
+            <div className="w-full mb-2">
               <h1 className="text-base font-normal text-black mb-2">
-                영수증 주소 수정
+                주문 정보 입력
               </h1>
               <p className="text-xs text-start text-black leading-relaxed">
                 주문하기 위해 먼저 고객님의 계정 정보를 입력해야 합니다.
