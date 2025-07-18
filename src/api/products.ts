@@ -9,7 +9,7 @@ import type {
 export const fetchProducts = async (showFitting?: boolean): Promise<ProductListResponse> => {
   const params = showFitting !== undefined ? { show_fitting: showFitting } : {};
   const response = await axiosInstance.get<ProductListResponse>(
-    "api/v1/products/information/", 
+    "api/v1/products/", 
     { params }
   );
   return response.data;

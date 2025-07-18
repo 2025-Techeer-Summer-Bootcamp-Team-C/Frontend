@@ -1,26 +1,86 @@
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
 import { useFilter } from "@/contexts/FilterContext";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 // API calls commented out for dummy data testing
 import { useProductsQuery } from "@/hooks/useProducts";
+import { startFittingDetail, pollFittingResults } from "@/api/fittings";
+import { fetchProducts } from "@/api/products";
 
 const Home = () => {
   const navigate = useNavigate();
   const { searchQuery } = useFilter();
+  const [showFitting, setShowFitting] = useState(false);
+  const [isFittingLoading, setIsFittingLoading] = useState(false);
+  const [fittingProgress, setFittingProgress] = useState<string>("");
   // API calls commented out for dummy data testing
-  const { data: products } = useProductsQuery();
+  const { data: products, refetch } = useProductsQuery(showFitting);
   // const { data: categories } = useCategoriesQuery();
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
   };
 
+  const handleFittingClick = async () => {
+    if (isFittingLoading) return;
+    
+    setIsFittingLoading(true);
+    setFittingProgress("피팅 작업을 시작하는 중...");
+    
+    try {
+      // 1. 피팅 작업 시작
+      const response = await startFittingDetail();
+      
+      setFittingProgress(`피팅 작업이 시작되었습니다! (${response.total_products}개 상품)`);
+      
+      // 2. 피팅 결과 폴링 시작
+      setFittingProgress("피팅 결과를 기다리는 중...");
+      
+      const fittingResults = await pollFittingResults(60, 2000); // 최대 2분 대기 (60 * 2초)
+      
+      // 3. 피팅 결과 받아오기 성공
+      setFittingProgress(`피팅 완료! ${fittingResults.products.length}개 상품 결과를 받았습니다.`);
+      
+      // 피팅 상태 업데이트 - 피팅 결과 보기 모드로 전환
+      setShowFitting(true);
+      
+      refetch();
+    } catch (error) {
+      // 에러 처리
+      const errorMessage = error instanceof Error ? error.message : "가상 피팅 요청 중 오류가 발생했습니다.";
+      
+      // 400 에러 (이미 피팅된 결과가 있음)인 경우 바로 피팅 결과 보기
+      if ((error as any).response?.status === 400) {
+        setFittingProgress("이미 피팅된 결과가 있습니다. 피팅 결과를 가져오는 중...");
+        
+        try {
+          // 직접 피팅 결과 가져오기
+          const fittingResults = await fetchProducts(true);
+          
+          if (fittingResults.products && fittingResults.products.length > 0) {
+            setShowFitting(true);
+            refetch(); // 훅 데이터도 업데이트
+            setFittingProgress(`피팅 결과 ${fittingResults.products.length}개를 불러왔습니다.`);
+          } else {
+            setFittingProgress("피팅 결과가 없습니다.");
+          }
+        } catch (fetchError) {
+          setFittingProgress("피팅 결과를 가져오는 중 오류가 발생했습니다.");
+        }
+      } else {
+        setFittingProgress(`에러: ${errorMessage}`);
+      }
+    } finally {
+      setIsFittingLoading(false);
+      // 진행 상태 메시지는 잠시 후 제거
+      setTimeout(() => setFittingProgress(""), 3000);
+    }
+  };
+
   // Using dummy data instead of API
-  const availableProducts = useMemo(() => products?.products, [products]);
   // 검색어와 카테고리로 상품 필터링
   const filteredProducts = useMemo(
     () =>
-      availableProducts?.filter((product) => {
+      products?.products?.filter((product) => {
         const matchesSearch = product.name
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
@@ -31,7 +91,7 @@ const Home = () => {
 
         return matchesSearch;
       }),
-    [availableProducts, searchQuery]
+    [products?.products, searchQuery]
   );
 
   // 필터링된 상품을 4개씩 그룹화하여 행으로 나눔
@@ -72,9 +132,33 @@ const Home = () => {
       </div>
 
       {/* 피팅하기 플로팅 버튼 */}
-      <button className="fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors z-50 font-inter text-sm">
-        피팅하기
-      </button>
+      <div className="fixed bottom-6 right-6 z-50">
+        {/* 진행 상태 메시지 */}
+        {fittingProgress && (
+          <div className="mb-2 bg-white text-black px-4 py-2 rounded-lg shadow-lg text-sm max-w-xs">
+            {fittingProgress}
+          </div>
+        )}
+        
+        {/* 피팅 모드 토글 버튼 (피팅 완료 후) */}
+        {showFitting && !isFittingLoading && (
+          <button
+            className="mb-2 w-full bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition-colors font-inter text-sm"
+            onClick={() => setShowFitting(false)}
+          >
+            원본 상품 보기
+          </button>
+        )}
+        
+        {/* 메인 피팅 버튼 */}
+        <button
+          className="w-full bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors font-inter text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleFittingClick}
+          disabled={isFittingLoading}
+        >
+          {isFittingLoading ? "피팅 중..." : showFitting ? "피팅 다시하기" : "피팅하기"}
+        </button>
+      </div>
     </div>
   );
 };
