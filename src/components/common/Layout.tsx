@@ -31,8 +31,7 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
       showNavigation: layoutConfig.showNavigation
     });
   }
-
-  const finalHeaderVariant = layoutConfig.header;
+  
   const finalFooterVariant = layoutConfig.footer;
 
   // totalPrice 우선순위: prop으로 전달된 값 > 경로별 로직
@@ -62,7 +61,6 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
   return (
     <div>
       <Header
-        variant={finalHeaderVariant}
         showSearch={layoutConfig.showSearch}
         showUserActions={layoutConfig.showUserActions}
         showNavigation={layoutConfig.showNavigation}

@@ -30,7 +30,7 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
   "/cart": {
     header: "cart",
     footer: "cart",
-    showSearch: true,
+    showSearch: false,
     showUserActions: false,
     showNavigation: false,
     title: "장바구니",
