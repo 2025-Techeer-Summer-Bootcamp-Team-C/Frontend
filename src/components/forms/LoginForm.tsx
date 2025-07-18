@@ -13,9 +13,6 @@ import { useLoginMutation } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { loginSchema, type LoginFormData } from "@/schemas/authSchema";
-import { AxiosError } from "axios";
-import type { AuthErrorResponse } from "@/types/user";
-import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
@@ -24,7 +21,6 @@ interface LoginFormProps {
 
 const LoginForm = ({ onSwitchToRegister, onClose }: LoginFormProps) => {
   const { mutate: login, isPending, error, isError } = useLoginMutation();
-  const navigate = useNavigate();
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -35,7 +31,6 @@ const LoginForm = ({ onSwitchToRegister, onClose }: LoginFormProps) => {
   });
 
   const onSubmit = (values: LoginFormData) => {
-    console.log(values);
     login(values, {
       onSuccess: () => {
         console.log("로그인 성공");
