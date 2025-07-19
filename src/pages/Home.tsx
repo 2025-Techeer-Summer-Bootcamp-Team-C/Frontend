@@ -49,7 +49,7 @@ const Home = () => {
       const errorMessage = error instanceof Error ? error.message : "가상 피팅 요청 중 오류가 발생했습니다.";
       
       // 400 에러 (이미 피팅된 결과가 있음)인 경우 바로 피팅 결과 보기
-      if ((error as any).response?.status === 400) {
+      if ((error as any).response?.status === 400 && (error as any).response?.data?.error.includes("이미 가상")) {
         setFittingProgress("이미 피팅된 결과가 있습니다. 피팅 결과를 가져오는 중...");
         
         try {
@@ -66,6 +66,10 @@ const Home = () => {
         } catch (fetchError) {
           setFittingProgress("피팅 결과를 가져오는 중 오류가 발생했습니다.");
         }
+      } else if ((error as any).response?.status === 400 && (error as any).response?.data?.error.includes("사용자 사진")) {
+        setFittingProgress("사용자 사진이 없습니다. 사진을 추가해 주세요.");
+      } else if ((error as any).response?.status === 400 && (error as any).response?.data?.error.includes("상품이")) {
+        setFittingProgress("상품이 없습니다. 상품을 추가해 주세요.");
       } else {
         setFittingProgress(`에러: ${errorMessage}`);
       }
