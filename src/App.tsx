@@ -11,12 +11,14 @@ import Cart from "./pages/Cart";
 import { CartProvider } from "./contexts/CartContext";
 import { FilterProvider } from "./contexts/FilterContext";
 import { OrderProvider } from "./contexts/OrderContext";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const queryClient = new QueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Analytics />
       <FilterProvider>
         <CartProvider>
           <OrderProvider>
