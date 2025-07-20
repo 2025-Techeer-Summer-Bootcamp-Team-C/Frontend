@@ -7,6 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import type { Product } from "@/types/product";
 import { useProductDetailQuery } from "@/hooks/useProducts";
 import { useProductsQuery } from "@/hooks/useProducts";
+import { Play } from "lucide-react";
 
 const Detail = () => {
   const { id } = useParams();
@@ -68,12 +69,19 @@ const Detail = () => {
             <div className="flex-1">
               <div className="flex flex-col gap-4 items-end">
                 {/* Main Product Image */}
-                <div className="w-[532px] h-[800px] bg-gray-200 overflow-hidden">
+                <div className="relative w-[532px] h-[800px] bg-gray-200 overflow-hidden group cursor-pointer">
                   <img
                     src={currentProduct.model_image}
                     alt={currentProduct.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:blur-sm group-hover:brightness-75"
                   />
+                  {/* 호버 시 나타나는 영상보기 버튼 */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button className="bg-white/90 hover:bg-white text-black font-inter font-medium text-[14px] px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-200 hover:scale-105">
+                      <Play size={16} className="fill-current" />
+                      영상보기
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
