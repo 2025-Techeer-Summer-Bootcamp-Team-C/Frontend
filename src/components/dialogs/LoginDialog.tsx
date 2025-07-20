@@ -17,6 +17,7 @@ import {
 import LoginForm from "../forms/LoginForm";
 import SignupForm from "../forms/SignupForm";
 import { useState } from "react";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface LoginDialogProps {
   children: React.ReactNode;
@@ -50,11 +51,11 @@ const LoginDialog = ({ children }: LoginDialogProps) => {
       }}
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="w-[480px] max-w-[480px] max-h-[600px] bg-white shadow-[8px_8px_50px_rgba(0,0,0,0.15)] p-0 overflow-hidden">
+      <DialogContent className="w-[480px] max-w-[480px] max-h-[80vh] bg-white shadow-[8px_8px_50px_rgba(0,0,0,0.15)] pb-8 overflow-hidden">
         <DialogTitle className="sr-only">Login</DialogTitle>
         <div className="h-full">
           {/* Scrollable Form Area */}
-          <div className="max-h-[90vh] overflow-y-auto px-8 pt-8">
+          <ScrollArea className="max-h-[calc(80vh-120px)] overflow-y-auto px-8 pt-8">
             <div className="space-y-6">
               {/* Conditional Form Rendering */}
               {currentForm === "login" ? (
@@ -62,46 +63,8 @@ const LoginDialog = ({ children }: LoginDialogProps) => {
               ) : (
                 <SignupForm onSwitchToLogin={handleSwitchToLogin} />
               )}
-
-              {/* Social Media Icons - Fixed at bottom */}
-              <div className="flex justify-center items-center gap-4 pb-8 pt-4 opacity-40">
-                <FaFacebook
-                  size={17}
-                  className="text-[#282828] hover:opacity-70 cursor-pointer"
-                />
-                <div className="w-[1px] h-[17px] bg-[#282828]"></div>
-                <FaLinkedin
-                  size={17}
-                  className="text-[#282828] hover:opacity-70 cursor-pointer"
-                />
-                <div className="w-[1px] h-[17px] bg-[#282828]"></div>
-                <FaTwitter
-                  size={17}
-                  className="text-[#282828] hover:opacity-70 cursor-pointer"
-                />
-                <div className="w-[1px] h-[17px] bg-[#282828]"></div>
-                <FaInstagram
-                  size={17}
-                  className="text-[#282828] hover:opacity-70 cursor-pointer"
-                />
-                <div className="w-[1px] h-[17px] bg-[#282828]"></div>
-                <FaApple
-                  size={17}
-                  className="text-[#282828] hover:opacity-70 cursor-pointer"
-                />
-                <div className="w-[1px] h-[17px] bg-[#282828]"></div>
-                <FaGooglePlay
-                  size={17}
-                  className="text-[#282828] hover:opacity-70 cursor-pointer"
-                />
-                <div className="w-[1px] h-[17px] bg-[#282828]"></div>
-                <FaYoutube
-                  size={17}
-                  className="text-[#282828] hover:opacity-70 cursor-pointer"
-                />
-              </div>
             </div>
-          </div>
+          </ScrollArea>
         </div>
       </DialogContent>
     </Dialog>

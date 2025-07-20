@@ -1,14 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ProductCard from "@/components/common/ProductCard";
-import { productDummy } from "@/dummys/productDummy";
-import { detailDummy } from "@/dummys/detailDummy";
 import { useNavigate } from "react-router-dom";
 import CartAddDialog from "@/components/dialogs/CartAddDialog";
 import { useCart } from "@/contexts/CartContext";
 import type { Product } from "@/types/product";
-// API calls commented out for dummy data testing
-// import { useProductDetailQuery } from "@/hooks/useProducts";
+import { useProductDetailQuery } from "@/hooks/useProducts";
+import { useProductsQuery } from "@/hooks/useProducts";
 
 const Detail = () => {
   const { id } = useParams();
@@ -17,11 +15,8 @@ const Detail = () => {
   const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
-  // API calls commented out for dummy data testing
-  // const { data: currentProduct } = useProductDetailQuery(Number(id));
-  
-  // Using dummy data instead of API
-  const currentProduct = detailDummy.find(product => product.product_id === Number(id));
+  const { data: productList } = useProductsQuery();
+  const { data: currentProduct } = useProductDetailQuery(Number(id));
 
   // 컴포넌트 마운트 시 스크롤을 맨 위로 이동
   useEffect(() => {
@@ -272,7 +267,7 @@ const Detail = () => {
 
             {/* Related Products Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center">
-              {productDummy.slice(0, 4).map((product) => (
+              {productList?.products.filter(product => product.product_id !== Number(id)).slice(0, 4).map((product) => (
                 <ProductCard
                   key={product.product_id}
                   variant="viewed"
