@@ -74,3 +74,35 @@ export const pollFittingResults = async (
   
   throw new Error("피팅 결과를 가져오는 데 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.");
 };
+
+
+export interface FittingVideoGenerateResponse {
+  detail: string;
+  video_url?: string;
+}
+
+export interface FittingVideoStatusResponse {
+  status: "pending" | "processing" | "completed" | "failed";
+  video_url?: string;
+}
+
+/**
+ * 가상 피팅 영상 생성 요청
+ * POST /api/v1/fittings/{product_id}/video
+ * 
+ * @param product_id 상품 ID
+ * @returns Promise<FittingVideoGenerateResponse>
+ */
+export const generateFittingVideo = async (product_id: number): Promise<FittingVideoGenerateResponse> => {
+  const response = await axiosInstance.post<FittingVideoGenerateResponse>(
+    `api/v1/fittings/${product_id}/videos`
+  );
+  return response.data;
+};
+
+export const getFittingVideoStatus = async (product_id: number): Promise<FittingVideoStatusResponse> => {
+  const response = await axiosInstance.get<FittingVideoStatusResponse>(
+    `api/v1/fittings/${product_id}/videos/status`
+  );
+  return response.data;
+};
