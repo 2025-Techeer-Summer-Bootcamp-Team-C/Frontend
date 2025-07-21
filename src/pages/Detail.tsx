@@ -56,7 +56,7 @@ const Detail = () => {
 
   const handleAddToCart = () => {
     if (currentProduct) {
-      addToCart(currentProduct as unknown as Product, purchaseQuantity);
+      addToCart(currentProduct as unknown as Product, 1);
       setIsCartDialogOpen(true);
     }
   };
