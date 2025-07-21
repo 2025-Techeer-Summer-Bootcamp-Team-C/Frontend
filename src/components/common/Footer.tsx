@@ -3,11 +3,18 @@ import type { FooterVariant } from "@/types/variants";
 import { PaymentDialog } from "@/components/dialogs/PaymentDialog";
 import { useCart } from "@/contexts/CartContext";
 import { useOrder } from "@/contexts/OrderContext";
+import { useMemo } from "react";
 
 interface FooterProps {
   variant?: FooterVariant;
   buttonText?: string;
   totalPrice?: number;
+  buyerInfo?: {
+    name: string;
+    phone: string;
+    address: string;
+    productName: string;
+  };
   onContinue?: () => void;
 }
 
@@ -15,13 +22,48 @@ const Footer = ({
   variant = "default",
   buttonText = "계속",
   totalPrice = 0,
+  buyerInfo: propBuyerInfo,
   onContinue,
 }: FooterProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setDirectPurchaseProduct } = useCart();
-  const { submitOrderForm } = useOrder();
+  const { setDirectPurchaseProduct, cartData, directPurchaseProduct } = useCart();
+  const { submitOrderForm, currentBuyerInfo } = useOrder();
   const path = location.pathname;
+
+  // PaymentDialog에 전달할 구매자 정보 계산 (summary 페이지에서만)
+  const calculatedBuyerInfo = useMemo(() => {
+    if (!path.includes("/summary") || !currentBuyerInfo) return undefined;
+    
+    const fullAddress = currentBuyerInfo.address2 
+      ? `${currentBuyerInfo.address} ${currentBuyerInfo.address2}`
+      : currentBuyerInfo.address;
+    
+    // 구매 상품명 계산
+    let productName = '';
+    const isDirectPurchase = !!directPurchaseProduct;
+    
+    if (isDirectPurchase && directPurchaseProduct) {
+      productName = directPurchaseProduct.name;
+    } else if (cartData?.cart_product && cartData.cart_product.length > 0) {
+      const firstProduct = cartData.cart_product[0];
+      if (cartData.cart_product.length === 1) {
+        productName = firstProduct.name;
+      } else {
+        productName = `${firstProduct.name} 외 ${cartData.cart_product.length - 1}개`;
+      }
+    }
+    
+    return {
+      name: currentBuyerInfo.name,
+      phone: currentBuyerInfo.phone,
+      address: fullAddress,
+      productName: productName
+    };
+  }, [path, currentBuyerInfo, directPurchaseProduct, cartData]);
+
+  // 최종적으로 사용할 buyerInfo (props로 전달된 것이 있으면 우선, 없으면 계산된 값)
+  const buyerInfo = propBuyerInfo || calculatedBuyerInfo;
 
   const formatPrice = (price: number) => {
     return price.toLocaleString("ko-KR");
@@ -92,6 +134,7 @@ const Footer = ({
                 {path.includes("/summary") ? (
                   <PaymentDialog
                     totalPrice={totalPrice}
+                    buyerInfo={buyerInfo}
                     onConfirm={() => {
                       navigate("/summary");
                     }}

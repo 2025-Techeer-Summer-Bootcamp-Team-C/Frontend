@@ -17,6 +17,7 @@ function OrderSummary() {
   // 사용자 크레딧 정보
   const userCredit = 1000000;
   const remainingCredit = userCredit - displayPrice;
+
   return (
     <div className="min-h-screen w-[1216px] mx-auto bg-white">
       <div className="flex pt-[149px] px-4 gap-[100px]">
