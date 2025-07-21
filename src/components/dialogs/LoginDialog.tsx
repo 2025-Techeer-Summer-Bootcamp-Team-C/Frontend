@@ -5,15 +5,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import {
-  FaFacebook,
-  FaLinkedin,
-  FaTwitter,
-  FaInstagram,
-  FaApple,
-  FaGooglePlay,
-  FaYoutube,
-} from "react-icons/fa";
+
 import LoginForm from "../forms/LoginForm";
 import SignupForm from "../forms/SignupForm";
 import { useState } from "react";

@@ -25,6 +25,7 @@ interface CartContextType {
   decreaseQuantity: (cartProductId: number) => void;
   directPurchaseProduct: DirectPurchaseProduct | null;
   setDirectPurchaseProduct: (product: DirectPurchaseProduct | null) => void;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -144,6 +145,13 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     decreaseQuantity: handleDecreaseQuantity,
     directPurchaseProduct,
     setDirectPurchaseProduct,
+    clearCart: () => {
+      if (isAuthenticated) {
+        cartData?.cart_product.forEach(item => {
+          removeCartItemMutation.mutate(item.cart_product_id);
+        });
+      }
+    },
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

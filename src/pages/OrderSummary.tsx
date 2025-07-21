@@ -7,10 +7,10 @@ function OrderSummary() {
   const isDirectPurchase = !!directPurchaseProduct;
   const displayPrice = isDirectPurchase
     ? directPurchaseProduct.price * directPurchaseProduct.quantity
-    : cartData.total_price;
+    : cartData?.total_price || 0;
   const displayProductCount = isDirectPurchase
     ? directPurchaseProduct.quantity
-    : cartData.cart_product.length;
+    : cartData?.cart_product.length || 0;
 
   // 사용자 크레딧 정보
   const userCredit = 1000000;
@@ -44,12 +44,12 @@ function OrderSummary() {
 
           {/* 상품 이미지들 */}
           <div className="flex gap-10 mb-16">
-            {cartData.cart_product.map((product) => (
+            {cartData?.cart_product.map((product) => (
               <img
-                key={product.id}
+                key={product.cart_product_id}
                 className="w-[118px] h-[178px] bg-gray-200 rounded"
-                src={product.main_image}
-                alt={product.product.name}
+                src={product.image}
+                alt={product.name}
               />
             ))}
           </div>
