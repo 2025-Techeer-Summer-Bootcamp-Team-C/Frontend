@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signUp, login, logout } from "../api/auth";
 import type {
   SignUpRequest,
@@ -63,6 +63,8 @@ export const useLoginMutation = () => {
 
 export const useLogoutMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  
   return useMutation<LogoutResponse, AxiosError<AuthErrorResponse>, void>({
     mutationFn: () => logout(),
     onSuccess: (data) => {
@@ -70,6 +72,10 @@ export const useLogoutMutation = () => {
       console.log("로그아웃 성공", data);
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
+      
+      // Clear all cart-related cache
+      queryClient.removeQueries({ queryKey: ["cart"] });
+      
       window.dispatchEvent(new Event("loginStatusChange"));
       navigate("/");
     },
@@ -79,6 +85,10 @@ export const useLogoutMutation = () => {
       // 실패해도 로컬 토큰은 제거
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
+      
+      // Clear all cart-related cache even on logout failure
+      queryClient.removeQueries({ queryKey: ["cart"] });
+      
       window.dispatchEvent(new Event("loginStatusChange"));
       navigate("/");
     },

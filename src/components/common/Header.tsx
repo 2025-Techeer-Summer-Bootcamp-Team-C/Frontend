@@ -166,7 +166,13 @@ const Header = ({
                     </span>
                     <span
                       className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
-                      onClick={() => navigate("/cart")}
+                      onClick={() => {
+                        if (!isLogin) {
+                          alert("로그인이 필요합니다.");
+                          return;
+                        }
+                        navigate("/cart");
+                      }}
                     >
                       장바구니({cartCount})
                     </span>

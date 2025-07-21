@@ -1,9 +1,24 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CartProductCard from "@/components/common/CartProductCard";
 import { useCart } from "@/contexts/CartContext";
 
 function Cart() {
-  const { cartData } = useCart();
+  const { cartData, isAuthenticated } = useCart();
+  const navigate = useNavigate();
   const cartItems = cartData?.cart_product;
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Don't render if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-white">
