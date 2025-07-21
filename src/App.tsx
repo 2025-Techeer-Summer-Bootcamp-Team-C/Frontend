@@ -11,6 +11,7 @@ import Cart from "./pages/Cart";
 import { CartProvider } from "./contexts/CartContext";
 import { FilterProvider } from "./contexts/FilterContext";
 import { OrderProvider } from "./contexts/OrderContext";
+import { FittingProvider } from "./contexts/FittingContext";
 import { Analytics } from "@vercel/analytics/react";
 
 function App() {
@@ -20,9 +21,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Analytics />
       <FilterProvider>
-        <CartProvider>
-          <OrderProvider>
-            <Layout>
+        <FittingProvider>
+          <CartProvider>
+            <OrderProvider>
+              <Layout>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/product/:id" element={<Detail />} />
@@ -31,9 +33,10 @@ function App() {
                 <Route path="/summary" element={<OrderSummary />} />
                 <Route path="/history" element={<OrderHistory />} />
               </Routes>
-            </Layout>
-          </OrderProvider>
-        </CartProvider>
+              </Layout>
+            </OrderProvider>
+          </CartProvider>
+        </FittingProvider>
       </FilterProvider>
     </QueryClientProvider>
   );
