@@ -2,9 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addCartItem, removeCartItem, updateCartItem, fetchCartList } from "@/api/cartItems";
 
 export const useCartQuery = () => {
+    const isAuthenticated = !!localStorage.getItem("access_token");
+    
     return useQuery({
-        queryKey: ["cart"],
+        queryKey: ["cart"], // Backend handles user isolation automatically
         queryFn: fetchCartList,
+        enabled: isAuthenticated, // Only fetch when authenticated
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
     });
