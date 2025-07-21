@@ -76,6 +76,10 @@ export const useLogoutMutation = () => {
       // Clear all cart-related cache
       queryClient.removeQueries({ queryKey: ["cart"] });
       
+      // Clear fitting-related cache and reset fitting state
+      queryClient.removeQueries({ queryKey: ["products"] });
+      window.dispatchEvent(new Event("resetFittingState"));
+      
       window.dispatchEvent(new Event("loginStatusChange"));
       navigate("/");
     },
@@ -88,6 +92,10 @@ export const useLogoutMutation = () => {
       
       // Clear all cart-related cache even on logout failure
       queryClient.removeQueries({ queryKey: ["cart"] });
+      
+      // Clear fitting-related cache and reset fitting state even on logout failure
+      queryClient.removeQueries({ queryKey: ["products"] });
+      window.dispatchEvent(new Event("resetFittingState"));
       
       window.dispatchEvent(new Event("loginStatusChange"));
       navigate("/");
