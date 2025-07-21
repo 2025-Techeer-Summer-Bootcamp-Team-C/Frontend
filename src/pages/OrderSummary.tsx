@@ -1,7 +1,9 @@
 import { useCart } from "@/contexts/CartContext";
+import { useOrder } from "@/contexts/OrderContext";
 
 function OrderSummary() {
   const { cartData, directPurchaseProduct } = useCart();
+  const { currentBuyerInfo } = useOrder();
 
   // 직접 구매 상품이 있으면 그것만, 없으면 장바구니 상품들 사용
   const isDirectPurchase = !!directPurchaseProduct;
@@ -18,7 +20,7 @@ function OrderSummary() {
   return (
     <div className="min-h-screen w-[1216px] mx-auto bg-white">
       <div className="flex pt-[149px] px-4 gap-[100px]">
-        <div className="max-w-[1216px]">
+        <div className="max-w-[1216px] min-w-[400px]">
           {/* 주문 요약 제목 */}
           <h1 className="text-xl font-bold text-black mb-20">주문요약</h1>
 
@@ -58,17 +60,26 @@ function OrderSummary() {
         <div className="w-[493px] space-y-[109px]">
           <div className="flex flex-col gap-28">
             {/* 배송 정보 */}
-            <div className="space-y-1.5">
-              <h2 className="text-[17px] font-bold text-black">배송</h2>
-              <p className="text-[17px] font-medium text-black">이름</p>
-              <p className="text-[17px] font-medium text-black">주소</p>
-              <p className="text-[17px] font-medium text-black">우편번호</p>
-              <p className="text-[17px] font-medium text-black">편집</p>
+            <div className="space-y-3">
+              <h2 className="text-[17px] font-bold text-black">배송 정보</h2>
+              {currentBuyerInfo ? (
+                <>
+                  <p className="text-[17px] font-medium text-black">이름 - <span className="text-gray-500">{currentBuyerInfo.name}</span></p>
+                  <p className="text-[17px] font-medium text-black">우편번호 - <span className="text-gray-500">{currentBuyerInfo.postalCode}</span></p>
+                  <p className="text-[17px] font-medium text-black">주소 - <span className="text-gray-500">{currentBuyerInfo.address}</span></p>
+                  {currentBuyerInfo.address2 && (
+                    <p className="text-[17px] font-medium text-black">상세주소 - <span className="text-gray-500">{currentBuyerInfo.address2}</span></p>
+                  )}
+                  <p className="text-[17px] font-medium text-black">전화번호 - <span className="text-gray-500">{currentBuyerInfo.phone}</span></p>
+                </>
+              ) : (
+                <p className="text-[17px] font-medium text-gray-500">배송 정보를 입력해주세요.</p>
+              )}
             </div>
 
             {/* 결제 정보 */}
             <div className="w-[290px] space-y-3">
-              <h2 className="text-[17px] font-bold text-black">결재</h2>
+              <h2 className="text-[17px] font-bold text-black">결제 정보</h2>
               <div className="space-y-3">
                 <p className="text-[17px] font-medium text-black">크레딧</p>
                 <p className="text-[17px] font-medium text-black">
