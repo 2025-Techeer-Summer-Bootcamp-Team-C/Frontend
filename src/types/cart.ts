@@ -1,18 +1,29 @@
-import type { Product } from "./product";
-
-export interface Cart {
-  id: number;
-  user_id: number;
-  product_id: number;
-  count: number;
-}
-
-export interface CartItem {
+export interface CartResponse {
   cart_product: {
-    id: number;
-    product: Product;
+    cart_product_id: number;
+    product_id: number;
+    name: string;
+    price: number;
     quantity: number;
-    main_image: string;
+    image: string;
   }[];
   total_price: number;
+}
+
+export interface CartItemResponse {
+  cart_product_id: number;
+  product_id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
+// 추가된 응답 타입들
+export interface CartMessageResponse {
+  message: string;
+}
+
+export interface CartErrorResponse {
+  error: string;
 }
