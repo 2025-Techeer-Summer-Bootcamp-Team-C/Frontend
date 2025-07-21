@@ -4,6 +4,7 @@ import ProductCard from "@/components/common/ProductCard";
 import { useNavigate } from "react-router-dom";
 import CartAddDialog from "@/components/dialogs/CartAddDialog";
 import { useCart } from "@/contexts/CartContext";
+import { useFittingContext } from "@/contexts/FittingContext";
 import type { Product } from "@/types/product";
 import { useProductDetailQuery } from "@/hooks/useProducts";
 import { useProductsQuery } from "@/hooks/useProducts";
@@ -14,12 +15,13 @@ const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { setDirectPurchaseProduct, addToCart } = useCart();
+  const { showFitting } = useFittingContext();
   const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const { data: productList } = useProductsQuery();
-  const { data: currentProduct } = useProductDetailQuery(Number(id));
+  const { data: productList } = useProductsQuery(showFitting);
+  const { data: currentProduct } = useProductDetailQuery(Number(id), showFitting);
   const { mutate: generateVideo, data: videoData, isPending: isVideoLoading } = useGenerateFittingVideoMutation();
 
   // 컴포넌트 마운트 시 스크롤을 맨 위로 이동
@@ -95,7 +97,7 @@ const Detail = () => {
                   ) : (
                     <img
                       src={currentProduct.model_image}
-                      alt={currentProduct.name}
+                      alt={`${currentProduct.name}${showFitting ? ' - 피팅 결과' : ' - 모델 착용'}`}
                       className="w-full h-full object-cover transition-all duration-300 group-hover:blur-sm group-hover:brightness-75"
                     />
                   )}

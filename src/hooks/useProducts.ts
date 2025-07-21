@@ -18,10 +18,11 @@ export const useProductsQuery = (showFitting?: boolean) => {
 // 상품 상세 쿼리
 export const useProductDetailQuery = (
   productId: number,
+  showFitting?: boolean
 ) => {
   return useQuery({
-    queryKey: ["product", productId],
-    queryFn: () => fetchProductDetail(productId),
+    queryKey: ["product", productId, { showFitting }],
+    queryFn: () => fetchProductDetail(productId, showFitting),
     enabled: !!productId,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,

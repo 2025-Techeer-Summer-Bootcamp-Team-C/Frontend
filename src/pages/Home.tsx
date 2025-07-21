@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
 import { useFilter } from "@/contexts/FilterContext";
+import { useFittingContext } from "@/contexts/FittingContext";
 import { useMemo, useState } from "react";
 // API calls commented out for dummy data testing
 import { useProductsQuery } from "@/hooks/useProducts";
@@ -10,7 +11,7 @@ import { fetchProducts } from "@/api/products";
 const Home = () => {
   const navigate = useNavigate();
   const { searchQuery } = useFilter();
-  const [showFitting, setShowFitting] = useState(false);
+  const { showFitting, setShowFitting } = useFittingContext();
   const [isFittingLoading, setIsFittingLoading] = useState(false);
   const [fittingProgress, setFittingProgress] = useState<string>("");
   // API calls commented out for dummy data testing
