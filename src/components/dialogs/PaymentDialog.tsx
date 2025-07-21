@@ -13,6 +13,7 @@ import { X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useOrder } from "@/contexts/OrderContext";
 import type { BuyerInfo } from "@/types/order";
+import type { CompletedOrder } from "@/types/order";
 
 interface PaymentDialogProps {
   children: React.ReactNode; // Dialog를 여는 버튼
@@ -40,8 +41,8 @@ export const PaymentDialog = ({
   const [currentVariant, setCurrentVariant] =
     useState<PaymentDialogVariant>("confirm");
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
-  const { cartData, clearCart } = useCart();
-  const { addOrder } = useOrder();
+  const { cartData, clearCart, directPurchaseProduct } = useCart();
+  const { addOrder, currentBuyerInfo } = useOrder();
   const formatPrice = (price: number) => {
     return price.toLocaleString("ko-KR");
   };
@@ -70,15 +71,32 @@ export const PaymentDialog = ({
   const handleConfirm = () => {
     // 1. 주문 정보 생성 및 저장 (clearCart 전에 실행)
     const generatedOrderNumber = generateOrderNumber();
+    
+    // 실제 구매 상품 정보 결정 (직접 구매 vs 장바구니)
+    const isDirectPurchase = !!directPurchaseProduct;
+    const actualProducts = isDirectPurchase 
+      ? [{
+          cart_product_id: directPurchaseProduct.product_id,
+          name: directPurchaseProduct.name,
+          image: directPurchaseProduct.image || '',
+          count: directPurchaseProduct.quantity,
+          price: directPurchaseProduct.price
+        }]
+      : cartData?.cart_product || [];
+    
+    const actualTotalPrice = isDirectPurchase
+      ? directPurchaseProduct.price * directPurchaseProduct.quantity
+      : cartData?.total_price || 0;
+    
     const orderInfo = {
       orderNumber: generatedOrderNumber,
       orderDate: new Date().toISOString(),
-      products: cartData?.cart_product || [],
-      totalPrice: cartData?.total_price || 0,
-      buyerInfo: getDummyBuyerInfo(),
+      products: actualProducts,
+      totalPrice: actualTotalPrice,
+      buyerInfo: currentBuyerInfo || getDummyBuyerInfo(),
       status: 'completed' as const
     };
-    addOrder(orderInfo);
+    addOrder(orderInfo as CompletedOrder);
     
     // 2. UI 상태 변경
     setCurrentVariant("complete");
