@@ -68,8 +68,8 @@ function OrderHistory() {
           <div className="w-[118px] h-[178px] bg-gray-200 rounded overflow-hidden">
             {firstProduct && (
               <img
-                src={firstProduct.product.image || ""}
-                alt={firstProduct.product.name}
+                src={firstProduct.image || ""}
+                alt={firstProduct.name}
                 className="w-full h-full object-cover"
               />
             )}
@@ -96,7 +96,7 @@ function OrderHistory() {
                 {formatDate(latestOrder.orderDate)}
               </span>
               <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[400px]">
-                {firstProduct?.product.name}
+                {firstProduct?.name}
                 {latestOrder.products.length > 1 && ` 외 ${latestOrder.products.length - 1}개`}
               </span>
               <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[100px]">

@@ -32,7 +32,7 @@ export const PaymentDialog = ({
   const navigate = useNavigate();
   const [currentVariant, setCurrentVariant] =
     useState<PaymentDialogVariant>("confirm");
-  const { clearCart, cartData } = useCart();
+  const { cartData, clearCart } = useCart();
   const { addOrder } = useOrder();
   const formatPrice = (price: number) => {
     return price.toLocaleString("ko-KR");
@@ -62,8 +62,8 @@ export const PaymentDialog = ({
     const orderInfo = {
       orderNumber: generatedOrderNumber,
       orderDate: new Date().toISOString(),
-      products: cartData.cart_product,
-      totalPrice: cartData.total_price,
+      products: cartData?.cart_product || [],
+      totalPrice: cartData?.total_price || 0,
       buyerInfo: getDummyBuyerInfo(),
       status: 'completed' as const
     };

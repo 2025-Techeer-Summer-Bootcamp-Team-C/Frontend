@@ -1,6 +1,4 @@
 import axiosInstance from "./axiosInstance";
-import { fetchProducts } from "./products";
-import type { ProductListResponse } from "../types/product";
 
 export interface FittingDetailResponse {
   message: string;

@@ -1,4 +1,4 @@
-import type { CartItem } from "./cart";
+import type { CartResponse } from "./cart";
 
 export type Order = {
   id: number;
@@ -29,7 +29,7 @@ export interface CompletedOrder {
   id: string;
   orderNumber: string;
   orderDate: string;
-  products: CartItem['cart_product'];
+  products: CartResponse['cart_product'];
   totalPrice: number;
   buyerInfo: BuyerInfo;
   status: 'completed' | 'shipping' | 'delivered';
