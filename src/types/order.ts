@@ -21,7 +21,10 @@ export type OrderItem = {
 export interface BuyerInfo {
   name: string;
   address: string;
+  address2?: string;
   postalCode: string;
+  region: string;
+  regionCode: string;
   phone: string;
 }
 
@@ -37,7 +40,11 @@ export interface CompletedOrder {
 
 export interface OrderContextType {
   orderHistory: CompletedOrder[];
+  currentBuyerInfo: BuyerInfo | null;
+  orderFormRef: React.RefObject<any>;
   addOrder: (order: Omit<CompletedOrder, 'id'>) => void;
   getOrders: () => CompletedOrder[];
   getLatestOrder: () => CompletedOrder | null;
+  setBuyerInfo: (info: BuyerInfo) => void;
+  submitOrderForm: () => void;
 }

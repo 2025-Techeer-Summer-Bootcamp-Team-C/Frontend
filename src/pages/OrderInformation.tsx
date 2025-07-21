@@ -1,6 +1,8 @@
 import { OrderInformationForm } from "@/components/forms/OrderInformationForm";
+import { useOrder } from "@/contexts/OrderContext";
 
 function OrderInformation() {
+  const { orderFormRef } = useOrder();
   return (
     <div className="min-h-screen bg-white">
 
@@ -27,7 +29,7 @@ function OrderInformation() {
             </div>
           </div>
 
-          <OrderInformationForm />
+          <OrderInformationForm ref={orderFormRef} />
         </div>
       </div>
     </div>

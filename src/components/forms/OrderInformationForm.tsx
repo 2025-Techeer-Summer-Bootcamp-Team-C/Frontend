@@ -3,8 +3,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { UnderlineInput } from "@/components/ui/UnderlineInput";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import DaumPostcode from "react-daum-postcode";
+import { useOrder } from "@/contexts/OrderContext";
+import { useNavigate } from "react-router-dom";
 
 // 2단 레이아웃에 맞춰 'region' 필드를 다시 추가합니다.
 const orderInformationSchema = z.object({
@@ -19,8 +21,14 @@ const orderInformationSchema = z.object({
 
 type OrderInformationFormData = z.infer<typeof orderInformationSchema>;
 
-function OrderInformationForm() {
+export interface OrderInformationFormRef {
+  submitForm: () => void;
+}
+
+const OrderInformationForm = forwardRef<OrderInformationFormRef>((_props, ref) => {
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+  const { setBuyerInfo } = useOrder();
+  const navigate = useNavigate();
   
   const {
     register,
@@ -31,7 +39,7 @@ function OrderInformationForm() {
     resolver: zodResolver(orderInformationSchema),
     // 이미지에 보이는 값으로 기본값을 설정합니다.
     defaultValues: {
-      name: "제승현",
+      name: "",
       postalCode: "",
       address: "",
       address2: "",
@@ -41,8 +49,28 @@ function OrderInformationForm() {
     },
   });
 
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      handleSubmit(onSubmit)();
+    }
+  }));
+
   const onSubmit = (data: OrderInformationFormData) => {
     console.log("Form submitted:", data);
+    
+    // OrderContext에 배송 정보 저장
+    setBuyerInfo({
+      name: data.name,
+      address: data.address,
+      address2: data.address2,
+      postalCode: data.postalCode,
+      region: data.region,
+      regionCode: data.regionCode,
+      phone: data.phone,
+    });
+    
+    // OrderSummary 페이지로 이동
+    navigate("/summary");
   };
 
   const handlePostcodeComplete = (data: any) => {
@@ -130,7 +158,7 @@ function OrderInformationForm() {
 
       {/* 우편번호 검색 모달 */}
       {isPostcodeOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-lg max-w-md w-full mx-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium">우편번호 검색</h3>
@@ -150,6 +178,8 @@ function OrderInformationForm() {
       )}
     </form>
   );
-}
+});
+
+OrderInformationForm.displayName = "OrderInformationForm";
 
 export { OrderInformationForm };

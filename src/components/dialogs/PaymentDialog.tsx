@@ -13,11 +13,18 @@ import { X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useOrder } from "@/contexts/OrderContext";
 import type { BuyerInfo } from "@/types/order";
+import type { CompletedOrder } from "@/types/order";
 
 interface PaymentDialogProps {
   children: React.ReactNode; // Dialog를 여는 버튼
   totalPrice?: number; // 'confirm' 상태일 때 필요한 가격
   orderNumber?: string; // 'complete' 상태일 때 필요한 주문번호
+  buyerInfo?: {
+    name: string;
+    phone: string;
+    address: string;
+    productName: string;
+  };
   onConfirm?: () => void; // '결재하기' 버튼 클릭 시 실행될 함수
   onClose?: () => void; // '확인' 버튼 클릭(완료 시) 또는 닫기 버튼 클릭 시 실행될 함수
 }
@@ -26,14 +33,16 @@ export const PaymentDialog = ({
   children,
   totalPrice = 0,
   orderNumber = "01234567890",
+  buyerInfo,
   onConfirm,
   onClose,
 }: PaymentDialogProps) => {
   const navigate = useNavigate();
   const [currentVariant, setCurrentVariant] =
     useState<PaymentDialogVariant>("confirm");
-  const { cartData, clearCart } = useCart();
-  const { addOrder } = useOrder();
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  const { cartData, clearCart, directPurchaseProduct } = useCart();
+  const { addOrder, currentBuyerInfo } = useOrder();
   const formatPrice = (price: number) => {
     return price.toLocaleString("ko-KR");
   };
@@ -52,22 +61,42 @@ export const PaymentDialog = ({
   const getDummyBuyerInfo = (): BuyerInfo => ({
     name: "홍길동",
     address: "서울특별시 강남구 테헤란로 123",
+    address2: "",
     postalCode: "06154",
+    region: "대한민국",
+    regionCode: "+82",
     phone: "010-1234-5678"
   });
 
   const handleConfirm = () => {
     // 1. 주문 정보 생성 및 저장 (clearCart 전에 실행)
     const generatedOrderNumber = generateOrderNumber();
+    
+    // 실제 구매 상품 정보 결정 (직접 구매 vs 장바구니)
+    const isDirectPurchase = !!directPurchaseProduct;
+    const actualProducts = isDirectPurchase 
+      ? [{
+          cart_product_id: directPurchaseProduct.product_id,
+          name: directPurchaseProduct.name,
+          image: directPurchaseProduct.image || '',
+          count: directPurchaseProduct.quantity,
+          price: directPurchaseProduct.price
+        }]
+      : cartData?.cart_product || [];
+    
+    const actualTotalPrice = isDirectPurchase
+      ? directPurchaseProduct.price * directPurchaseProduct.quantity
+      : cartData?.total_price || 0;
+    
     const orderInfo = {
       orderNumber: generatedOrderNumber,
       orderDate: new Date().toISOString(),
-      products: cartData?.cart_product || [],
-      totalPrice: cartData?.total_price || 0,
-      buyerInfo: getDummyBuyerInfo(),
+      products: actualProducts,
+      totalPrice: actualTotalPrice,
+      buyerInfo: currentBuyerInfo || getDummyBuyerInfo(),
       status: 'completed' as const
     };
-    addOrder(orderInfo);
+    addOrder(orderInfo as CompletedOrder);
     
     // 2. UI 상태 변경
     setCurrentVariant("complete");
@@ -138,22 +167,22 @@ export const PaymentDialog = ({
               <h2 className="mb-10 text-[15px] font-bold">구매자 정보</h2>
               <div className="flex flex-col gap-6 text-[15px]">
                 <div className="flex items-center gap-10">
-                  <div className="flex items-end gap-2 w-[400px]">
+                  <div className="flex items-end gap-5 w-[400px]">
                     <span>이름</span>
-                    <div className="flex-1 h-[0.5px] bg-black" />
+                    <span className="text-gray-600">{buyerInfo?.name || '-'}</span>
                   </div>
-                  <div className="flex items-end gap-2 w-full">
+                  <div className="flex items-end gap-5 w-full">
                     <span>전화번호</span>
-                    <div className="flex-1 h-[0.5px] bg-black" />
+                    <span className="text-gray-600">{buyerInfo?.phone || '-'}</span>
                   </div>
                 </div>
-                <div className="flex items-end gap-2">
+                <div className="flex items-end gap-5 w-full">
                   <span>주소</span>
-                  <div className="flex-1 h-[0.5px] bg-black" />
+                    <span className="text-gray-600">{buyerInfo?.address || '-'}</span>
                 </div>
-                <div className="flex items-end gap-1">
+                <div className="flex items-end gap-5 w-full">
                   <span>구매 상품명</span>
-                  <div className="flex-1 h-[0.5px] bg-black" />
+                    <span className="text-gray-600">{buyerInfo?.productName || '-'}</span>
                 </div>
               </div>
             </div>
@@ -195,6 +224,8 @@ export const PaymentDialog = ({
                 <input
                   type="checkbox"
                   id="terms"
+                  checked={isTermsAccepted}
+                  onChange={(e) => setIsTermsAccepted(e.target.checked)}
                   className="w-3 h-3 border border-black"
                 />
                 <label htmlFor="terms" className="text-xs font-medium">
@@ -207,7 +238,12 @@ export const PaymentDialog = ({
             <div className="flex justify-center">
               <button
                 onClick={handleConfirm}
-                className="bg-black text-white text-[15px] font-medium leading-6 h-10 px-6 flex items-center justify-center"
+                disabled={!isTermsAccepted}
+                className={`text-[15px] font-medium leading-6 h-10 px-6 flex items-center justify-center transition-colors ${
+                  isTermsAccepted 
+                    ? 'bg-black text-white hover:bg-gray-800' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
                 결제하기
               </button>

@@ -148,10 +148,10 @@ const Home = () => {
       </div>
 
       {/* 피팅하기 플로팅 버튼 */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed flex flex-col gap-1 bottom-6 right-6 z-50">
         {/* 진행 상태 메시지 */}
         {fittingProgress && (
-          <div className="mb-2 bg-white text-black px-4 py-2 rounded-lg shadow-lg text-sm max-w-xs">
+          <div className="mb-2 w-[240px] bg-white text-black px-4 py-2 rounded-lg shadow-lg text-sm">
             {fittingProgress}
           </div>
         )}
@@ -159,7 +159,7 @@ const Home = () => {
         {/* 피팅 모드 토글 버튼 (피팅 완료 후) */}
         {showFitting && !isFittingLoading && (
           <button
-            className="mb-2 w-full bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition-colors font-inter text-sm"
+            className="mb-2 w-[240px] bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition-colors font-inter text-sm"
             onClick={() => setShowFitting(false)}
           >
             원본 상품 보기
@@ -168,7 +168,7 @@ const Home = () => {
         
         {/* 메인 피팅 버튼 */}
         <button
-          className="w-full bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors font-inter text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-[240px] bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors font-inter text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleFittingClick}
           disabled={isFittingLoading}
         >

@@ -79,7 +79,7 @@ function OrderHistory() {
           <div className="w-[946px] flex flex-col gap-[59px]">
             {/* Header Row */}
             <div className="flex items-center">
-              <span className="text-black text-[20px] font-medium font-inter leading-[30px] w-[120px]">
+              <span className="text-black text-[20px] font-medium font-inter leading-[30px] w-[240px]">
                 날짜
               </span>
               <span className="text-black text-[20px] font-medium font-inter leading-[30px] w-[400px]">
@@ -92,7 +92,7 @@ function OrderHistory() {
 
             {/* Data Row */}
             <div className="flex items-center">
-              <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[120px]">
+              <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[240px]">
                 {formatDate(latestOrder.orderDate)}
               </span>
               <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[400px]">
