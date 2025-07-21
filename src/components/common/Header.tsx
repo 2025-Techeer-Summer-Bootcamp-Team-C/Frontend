@@ -52,7 +52,7 @@ const Header = ({
     };
   }, []);
   const { cartData } = useCart();
-  const cartCount = cartData.cart_product.length;
+  const cartCount = cartData?.cart_product?.length || 0;
   const { mutate: logoutMutation } = useLogoutMutation();
 
   useEffect(() => {
