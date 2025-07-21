@@ -59,7 +59,7 @@ const Home = () => {
           
           if (fittingResults.products && fittingResults.products.length > 0) {
             setShowFitting(true);
-            refetch(); // 훅 데이터도 업데이트
+            refetch();
             setFittingProgress(`피팅 결과 ${fittingResults.products.length}개를 불러왔습니다.`);
           } else {
             setFittingProgress("피팅 결과가 없습니다.");
