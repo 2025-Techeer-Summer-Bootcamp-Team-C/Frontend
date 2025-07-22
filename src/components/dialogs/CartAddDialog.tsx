@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import ProductCard from "@/components/common/ProductCard";
-import type { Product, ProductDetail } from "@/types/product";
+import type { ProductDetail } from "@/types/product";
 import { useProductsQuery } from "@/hooks/useProducts";
 
 interface CartAddDialogProps {
