@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import video1 from "../assets/video1.mp4";
+import video2 from "../assets/video2.mp4";
+import video3 from "../assets/video3.mp4";
 
 interface VideoSectionProps {
   onVolumeChange?: (volume: number) => void;
@@ -10,9 +13,9 @@ const VideoSection = ({ onVolumeChange }: VideoSectionProps) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   
   const videos = [
-    "/src/assets/video1.mp4",
-    "/src/assets/video2.mp4",
-    "/src/assets/video3.mp4"
+    video1,
+    video2,
+    video3
   ];
 
   const handleVideoEnded = () => {
