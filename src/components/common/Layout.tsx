@@ -1,9 +1,12 @@
 import Header from "./Header";
 import Footer from "./Footer";
-import React from "react";
+import React, { useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { getLayoutConfig } from "@/config/layoutConfig";
+import VideoSection from "@/components/VideoSection";
+import Audio from "@/components/Audio";
+import OnBoarding from "@/components/OnBoarding";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,6 +16,7 @@ interface LayoutProps {
 const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
   const location = useLocation();
   const { totalPrice: cartTotalPrice, directPurchaseProduct } = useCart();
+  const audioRef = useRef<{ setVolume: (volume: number) => void }>(null);
 
   // 개발 단계에서 레이아웃 설정 검증
   // useEffect(() => {
@@ -58,8 +62,21 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
 
   const totalPrice = getTotalPrice();
 
+  const isHomePage = location.pathname === "/";
+
+  const handleVolumeChange = (volume: number) => {
+    audioRef.current?.setVolume(volume);
+  };
+
   return (
     <div>
+      {isHomePage && (
+        <>
+          <Audio ref={audioRef} />
+          <VideoSection onVolumeChange={handleVolumeChange} />
+          <OnBoarding />
+        </>
+      )}
       <Header
         showSearch={layoutConfig.showSearch}
         showUserActions={layoutConfig.showUserActions}

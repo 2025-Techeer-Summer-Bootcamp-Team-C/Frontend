@@ -11,7 +11,6 @@ const VideoSection = ({ onVolumeChange }: VideoSectionProps) => {
   const [currentVideo, setCurrentVideo] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
-  
   const videos = [
     video1,
     video2,
@@ -72,6 +71,13 @@ const VideoSection = ({ onVolumeChange }: VideoSectionProps) => {
       >
         <source src={videos[currentVideo]} type="video/mp4" />
       </video>
+      <div className="absolute top-0 left-0 w-full h-[800px] bg-transparent">
+        <div className="flex items-center justify-center h-full">
+          <div className={`text-black text-[200px] font-butler`}>
+            Morph
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

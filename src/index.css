@@ -5,6 +5,7 @@
 
 @theme {
   --color-hero-background: #d2aaa8;
+  --font-butler: "butler", sans-serif;
 }
 
 @theme inline {
@@ -132,4 +133,11 @@
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+@font-face {
+  font-family: "butler";
+  src: url("./fonts/Butler-Black.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
 }
