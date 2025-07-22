@@ -5,6 +5,7 @@ import { useFilter } from "@/contexts/FilterContext";
 import type { HeaderVariant } from "@/types/variants";
 import { useCart } from "@/contexts/CartContext";
 import { useLogoutMutation } from "@/hooks/useAuth";
+import { useHeaderSticky } from "@/hooks/useHeaderSticky";
 
 interface HeaderProps {
   variant?: HeaderVariant;
@@ -30,7 +31,7 @@ const Header = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
-  const [isSticky, setIsSticky] = useState(false);
+  const isSticky = useHeaderSticky();
 
   // 로그인 상태 체크
   useEffect(() => {
@@ -63,13 +64,7 @@ const Header = ({
       const scrollDirection = currentScrollY > lastScrollY ? 1 : -1;
       const isHomePage = location.pathname === "/";
 
-      // 홈페이지에서는 비디오 섹션(800px) 높이를 기준으로 sticky 여부 결정
       if (isHomePage) {
-        const videoSectionHeight = 800;
-        const onBoardingHeight = 1000;
-        const stickyThreshold = videoSectionHeight + onBoardingHeight;
-        setIsSticky(currentScrollY >= stickyThreshold);
-
         // 비디오 섹션 내에서의 스크롤 진행도 계산
         const maxScrollDistance = 100;
         const rawProgress = Math.min(currentScrollY / maxScrollDistance, 1);
@@ -83,8 +78,7 @@ const Header = ({
 
         setScrollProgress(adjustedProgress);
       } else {
-        // 다른 페이지에서는 항상 sticky
-        setIsSticky(true);
+        // 다른 페이지에서는 항상 메뉴 숨김
         setScrollProgress(1);
       }
 

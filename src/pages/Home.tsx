@@ -8,6 +8,7 @@ import { useProductsQuery } from "@/hooks/useProducts";
 import { startFittingDetail } from "@/api/fittings";
 import { fetchProducts } from "@/api/products";
 import { useFittingResultsPollingMutation } from "@/hooks/useFittings";
+import { useHeaderSticky } from "@/hooks/useHeaderSticky";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Home = () => {
   const { showFitting, setShowFitting } = useFittingContext();
   const [isFittingLoading, setIsFittingLoading] = useState(false);
   const [fittingProgress, setFittingProgress] = useState<string>("");
+  const isSticky = useHeaderSticky();
   // API calls commented out for dummy data testing
   const { data: products } = useProductsQuery(showFitting);
   // const { data: categories } = useCategoriesQuery();
@@ -122,7 +124,7 @@ const Home = () => {
   return (
     <div className="w-full bg-white">
       {/* Main Content */}
-      <div className="flex justify-center pt-[200px] md:pt-[260px]">
+      <div className={`flex justify-center ${isSticky ? 'pt-[200px] md:pt-[260px]' : ''}`}>
         <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">
           {/* Product Grid */}
           <div className="flex flex-col gap-[60px] md:gap-[80px]">
