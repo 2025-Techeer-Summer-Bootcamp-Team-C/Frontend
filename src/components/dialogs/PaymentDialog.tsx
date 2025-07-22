@@ -164,7 +164,7 @@ export const PaymentDialog = ({
 
             {/* Buyer Information */}
             <div className="mb-9">
-              <h2 className="mb-10 text-[15px] font-bold">구매자 정보</h2>
+              <h2 className="mb-6 text-[15px] font-bold">구매자 정보</h2>
               <div className="flex flex-col gap-6 text-[15px]">
                 <div className="flex items-center gap-10">
                   <div className="flex items-end gap-5 w-[400px]">
