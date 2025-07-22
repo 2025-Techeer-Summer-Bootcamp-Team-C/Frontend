@@ -121,12 +121,12 @@ const Header = ({
       className={`${
         isHomePage && !isSticky 
           ? "relative bg-transparent" 
-          : "fixed top-0 left-0 bg-white/70"
+          : "fixed top-0 left-0 bg-transparent"
       } w-full z-50 hover:bg-white/70 group transition-all duration-300`}
     >
       {/* Main Header */}
       <div className="flex items-center justify-center py-5">
-        <div className="w-full max-w-[1329px] px-4 lg:px-8 xl:px-0">
+        <div className="w-full max-w-[1440px] px-4 lg:px-8 xl:px-0">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center">
