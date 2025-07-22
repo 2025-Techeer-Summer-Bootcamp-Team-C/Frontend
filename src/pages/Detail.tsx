@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import CartAddDialog from "@/components/dialogs/CartAddDialog";
 import { useCart } from "@/contexts/CartContext";
 import { useFittingContext } from "@/contexts/FittingContext";
-import type { Product } from "@/types/product";
+import type { Product, ProductDetail } from "@/types/product";
 import { useProductDetailQuery } from "@/hooks/useProducts";
 import { useProductsQuery } from "@/hooks/useProducts";
 import { useGenerateFittingVideoMutation } from "@/hooks/useFittings";
@@ -337,7 +337,7 @@ const Detail = () => {
       <CartAddDialog
         isOpen={isCartDialogOpen}
         onClose={() => setIsCartDialogOpen(false)}
-        product={currentProduct as unknown as Product}
+        product={currentProduct as unknown as ProductDetail}
       />
     </div>
   );

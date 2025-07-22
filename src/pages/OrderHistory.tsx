@@ -112,10 +112,10 @@ function OrderHistory() {
                   이름: {latestOrder.buyerInfo.name}
                 </span>
                 <span className="text-black text-[17px] font-medium font-inter leading-[25px]">
-                  주소: {latestOrder.buyerInfo.address}
+                  우편번호: {latestOrder.buyerInfo.postalCode}
                 </span>
                 <span className="text-black text-[17px] font-medium font-inter leading-[25px]">
-                  우편번호: {latestOrder.buyerInfo.postalCode}
+                  주소: {latestOrder.buyerInfo.address}
                 </span>
               </div>
 
