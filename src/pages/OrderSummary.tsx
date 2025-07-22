@@ -47,6 +47,14 @@ function OrderSummary() {
 
           {/* 상품 이미지들 */}
           <div className="flex gap-10 mb-16">
+            {isDirectPurchase && (
+              <img
+                key={directPurchaseProduct.product_id}
+                className="w-[118px] h-[178px] bg-gray-200 rounded"
+                src={directPurchaseProduct.image}
+                alt={directPurchaseProduct.name}
+              />
+            )}
             {cartData?.cart_product.map((product) => (
               <img
                 key={product.cart_product_id}
