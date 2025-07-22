@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LoginDialog from "@/components/dialogs/LoginDialog";
 import { useFilter } from "@/contexts/FilterContext";
 import type { HeaderVariant } from "@/types/variants";
@@ -19,6 +19,7 @@ const Header = ({
   showNavigation,
 }: HeaderProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     inputValue,
     setInputValue,
@@ -29,6 +30,7 @@ const Header = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLogin, setIsLogin] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
 
   // 로그인 상태 체크
   useEffect(() => {
@@ -59,33 +61,47 @@ const Header = ({
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const scrollDirection = currentScrollY > lastScrollY ? 1 : -1;
+      const isHomePage = location.pathname === "/";
 
-      // 스크롤 진행도 계산 (0~200px 구간에서 0~1로 매핑)
-      const maxScrollDistance = 100;
-      const rawProgress = Math.min(currentScrollY / maxScrollDistance, 1);
+      // 홈페이지에서는 비디오 섹션(800px) 높이를 기준으로 sticky 여부 결정
+      if (isHomePage) {
+        const videoSectionHeight = 800;
+        const onBoardingHeight = 1000;
+        const stickyThreshold = videoSectionHeight + onBoardingHeight;
+        setIsSticky(currentScrollY >= stickyThreshold);
 
-      // 스크롤 방향에 따른 가속도 적용(지금은 그대로임)
-      let adjustedProgress;
-      if (scrollDirection > 0) {
-        // 아래로 스크롤 시
-        adjustedProgress = Math.min(rawProgress * 1, 1);
+        // 비디오 섹션 내에서의 스크롤 진행도 계산
+        const maxScrollDistance = 100;
+        const rawProgress = Math.min(currentScrollY / maxScrollDistance, 1);
+
+        let adjustedProgress;
+        if (scrollDirection > 0) {
+          adjustedProgress = Math.min(rawProgress * 1, 1);
+        } else {
+          adjustedProgress = Math.max(rawProgress * 1, 0);
+        }
+
+        setScrollProgress(adjustedProgress);
       } else {
-        // 위로 스크롤 시
-        adjustedProgress = Math.max(rawProgress * 1, 0);
+        // 다른 페이지에서는 항상 sticky
+        setIsSticky(true);
+        setScrollProgress(1);
       }
 
-      setScrollProgress(adjustedProgress);
       setLastScrollY(currentScrollY);
     };
 
     // 스크롤 이벤트 리스너 등록
     window.addEventListener("scroll", handleScroll, { passive: true });
 
+    // 초기 실행
+    handleScroll();
+
     // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollY]);
+  }, [lastScrollY, location.pathname]);
 
   const handleLogoClick = () => {
     navigate("/");
@@ -104,8 +120,16 @@ const Header = ({
 
   const filterItems = ["보기", "2", "3", "필터"];
 
+  const isHomePage = location.pathname === "/";
+
   return (
-    <header className="fixed top-0 left-0 w-full bg-transparent z-50 hover:bg-white/70 group">
+    <header 
+      className={`${
+        isHomePage && !isSticky 
+          ? "relative bg-transparent" 
+          : "fixed top-0 left-0 bg-white/70"
+      } w-full z-50 hover:bg-white/70 group transition-all duration-300`}
+    >
       {/* Main Header */}
       <div className="flex items-center justify-center py-5">
         <div className="w-full max-w-[1329px] px-4 lg:px-8 xl:px-0">
@@ -116,8 +140,8 @@ const Header = ({
                 className="w-[200px] md:w-[262px] h-[80px] md:h-[109px] flex items-center justify-center cursor-pointer"
                 onClick={handleLogoClick}
               >
-                <span className="text-black text-[32px] md:text-[50px] font-inter leading-none">
-                  Techeer Fashion
+                <span className="text-black text-[32px] md:text-[50px] leading-none font-butler">
+                  Morph
                 </span>
               </div>
             </div>
