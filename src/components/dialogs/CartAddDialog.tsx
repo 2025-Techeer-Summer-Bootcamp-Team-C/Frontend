@@ -1,17 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import ProductCard from "@/components/common/ProductCard";
-import { productDummy } from "@/dummys/productDummy";
-import type { Product } from "@/types/product";
+import type { Product, ProductDetail } from "@/types/product";
+import { useProductsQuery } from "@/hooks/useProducts";
 
 interface CartAddDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  product: Product;
+  product: ProductDetail;
 }
 
 const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
   const navigate = useNavigate();
+
+  const { data: products } = useProductsQuery();
 
   const handleCartView = () => {
     navigate("/cart");
@@ -38,7 +40,7 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
             <div className="pl-[44px] pr-[20px] mt-[76px]">
               <div className="w-[134.4px] h-[201.6px] bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src=""
+                  src={product.model_image}
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
@@ -46,13 +48,16 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
             </div>
 
             {/* Product Info */}
-            <div className="h-full flex items-center pb-20">
+            <div className="h-full flex items-start pt-[76px]">
               <div className="flex flex-col gap-[7px]">
-                <p className="text-black text-[12px] font-inter font-medium leading-[18px] tracking-[-0.013em]">
+                <p className="text-black text-[14px] font-inter font-bold leading-[18px] tracking-[-0.013em]">
                   {product.name}
                 </p>
                 <p className="text-black text-[12px] font-inter font-medium leading-[18px] tracking-[-0.013em]">
-                  사이즈
+                  {product.content}
+                </p>
+                <p className="text-black text-[12px] font-inter font-medium leading-[18px] tracking-[-0.013em]">
+                  {product.price}원 
                 </p>
               </div>
             </div>
@@ -78,7 +83,7 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
 
             {/* Products Grid */}
             <div className="grid grid-cols-3 gap-[26px] w-[455.2px]">
-              {productDummy.slice(0, 6).map((item) => (
+              {products?.products.filter((item) => item.product_id !== product.product_id).slice(0, 6).map((item) => (
                 <div
                   key={item.product_id}
                   className="[&>div]:w-[134.4px] [&>div>div:first-child]:!w-[134.4px] [&>div>div:first-child]:!h-[201.6px]"
