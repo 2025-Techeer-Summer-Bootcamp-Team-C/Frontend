@@ -149,7 +149,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 피팅하기 플로팅 버튼 */}
+      {/* 피팅하기 플로팅 버튼 - 동영상/온보딩 섹션이 z-index로 가림 */}
       <div className="fixed flex flex-col gap-1 bottom-6 right-6 z-50">
         {/* 진행 상태 메시지 */}
         {fittingProgress && (

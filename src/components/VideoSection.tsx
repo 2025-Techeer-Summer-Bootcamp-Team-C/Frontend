@@ -61,7 +61,7 @@ const VideoSection = ({ onVolumeChange }: VideoSectionProps) => {
   }, [onVolumeChange]);
 
   return (
-    <div ref={sectionRef}>
+    <div ref={sectionRef} className="relative z-[60]">
       <video 
         ref={videoRef}
         autoPlay 
