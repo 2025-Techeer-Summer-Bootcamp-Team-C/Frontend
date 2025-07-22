@@ -65,7 +65,7 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
         showUserActions={layoutConfig.showUserActions}
         showNavigation={layoutConfig.showNavigation}
       />
-      <main className="mb-16">{children}</main>
+      <main className="mb-50">{children}</main>
       <Footer variant={finalFooterVariant} totalPrice={totalPrice} />
     </div>
   );
