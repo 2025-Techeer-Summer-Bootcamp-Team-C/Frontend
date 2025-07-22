@@ -2,12 +2,14 @@ import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/common/ProductCard";
 import { useFilter } from "@/contexts/FilterContext";
 import { useFittingContext } from "@/contexts/FittingContext";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 // API calls commented out for dummy data testing
 import { useProductsQuery } from "@/hooks/useProducts";
 import { startFittingDetail } from "@/api/fittings";
 import { fetchProducts } from "@/api/products";
 import { useFittingResultsPollingMutation } from "@/hooks/useFittings";
+import VideoSection from "@/components/VideoSection";
+import Audio from "@/components/Audio";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ const Home = () => {
   const { showFitting, setShowFitting } = useFittingContext();
   const [isFittingLoading, setIsFittingLoading] = useState(false);
   const [fittingProgress, setFittingProgress] = useState<string>("");
+  const audioRef = useRef<{ setVolume: (volume: number) => void }>(null);
   // API calls commented out for dummy data testing
   const { data: products } = useProductsQuery(showFitting);
   // const { data: categories } = useCategoriesQuery();
@@ -119,8 +122,14 @@ const Home = () => {
     return rows;
   }, [filteredProducts]);
 
+  const handleVolumeChange = (volume: number) => {
+    audioRef.current?.setVolume(volume);
+  };
+
   return (
     <div className="w-full bg-white">
+      <Audio ref={audioRef} />
+      <VideoSection onVolumeChange={handleVolumeChange} />
       {/* Main Content */}
       <div className="flex justify-center pt-[200px] md:pt-[260px]">
         <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">
