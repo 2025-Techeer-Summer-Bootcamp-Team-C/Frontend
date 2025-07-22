@@ -71,7 +71,7 @@ export const DYNAMIC_LAYOUT_CONFIG: RoutePattern[] = [
     config: {
       header: "detail",
       footer: "default",
-      showSearch: true,
+      showSearch: false,
       showUserActions: true,
       showNavigation: false,
       title: "상품 상세",
