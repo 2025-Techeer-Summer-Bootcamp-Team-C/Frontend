@@ -13,6 +13,7 @@ import { FilterProvider } from "./contexts/FilterContext";
 import { OrderProvider } from "./contexts/OrderContext";
 import { FittingProvider } from "./contexts/FittingContext";
 import { Analytics } from "@vercel/analytics/react";
+import MyPage from "./pages/MyPage";
 
 function App() {
   const queryClient = new QueryClient();
@@ -25,14 +26,15 @@ function App() {
           <CartProvider>
             <OrderProvider>
               <Layout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/product/:id" element={<Detail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/order" element={<OrderInformation />} />
-                <Route path="/summary" element={<OrderSummary />} />
-                <Route path="/history" element={<OrderHistory />} />
-              </Routes>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/product/:id" element={<Detail />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/order" element={<OrderInformation />} />
+                  <Route path="/summary" element={<OrderSummary />} />
+                  <Route path="/history" element={<OrderHistory />} />
+                  <Route path="/mypage" element={<MyPage />} />
+                </Routes>
               </Layout>
             </OrderProvider>
           </CartProvider>
