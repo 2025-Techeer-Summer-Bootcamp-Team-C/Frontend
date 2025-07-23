@@ -62,6 +62,15 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     showNavigation: false,
     title: "주문 내역",
   },
+  "/mypage": {
+    header: "default",
+    footer: "default",
+    showSearch: false,
+    showUserActions: true,
+    requiresAuth: true,
+    showNavigation: false,
+    title: "마이페이지",
+  },
 } as const;
 
 // 동적 경로 설정 (패턴 매칭)

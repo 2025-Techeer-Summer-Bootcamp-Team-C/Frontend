@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProductCard from "@/components/common/ProductCard";
 import { useNavigate } from "react-router-dom";
 import CartAddDialog from "@/components/dialogs/CartAddDialog";
@@ -21,15 +21,19 @@ const Detail = () => {
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const { data: productList } = useProductsQuery(showFitting);
-  const { data: currentProduct } = useProductDetailQuery(Number(id), showFitting);
-  const { mutate: generateVideo, data: videoData, isPending: isVideoLoading } = useGenerateFittingVideoMutation();
+  const { data: currentProduct } = useProductDetailQuery(
+    Number(id),
+    showFitting
+  );
+  const {
+    mutate: generateVideo,
+    data: videoData,
+    isPending: isVideoLoading,
+  } = useGenerateFittingVideoMutation();
 
-  const image = productList?.products.find(product => product.product_id === Number(id))?.image;
-
-  // 컴포넌트 마운트 시 스크롤을 맨 위로 이동
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [id]);
+  const image = productList?.products.find(
+    (product) => product.product_id === Number(id)
+  )?.image;
 
   const handlePurchaseClick = () => {
     if (showQuantitySelector) {
@@ -82,13 +86,16 @@ const Detail = () => {
             <div className="flex-1">
               <div className="flex flex-col gap-4 items-end">
                 {/* Main Product Image */}
-                <div 
+                <div
                   className="relative w-[532px] h-[800px] bg-gray-200 overflow-hidden group cursor-pointer"
                   onMouseEnter={() => setIsHovering(true)}
                   onMouseLeave={() => setIsHovering(false)}
                 >
                   {/* 기본 이미지 또는 비디오 */}
-                  {showFitting && isHovering && videoData?.status === "completed" && videoData.video_url ? (
+                  {showFitting &&
+                  isHovering &&
+                  videoData?.status === "completed" &&
+                  videoData.video_url ? (
                     <video
                       src={videoData.video_url}
                       autoPlay
@@ -99,32 +106,39 @@ const Detail = () => {
                   ) : (
                     <img
                       src={image}
-                      alt={`${currentProduct.name}${showFitting ? ' - 피팅 결과' : ' - 모델 착용'}`}
-                      className={`w-full h-full object-cover transition-all duration-300 ${showFitting ? 'group-hover:blur-sm group-hover:brightness-75' : ''}`}
+                      alt={`${currentProduct.name}${
+                        showFitting ? " - 피팅 결과" : " - 모델 착용"
+                      }`}
+                      className={`w-full h-full object-cover transition-all duration-300 ${
+                        showFitting
+                          ? "group-hover:blur-sm group-hover:brightness-75"
+                          : ""
+                      }`}
                     />
                   )}
                   {/* 호버 시 나타나는 영상보기 버튼 - showFitting이 true일 때만 표시 */}
-                  {showFitting && (!videoData || videoData.status !== "completed") && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button 
-                        onClick={handleVideoGenerate}
-                        disabled={isVideoLoading}
-                        className="bg-white/90 hover:bg-white text-black font-inter font-medium text-[14px] px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isVideoLoading ? (
-                          <>
-                            <Loader2 size={16} className="animate-spin" />
-                            로딩중...
-                          </>
-                        ) : (
-                          <>
-                            <Play size={16} className="fill-current" />
-                            영상보기
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  )}
+                  {showFitting &&
+                    (!videoData || videoData.status !== "completed") && (
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button
+                          onClick={handleVideoGenerate}
+                          disabled={isVideoLoading}
+                          className="bg-white/90 hover:bg-white text-black font-inter font-medium text-[14px] px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isVideoLoading ? (
+                            <>
+                              <Loader2 size={16} className="animate-spin" />
+                              로딩중...
+                            </>
+                          ) : (
+                            <>
+                              <Play size={16} className="fill-current" />
+                              영상보기
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
@@ -318,16 +332,19 @@ const Detail = () => {
 
             {/* Related Products Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center">
-              {productList?.products.filter(product => product.product_id !== Number(id)).slice(0, 4).map((product) => (
-                <ProductCard
-                  key={product.product_id}
-                  variant="viewed"
-                  product={product}
-                  onProductClick={() => {
-                    navigate(`/product/${product.product_id}`);
-                  }}
-                />
-              ))}
+              {productList?.products
+                .filter((product) => product.product_id !== Number(id))
+                .slice(0, 4)
+                .map((product) => (
+                  <ProductCard
+                    key={product.product_id}
+                    variant="viewed"
+                    product={product}
+                    onProductClick={() => {
+                      navigate(`/product/${product.product_id}`);
+                    }}
+                  />
+                ))}
             </div>
           </div>
         </div>

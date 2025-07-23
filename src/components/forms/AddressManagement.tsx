@@ -69,7 +69,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<AddressFormData>({
-    resolver: zodResolver(addressSchema),
+    resolver: zodResolver(addressSchema) as any,
     defaultValues: {
       name: "",
       recipient: "",
@@ -121,14 +121,16 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
     if (!confirm("이 주소를 삭제하시겠습니까?")) return;
 
     try {
-      const updatedAddresses = addresses.filter(addr => addr.id !== addressId);
-      
+      const updatedAddresses = addresses.filter(
+        (addr) => addr.id !== addressId
+      );
+
       // 기본 주소를 삭제한 경우, 첫 번째 주소를 기본으로 설정
-      const deletedAddress = addresses.find(addr => addr.id === addressId);
+      const deletedAddress = addresses.find((addr) => addr.id === addressId);
       if (deletedAddress?.isDefault && updatedAddresses.length > 0) {
         updatedAddresses[0].isDefault = true;
       }
-      
+
       setAddresses(updatedAddresses);
     } catch (error) {
       console.error("주소 삭제 실패:", error);
@@ -138,11 +140,11 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
 
   const handleSetDefault = async (addressId: string) => {
     try {
-      const updatedAddresses = addresses.map(addr => ({
+      const updatedAddresses = addresses.map((addr) => ({
         ...addr,
         isDefault: addr.id === addressId,
       }));
-      
+
       setAddresses(updatedAddresses);
     } catch (error) {
       console.error("기본 주소 설정 실패:", error);
@@ -153,20 +155,22 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
   const onSubmit = async (data: AddressFormData) => {
     try {
       setIsSubmitting(true);
-      
+
       let updatedAddresses = [...addresses];
-      
+
       // 기본 주소로 설정하는 경우 다른 주소들의 기본 설정 해제
       if (data.isDefault) {
-        updatedAddresses = updatedAddresses.map(addr => ({
+        updatedAddresses = updatedAddresses.map((addr) => ({
           ...addr,
           isDefault: false,
         }));
       }
-      
+
       if (editingAddress) {
         // 수정
-        const index = updatedAddresses.findIndex(addr => addr.id === editingAddress.id);
+        const index = updatedAddresses.findIndex(
+          (addr) => addr.id === editingAddress.id
+        );
         if (index !== -1) {
           updatedAddresses[index] = { ...data, id: editingAddress.id };
         }
@@ -178,14 +182,13 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
         };
         updatedAddresses.push(newAddress);
       }
-      
+
       setAddresses(updatedAddresses);
       setIsAdding(false);
       setEditingAddress(null);
-      
+
       // Mock delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
       console.error("주소 저장 실패:", error);
       alert("주소 저장에 실패했습니다.");
@@ -204,9 +207,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>
-            {editingAddress ? "주소 수정" : "새 주소 추가"}
-          </CardTitle>
+          <CardTitle>{editingAddress ? "주소 수정" : "새 주소 추가"}</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -225,7 +226,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="recipient"
@@ -240,7 +241,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                   )}
                 />
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -255,7 +256,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="phone"
@@ -270,7 +271,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                   )}
                 />
               </div>
-              
+
               <FormField
                 control={form.control}
                 name="address1"
@@ -284,7 +285,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="address2"
@@ -298,7 +299,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="isDefault"
@@ -316,18 +317,22 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                   </FormItem>
                 )}
               />
-              
+
               <div className="flex justify-end space-x-2 pt-4">
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={handleCancel}
                   disabled={isSubmitting}
                 >
                   취소
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "저장 중..." : editingAddress ? "수정" : "추가"}
+                  {isSubmitting
+                    ? "저장 중..."
+                    : editingAddress
+                    ? "수정"
+                    : "추가"}
                 </Button>
               </div>
             </form>
@@ -367,7 +372,9 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-700 mb-1">{address.recipient}</p>
+                    <p className="text-sm text-gray-700 mb-1">
+                      {address.recipient}
+                    </p>
                     <p className="text-sm text-gray-600 mb-1">
                       {address.address1} {address.address2}
                     </p>
@@ -376,23 +383,23 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
                     </p>
                   </div>
                   <div className="flex flex-col space-y-2 ml-4">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => handleEdit(address)}
                     >
                       수정
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => handleDelete(address.id)}
                     >
                       삭제
                     </Button>
                     {!address.isDefault && (
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleSetDefault(address.id)}
                       >
@@ -405,7 +412,7 @@ const AddressManagement = ({ onClose }: AddressManagementProps) => {
             ))}
           </div>
         )}
-        
+
         <div className="mt-6 pt-4 border-t text-right">
           <Button variant="outline" onClick={onClose}>
             닫기

@@ -48,10 +48,7 @@ function Cart() {
                     className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[85px] justify-items-center"
                   >
                     {row?.map((item) => (
-                      <CartProductCard
-                        key={item.product_id}
-                        product={item}
-                      />
+                      <CartProductCard key={item.product_id} product={item} />
                     ))}
                   </div>
                 ));

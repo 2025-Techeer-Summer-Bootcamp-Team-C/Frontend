@@ -149,7 +149,7 @@ yarn add @mui/material @emotion/react @emotion/styled
 
 ### 컴포넌트 개발 우선순위
 
-1. **외부 라이브러리 조사**: 디자인에 적합한 기존 컴포넌트가 있는지 먼저 조사
+1. **외부 라이브러리 조사**: 디자인에 적합한 기존 컴포넌트가 있는지 먼저 조사(magic mcp 사용)
 2. **라이브러리 설치 및 적용**: 적합한 라이브러리가 있으면 즉시 설치하여 사용
 3. **커스터마이징**: 외부 라이브러리 컴포넌트를 디자인에 맞게 수정
 4. **커스텀 개발**: 적합한 외부 라이브러리가 없을 경우에만 새로 개발
@@ -276,3 +276,7 @@ npx shadcn@latest add [component-name]
 - **아이콘 라이브러리 우선**: SVG 파일 직접 사용 금지, 라이브러리 아이콘 활용
 - **접근성 고려**: 모든 사용자가 사용할 수 있도록 구현
 - **성능 최적화**: 빠른 로딩과 부드러운 인터랙션 보장
+
+## Task Master AI Instructions
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md

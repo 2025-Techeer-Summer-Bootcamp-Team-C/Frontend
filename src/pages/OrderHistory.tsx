@@ -19,7 +19,7 @@ function OrderHistory() {
     return date.toLocaleDateString("ko-KR", {
       year: "numeric",
       month: "2-digit",
-      day: "2-digit"
+      day: "2-digit",
     });
   };
 
@@ -97,7 +97,8 @@ function OrderHistory() {
               </span>
               <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[400px]">
                 {firstProduct?.name}
-                {latestOrder.products.length > 1 && ` 외 ${latestOrder.products.length - 1}개`}
+                {latestOrder.products.length > 1 &&
+                  ` 외 ${latestOrder.products.length - 1}개`}
               </span>
               <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[100px]">
                 {productCount}개
