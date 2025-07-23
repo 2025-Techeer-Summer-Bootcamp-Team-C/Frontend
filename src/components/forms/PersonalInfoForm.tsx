@@ -16,12 +16,15 @@ import { useState } from "react";
 
 const personalInfoSchema = z.object({
   name: z.string().min(2, { message: "이름은 2글자 이상이어야 합니다." }),
-  username: z.string().min(3, { message: "사용자명은 3글자 이상이어야 합니다." }).regex(/^[a-zA-Z0-9_]+$/, {
-    message: "사용자명은 영문, 숫자, 밑줄(_)만 사용 가능합니다."
-  }),
+  username: z
+    .string()
+    .min(3, { message: "사용자명은 3글자 이상이어야 합니다." })
+    .regex(/^[a-zA-Z0-9_]+$/, {
+      message: "사용자명은 영문, 숫자, 밑줄(_)만 사용 가능합니다.",
+    }),
   email: z.string().email({ message: "유효한 이메일 주소를 입력해주세요." }),
-  phone: z.string().regex(/^010-\d{4}-\d{4}$/, {
-    message: "전화번호 형식은 010-0000-0000 이어야 합니다.",
+  phone: z.string().regex(/^\d{10,11}$/, {
+    message: "전화번호는 숫자로만 이루어져야 합니다.",
   }),
 });
 
@@ -38,13 +41,13 @@ interface PersonalInfoFormProps {
   onSubmit?: (data: PersonalInfoFormData) => Promise<void>;
 }
 
-const PersonalInfoForm = ({ 
-  initialData = { name: "", username: "", email: "", phone: "" }, 
+const PersonalInfoForm = ({
+  initialData = { name: "", username: "", email: "", phone: "" },
   onClose,
-  onSubmit
+  onSubmit,
 }: PersonalInfoFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const form = useForm<PersonalInfoFormData>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
@@ -58,15 +61,15 @@ const PersonalInfoForm = ({
   const handleSubmit = async (data: PersonalInfoFormData) => {
     try {
       setIsSubmitting(true);
-      
+
       if (onSubmit) {
         await onSubmit(data);
       } else {
         // Mock 업데이트 - 실제로는 auth context나 API 호출
         console.log("개인정보 업데이트:", data);
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Mock delay
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Mock delay
       }
-      
+
       onClose();
     } catch (error) {
       console.error("개인정보 업데이트 실패:", error);
@@ -84,7 +87,10 @@ const PersonalInfoForm = ({
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -98,7 +104,7 @@ const PersonalInfoForm = ({
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="username"
@@ -112,7 +118,7 @@ const PersonalInfoForm = ({
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="email"
@@ -120,13 +126,17 @@ const PersonalInfoForm = ({
                 <FormItem>
                   <FormLabel>이메일</FormLabel>
                   <FormControl>
-                    <Input {...field} type="email" placeholder="이메일을 입력해주세요" />
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="이메일을 입력해주세요"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="phone"
@@ -140,11 +150,11 @@ const PersonalInfoForm = ({
                 </FormItem>
               )}
             />
-            
+
             <div className="flex justify-end space-x-2 pt-4">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={onClose}
                 disabled={isSubmitting}
               >

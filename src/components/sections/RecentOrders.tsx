@@ -7,7 +7,7 @@ import { memo, useMemo } from "react";
 const RecentOrders = memo(() => {
   const { orderHistory } = useOrder();
   const navigate = useNavigate();
-  
+
   // 최근 3개 주문만 메모이제이션
   const recentOrders = useMemo(() => {
     return orderHistory.slice(0, 3);
@@ -19,7 +19,7 @@ const RecentOrders = memo(() => {
         <h2 className="text-xl font-semibold mb-4">최근 주문 내역</h2>
         <div className="text-center py-8 text-gray-500">
           <p className="mb-4">최근 주문 내역이 없습니다.</p>
-          <Button 
+          <Button
             onClick={() => navigate("/")}
             className="bg-black text-white hover:bg-gray-800"
           >
@@ -34,21 +34,15 @@ const RecentOrders = memo(() => {
     <div className="bg-white p-6 rounded-lg border border-gray-200">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">최근 주문 내역</h2>
-        <Button 
-          variant="link" 
-          onClick={() => navigate("/history")}
-          className="text-black hover:text-gray-600 p-0 h-auto font-normal text-sm"
-        >
-          모든 주문 보기 →
-        </Button>
       </div>
-      
+
       <div className="space-y-4">
         {recentOrders.map((order) => (
           <Card key={order.id} className="border border-gray-200">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-900">
-                주문번호: {order.orderNumber} | {new Date(order.orderDate).toLocaleDateString('ko-KR')}
+                주문번호: {order.orderNumber} |{" "}
+                {new Date(order.orderDate).toLocaleDateString("ko-KR")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -58,8 +52,12 @@ const RecentOrders = memo(() => {
                     {order.products.length}개 상품
                   </p>
                   <p className="text-xs text-gray-500">
-                    {order.products.slice(0, 2).map(item => item.name).join(', ')}
-                    {order.products.length > 2 && ` 외 ${order.products.length - 2}개`}
+                    {order.products
+                      .slice(0, 2)
+                      .map((item) => item.name)
+                      .join(", ")}
+                    {order.products.length > 2 &&
+                      ` 외 ${order.products.length - 2}개`}
                   </p>
                 </div>
                 <div className="text-right">
@@ -67,9 +65,9 @@ const RecentOrders = memo(() => {
                     {order.totalPrice.toLocaleString()}원
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {order.status === 'completed' && '주문완료'}
-                    {order.status === 'shipping' && '배송중'}
-                    {order.status === 'delivered' && '배송완료'}
+                    {order.status === "completed" && "주문완료"}
+                    {order.status === "shipping" && "배송중"}
+                    {order.status === "delivered" && "배송완료"}
                   </p>
                 </div>
               </div>
