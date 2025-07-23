@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 import video1 from "../assets/video1.mp4";
 import video2 from "../assets/video2.mp4";
 import video3 from "../assets/video3.mp4";
@@ -11,11 +11,7 @@ const VideoSection = ({ onVolumeChange }: VideoSectionProps) => {
   const [currentVideo, setCurrentVideo] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const videos = [
-    video1,
-    video2,
-    video3
-  ];
+  const videos = [video1, video2, video3];
 
   const handleVideoEnded = () => {
     const nextVideo = (currentVideo + 1) % videos.length;
@@ -33,16 +29,16 @@ const VideoSection = ({ onVolumeChange }: VideoSectionProps) => {
   useEffect(() => {
     const handleScroll = () => {
       if (!sectionRef.current) return;
-      
+
       const rect = sectionRef.current.getBoundingClientRect();
-      
+
       // 비디오 섹션이 화면에 완전히 보이는 상태에서의 볼륨 계산
       if (rect.bottom <= 0) {
         // 비디오 섹션이 완전히 화면을 벗어난 경우 볼륨 0
         onVolumeChange?.(0);
       } else if (rect.top >= 0) {
         // 비디오 섹션이 완전히 화면에 있는 경우 볼륨 1
-        onVolumeChange?.(1);
+        onVolumeChange?.(0.5);
       } else {
         // 비디오 섹션이 부분적으로 화면을 벗어나는 경우 비례적으로 볼륨 조절
         const visibleHeight = Math.max(0, rect.bottom);
@@ -52,20 +48,20 @@ const VideoSection = ({ onVolumeChange }: VideoSectionProps) => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll(); // 초기 볼륨 설정
-    
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [onVolumeChange]);
 
   return (
     <div ref={sectionRef} className="relative z-[60]">
-      <video 
+      <video
         ref={videoRef}
-        autoPlay 
-        muted 
+        autoPlay
+        muted
         className="w-full h-[800px] object-cover object-top"
         onEnded={handleVideoEnded}
       >
@@ -73,9 +69,7 @@ const VideoSection = ({ onVolumeChange }: VideoSectionProps) => {
       </video>
       <div className="absolute top-0 left-0 w-full h-[800px] bg-transparent">
         <div className="flex items-center justify-center h-full">
-          <div className={`text-black text-[200px] font-butler`}>
-            Morph
-          </div>
+          <div className={`text-black text-[200px] font-butler`}>Morph</div>
         </div>
       </div>
     </div>
