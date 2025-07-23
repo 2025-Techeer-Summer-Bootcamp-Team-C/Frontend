@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { generateFittingVideo, getFittingVideoStatus } from "../api/fittings";
 import { fetchProducts } from "../api/products";
 import type { FittingVideoStatusResponse } from "../api/fittings";
@@ -141,5 +141,61 @@ export const useFittingResultsPollingMutation = () => {
         console.error("피팅 결과 조회 실패:", error);
       }
     },
+  });
+};
+
+/**
+ * 모든 상품의 피팅 영상 상태를 확인하는 훅
+ * 모든 products를 가져와서 각 product_id로 getFittingVideoStatus 호출
+ * status가 'completed'인 영상들만 반환
+ */
+export interface CompletedFittingVideo {
+  product_id: number;
+  product_name: string;
+  video_url: string;
+  status: 'completed';
+}
+
+export const useFittingVideos = () => {
+  return useQuery<CompletedFittingVideo[], Error>({
+    queryKey: ["fittingVideos"],
+    queryFn: async () => {
+      try {
+        // 1. 모든 상품 정보 가져오기
+        const productsResponse = await fetchProducts();
+        
+        // 2. 각 상품에 대해 영상 상태 확인
+        const videoStatusPromises = productsResponse.products.map(async (product) => {
+          try {
+            const statusResponse = await getFittingVideoStatus(product.product_id);
+            
+            // status가 'completed'이고 video_url이 있는 경우만 반환
+            if (statusResponse.status === 'completed' && statusResponse.video_url) {
+              return {
+                product_id: product.product_id,
+                product_name: product.name,
+                video_url: statusResponse.video_url,
+                status: 'completed' as const,
+              };
+            }
+            return null;
+          } catch (error) {
+            // 개별 상품의 영상 상태 조회 실패는 무시하고 null 반환
+            console.warn(`피팅 영상 상태 조회 실패 (product_id: ${product.product_id}):`, error);
+            return null;
+          }
+        });
+        
+        // 3. 모든 Promise 완료 후 null이 아닌 값들만 필터링
+        const results = await Promise.all(videoStatusPromises);
+        return results.filter((result): result is CompletedFittingVideo => result !== null);
+        
+      } catch (error) {
+        console.error("피팅 영상 목록 조회 실패:", error);
+        throw error;
+      }
+    },
+    staleTime: 1 * 60 * 1000, // 1분간 데이터를 신선하다고 간주
+    gcTime: 5 * 60 * 1000, // 5분간 캐시 유지
   });
 };
