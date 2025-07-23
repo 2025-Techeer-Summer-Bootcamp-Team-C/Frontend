@@ -117,10 +117,10 @@ const Header = ({
   const isHomePage = location.pathname === "/";
 
   return (
-    <header 
+    <header
       className={`${
-        isHomePage && !isSticky 
-          ? "relative bg-transparent" 
+        isHomePage && !isSticky
+          ? "relative bg-transparent"
           : "fixed top-0 left-0 bg-transparent"
       } w-full z-50 hover:bg-white/70 group transition-all duration-300`}
     >
@@ -179,9 +179,6 @@ const Header = ({
                         </span>
                       </LoginDialog>
                     )}
-                    <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-6 md:w-8 h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
-                      도움말
-                    </span>
                     <span
                       className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
                       onClick={() => {
@@ -193,6 +190,18 @@ const Header = ({
                       }}
                     >
                       장바구니({cartCount})
+                    </span>
+                    <span
+                      className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
+                      onClick={() => {
+                        if (!isLogin) {
+                          alert("로그인이 필요합니다.");
+                          return;
+                        }
+                        navigate("/mypage");
+                      }}
+                    >
+                      마이페이지
                     </span>
                   </div>
                 )}
