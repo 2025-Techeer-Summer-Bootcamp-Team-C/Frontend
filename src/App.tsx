@@ -14,9 +14,15 @@ import { OrderProvider } from "./contexts/OrderContext";
 import { FittingProvider } from "./contexts/FittingContext";
 import { Analytics } from "@vercel/analytics/react";
 import MyPage from "./pages/MyPage";
+import { useEffect } from "react";
 
 function App() {
   const queryClient = new QueryClient();
+
+  // 컴포넌트 마운트 시 스크롤을 맨 위로 이동
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

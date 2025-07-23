@@ -18,24 +18,19 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
   const { totalPrice: cartTotalPrice, directPurchaseProduct } = useCart();
   const audioRef = useRef<{ setVolume: (volume: number) => void }>(null);
 
-  // 개발 단계에서 레이아웃 설정 검증
-  // useEffect(() => {
-  //   validateLayoutConfig();
-  // }, []);
-
   const layoutConfig = getLayoutConfig(location.pathname);
-  
+
   // 디버깅용 로그 (개발 환경에서만)
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔍 Layout Debug:', {
+  if (process.env.NODE_ENV === "development") {
+    console.log("🔍 Layout Debug:", {
       pathname: location.pathname,
       layoutConfig,
       showSearch: layoutConfig.showSearch,
       showUserActions: layoutConfig.showUserActions,
-      showNavigation: layoutConfig.showNavigation
+      showNavigation: layoutConfig.showNavigation,
     });
   }
-  
+
   const finalFooterVariant = layoutConfig.footer;
 
   // totalPrice 우선순위: prop으로 전달된 값 > 경로별 로직

@@ -43,7 +43,7 @@ const LoginDialog = ({ children }: LoginDialogProps) => {
       }}
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="w-[480px] max-w-[480px] max-h-[80vh] bg-white shadow-[8px_8px_50px_rgba(0,0,0,0.15)] pb-8 overflow-hidden">
+      <DialogContent className="w-[480px] max-w-[480px] max-h-[80vh] bg-white shadow-[8px_8px_50px_rgba(0,0,0,0.15)] pb-8 overflow-hidden z-[70]">
         <DialogTitle className="sr-only">Login</DialogTitle>
         <div className="h-full">
           {/* Scrollable Form Area */}
