@@ -1,47 +1,46 @@
-import { memo } from "react";
+import { useState, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useModal } from "@/contexts/ModalContext";
 import ProfileImage from "@/components/common/ProfileImage";
 import VirtualFittingVideos from "@/components/sections/VirtualFittingVideos";
-import { useAuth } from "@/contexts/AuthContext";
 
-// // Mock user data - 실제로는 auth context에서 가져올 데이터
-// const mockUser = {
-//   name: "홍길동",
-//   username: "hong_gildong",
-//   email: "user@example.com",
-//   phone: "010-1234-5678",
-//   profileImage: null as string | null, // 프로필 이미지 URL
-//   addresses: [
-//     {
-//       id: "1",
-//       name: "집",
-//       recipient: "홍길동",
-//       full: "서울시 강남구 테헤란로 123",
-//       zipcode: "06142",
-//       phone: "010-1234-5678",
-//       isDefault: true,
-//     },
-//     {
-//       id: "2",
-//       name: "회사",
-//       recipient: "홍길동",
-//       full: "서울시 서초구 강남대로 456",
-//       zipcode: "06543",
-//       phone: "010-1234-5678",
-//       isDefault: false,
-//     },
-//   ],
-// };
+// Mock user data - 실제로는 auth context에서 가져올 데이터
+const mockUser = {
+  name: "홍길동",
+  username: "hong_gildong",
+  email: "user@example.com",
+  phone: "010-1234-5678",
+  profileImage: null as string | null, // 프로필 이미지 URL
+  addresses: [
+    {
+      id: "1",
+      name: "집",
+      recipient: "홍길동",
+      full: "서울시 강남구 테헤란로 123",
+      zipcode: "06142",
+      phone: "010-1234-5678",
+      isDefault: true,
+    },
+    {
+      id: "2",
+      name: "회사",
+      recipient: "홍길동",
+      full: "서울시 서초구 강남대로 456",
+      zipcode: "06543",
+      phone: "010-1234-5678",
+      isDefault: false,
+    },
+  ],
+};
 
 interface ProfileSectionProps {
   onEditSection?: (section: string) => void;
 }
 
 const ProfileSection = memo(({ onEditSection }: ProfileSectionProps) => {
-  const { user } = useAuth();
+  const [user, setUser] = useState(mockUser); // 실제로는 useAuth 등에서 가져옴
   const { openModal } = useModal();
 
   const handleEditClick = (section: string) => {
@@ -54,6 +53,11 @@ const ProfileSection = memo(({ onEditSection }: ProfileSectionProps) => {
   };
 
   const handleProfileImageChange = (imageUrl: string | null) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      profileImage: imageUrl,
+    }));
+    // 실제로는 auth context나 API를 통해 서버에 저장
     console.log("프로필 이미지 업데이트:", imageUrl);
   };
 
