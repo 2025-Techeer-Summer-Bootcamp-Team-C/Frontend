@@ -19,11 +19,37 @@ interface PersonalInfo {
   phone: string;
 }
 
+interface Address {
+  id: string;
+  name: string;
+  recipient: string;
+  zipcode: string;
+  address1: string;
+  address2?: string;
+  phone: string;
+  isDefault: boolean;
+}
+
 const ProfileSection = memo(({ onEditSection }: ProfileSectionProps) => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const { openModal } = useModal();
   const { currentBuyerInfo } = useOrder();
+
+  // BuyerInfo를 Address 형식으로 변환하는 함수
+  const convertBuyerInfoToAddress = (buyerInfo: typeof currentBuyerInfo): Address => {
+    return {
+      id: "temp_buyer_address", // 임시 ID
+      name: "기본 주소 (주문 정보에서)",
+      recipient: buyerInfo!.name,
+      zipcode: buyerInfo!.postalCode,
+      address1: buyerInfo!.address,
+      address2: buyerInfo!.address2 || "",
+      phone: buyerInfo!.phone,
+      isDefault: true,
+    };
+  };
 
   const handleEditClick = (section: string) => {
     if (section === "personalInfo") {
@@ -42,7 +68,24 @@ const ProfileSection = memo(({ onEditSection }: ProfileSectionProps) => {
       
       openModal("personalInfo", currentData, handlePersonalInfoSubmit);
     } else if (section === "addresses") {
-      openModal("addresses");
+      // AddressManagement에서 주소 변경 시 호출될 콜백
+      const handleAddressSubmit = (updatedAddresses: Address[]) => {
+        setAddresses(updatedAddresses);
+      };
+      
+      // 초기 주소 데이터 준비
+      let initialAddressData: Address[] = [];
+      
+      // 1. 사용자가 저장한 주소가 있으면 그것을 사용
+      if (addresses.length > 0) {
+        initialAddressData = addresses;
+      }
+      // 2. 없으면 currentBuyerInfo를 Address 형식으로 변환하여 사용
+      else if (currentBuyerInfo) {
+        initialAddressData = [convertBuyerInfoToAddress(currentBuyerInfo)];
+      }
+      
+      openModal("addresses", undefined, undefined, handleAddressSubmit, initialAddressData);
     }
     onEditSection?.(section);
   };
@@ -114,16 +157,44 @@ const ProfileSection = memo(({ onEditSection }: ProfileSectionProps) => {
           <CardTitle className="text-lg">배송지 관리</CardTitle>
         </CardHeader>
         <CardContent>
-          {currentBuyerInfo ? (
+          {addresses.length > 0 ? (
+            <div className="space-y-4">
+              {addresses.map((address, index) => (
+                <div key={address.id}>
+                  {index > 0 && <div className="border-t pt-4" />}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-900">
+                        {address.name}
+                      </span>
+                      {address.isDefault && (
+                        <span className="bg-black text-white text-xs px-2 py-1 rounded">
+                          기본 배송지
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600">{address.recipient}</p>
+                    <p className="text-sm text-gray-500">
+                      {address.address1}
+                      {address.address2 && `, ${address.address2}`}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {address.zipcode} | {formatPhoneNumber(address.phone)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : currentBuyerInfo ? (
             <div className="space-y-4">
               <div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-900">
-                      기본 주소
+                      기본 주소 (주문 정보에서)
                     </span>
-                    <span className="bg-black text-white text-xs px-2 py-1 rounded">
-                      기본 배송지
+                    <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded">
+                      임시 배송지
                     </span>
                   </div>
                   <p className="text-sm text-gray-600">{currentBuyerInfo.name}</p>

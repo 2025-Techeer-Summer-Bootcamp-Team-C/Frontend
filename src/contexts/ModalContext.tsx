@@ -19,8 +19,25 @@ type PersonalInfoData = {
   phone: string;
 };
 
+type Address = {
+  id: string;
+  name: string;
+  recipient: string;
+  zipcode: string;
+  address1: string;
+  address2?: string;
+  phone: string;
+  isDefault: boolean;
+};
+
 type ModalContextType = {
-  openModal: (type: ModalType, initialData?: PersonalInfoData, onSubmitCallback?: (data: PersonalInfoData) => void) => void;
+  openModal: (
+    type: ModalType, 
+    initialData?: PersonalInfoData, 
+    onSubmitCallback?: (data: PersonalInfoData) => void,
+    onAddressCallback?: (addresses: Address[]) => void,
+    initialAddresses?: Address[]
+  ) => void;
   closeModal: () => void;
   modalType: ModalType;
 };
@@ -31,17 +48,29 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [modalType, setModalType] = useState<ModalType>(null);
   const [initialData, setInitialData] = useState<PersonalInfoData | null>(null);
   const [submitCallback, setSubmitCallback] = useState<((data: PersonalInfoData) => void) | null>(null);
+  const [addressCallback, setAddressCallback] = useState<((addresses: Address[]) => void) | null>(null);
+  const [initialAddresses, setInitialAddresses] = useState<Address[]>([]);
 
-  const openModal = (type: ModalType, data?: PersonalInfoData, onSubmitCallback?: (data: PersonalInfoData) => void) => {
+  const openModal = (
+    type: ModalType, 
+    data?: PersonalInfoData, 
+    onSubmitCallback?: (data: PersonalInfoData) => void,
+    onAddressCallback?: (addresses: Address[]) => void,
+    initialAddressData?: Address[]
+  ) => {
     setModalType(type);
     setInitialData(data || null);
     setSubmitCallback(() => onSubmitCallback || null);
+    setAddressCallback(() => onAddressCallback || null);
+    setInitialAddresses(initialAddressData || []);
   };
 
   const closeModal = () => {
     setModalType(null);
     setInitialData(null);
     setSubmitCallback(null);
+    setAddressCallback(null);
+    setInitialAddresses([]);
   };
 
   // Default data for forms when no initial data is provided
@@ -88,7 +117,11 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
               />
             )}
             {modalType === "addresses" && (
-              <AddressManagement onClose={closeModal} />
+              <AddressManagement 
+                onClose={closeModal}
+                onAddressUpdate={addressCallback}
+                initialAddresses={initialAddresses}
+              />
             )}
           </Suspense>
         </DialogContent>

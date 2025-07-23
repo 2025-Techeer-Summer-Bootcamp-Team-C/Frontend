@@ -22,8 +22,8 @@ const addressSchema = z.object({
   zipcode: z.string().min(5, { message: "우편번호를 입력해주세요." }),
   address1: z.string().min(1, { message: "기본 주소를 입력해주세요." }),
   address2: z.string().optional(),
-  phone: z.string().regex(/^010-\d{4}-\d{4}$/, {
-    message: "전화번호 형식은 010-0000-0000 이어야 합니다.",
+  phone: z.string().regex(/^\d{10,11}$/, {
+    message: "전화번호는 숫자로만 이루어져야 합니다.",
   }),
   isDefault: z.boolean().default(false),
 });
@@ -34,36 +34,26 @@ interface Address extends AddressFormData {
   id: string;
 }
 
-// Mock addresses data
-const mockAddresses: Address[] = [
-  {
-    id: "1",
-    name: "집",
-    recipient: "홍길동",
-    zipcode: "06142",
-    address1: "서울시 강남구 테헤란로 123",
-    address2: "A동 101호",
-    phone: "010-1234-5678",
-    isDefault: true,
-  },
-  {
-    id: "2",
-    name: "회사",
-    recipient: "홍길동",
-    zipcode: "06543",
-    address1: "서울시 서초구 강남대로 456",
-    address2: "",
-    phone: "010-1234-5678",
-    isDefault: false,
-  },
-];
-
 interface AddressManagementProps {
   onClose: () => void;
+  onAddressUpdate?: ((addresses: Address[]) => void) | null;
+  initialAddresses?: Address[];
 }
 
-const AddressManagement = ({ onClose }: AddressManagementProps) => {
-  const [addresses, setAddresses] = useState<Address[]>(mockAddresses);
+const AddressManagement = ({
+  onClose,
+  onAddressUpdate,
+  initialAddresses = [],
+}: AddressManagementProps) => {
+  const [addresses, setAddressesState] = useState<Address[]>(initialAddresses);
+
+  // addresses 업데이트 시 콜백도 함께 호출
+  const setAddresses = (newAddresses: Address[]) => {
+    setAddressesState(newAddresses);
+    if (onAddressUpdate) {
+      onAddressUpdate(newAddresses);
+    }
+  };
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
