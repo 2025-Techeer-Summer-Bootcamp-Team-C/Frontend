@@ -20,18 +20,19 @@ const Home = () => {
   // API calls commented out for dummy data testing
   const { data: products } = useProductsQuery(showFitting);
   // const { data: categories } = useCategoriesQuery();
-  
+
   const fittingPollingMutation = useFittingResultsPollingMutation();
+
   const handleProductClick = (productId: number) => {
     navigate(`/product/${productId}`);
   };
 
   const handleFittingClick = async () => {
     if (isFittingLoading || fittingPollingMutation.isPending) return;
-    
+
     setIsFittingLoading(true);
     setFittingProgress("피팅 작업을 시작하는 중...");
-    
+
     try {
       // 1. 현재 피팅 이미지 URL들을 가져와서 비교 기준점 설정
       let previousImageUrls: string[] = [];
@@ -39,8 +40,8 @@ const Home = () => {
         const currentProducts = await fetchProducts(true);
         if (currentProducts.products) {
           previousImageUrls = currentProducts.products
-            .filter(product => product.image)
-            .map(product => product.image);
+            .filter((product) => product.image)
+            .map((product) => product.image);
         }
       } catch (error) {
         console.log("현재 피팅 결과를 가져올 수 없음:", error);
@@ -48,41 +49,60 @@ const Home = () => {
 
       // 2. 피팅 작업 시작
       const response = await startFittingDetail();
-      
-      setFittingProgress(`피팅 작업이 시작되었습니다! (${response.total_products}개 상품)`);
-      
+
+      setFittingProgress(
+        `피팅 작업이 시작되었습니다! (${response.total_products}개 상품)`
+      );
+
       // 3. 피팅 결과 폴링 시작 (이미지 변경 감지)
       setFittingProgress("피팅 결과를 기다리는 중...");
-      
-      const fittingResults = await fittingPollingMutation.mutateAsync({ 
-        previousImageUrls: previousImageUrls.length > 0 ? previousImageUrls : undefined,
+
+      const fittingResults = await fittingPollingMutation.mutateAsync({
+        previousImageUrls:
+          previousImageUrls.length > 0 ? previousImageUrls : undefined,
         onProgress: (progress: string) => {
           setFittingProgress(progress);
-        }
+        },
       });
-      
+
       // 4. 피팅 결과 받아오기 성공
-      setFittingProgress(`피팅 완료! ${fittingResults.products.length}개 상품 결과를 받았습니다.`);
-      
+      setFittingProgress(
+        `피팅 완료! ${fittingResults.products.length}개 상품 결과를 받았습니다.`
+      );
+
       // 피팅 상태 업데이트 - 피팅 결과 보기 모드로 전환
       setShowFitting(true);
-      
+
       // refetch 제거: 폴링에서 이미 최신 데이터를 받아옴
     } catch (error) {
       // 에러 처리
-      const errorMessage = error instanceof Error ? error.message : "가상 피팅 요청 중 오류가 발생했습니다.";
-      
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "가상 피팅 요청 중 오류가 발생했습니다.";
+
       // 400 에러 (이미 피팅된 결과가 있음)인 경우 바로 피팅 결과 보기
-      if ((error as any).response?.status === 400 && (error as any).response?.data?.error.includes("이미 가상")) {
-        setFittingProgress("이미 피팅된 결과가 있습니다. 피팅 결과를 가져오는 중...");
-        
+      if (
+        (error as any).response?.status === 400 &&
+        (error as any).response?.data?.error.includes("이미 가상")
+      ) {
+        setFittingProgress(
+          "이미 피팅된 결과가 있습니다. 피팅 결과를 가져오는 중..."
+        );
+
         // 이미 피팅된 결과가 있으므로 바로 피팅 모드로 전환
         setShowFitting(true);
         setFittingProgress("이미 피팅된 결과를 표시합니다.");
         // 별도의 API 호출 없이 useProductsQuery가 showFitting=true로 자동 refetch됨
-      } else if ((error as any).response?.status === 400 && (error as any).response?.data?.error.includes("사용자 사진")) {
+      } else if (
+        (error as any).response?.status === 400 &&
+        (error as any).response?.data?.error.includes("사용자 사진")
+      ) {
         setFittingProgress("사용자 사진이 없습니다. 사진을 추가해 주세요.");
-      } else if ((error as any).response?.status === 400 && (error as any).response?.data?.error.includes("상품이")) {
+      } else if (
+        (error as any).response?.status === 400 &&
+        (error as any).response?.data?.error.includes("상품이")
+      ) {
         setFittingProgress("상품이 없습니다. 상품을 추가해 주세요.");
       } else {
         setFittingProgress(`에러: ${errorMessage}`);
@@ -122,9 +142,13 @@ const Home = () => {
   }, [filteredProducts]);
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white relative">
       {/* Main Content */}
-      <div className={`flex justify-center ${isSticky ? 'pt-[200px] md:pt-[260px]' : ''}`}>
+      <div
+        className={`flex justify-center ${
+          isSticky ? "pt-[200px] md:pt-[260px]" : ""
+        }`}
+      >
         <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">
           {/* Product Grid */}
           <div className="flex flex-col gap-[60px] md:gap-[80px]">
@@ -157,7 +181,7 @@ const Home = () => {
             {fittingProgress}
           </div>
         )}
-        
+
         {/* 피팅 모드 토글 버튼 (피팅 완료 후) */}
         {showFitting && !isFittingLoading && (
           <button
@@ -167,14 +191,18 @@ const Home = () => {
             원본 상품 보기
           </button>
         )}
-        
+
         {/* 메인 피팅 버튼 */}
         <button
           className="w-[240px] bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors font-inter text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleFittingClick}
           disabled={isFittingLoading}
         >
-          {isFittingLoading ? "피팅 중..." : showFitting ? "피팅 다시하기" : "피팅하기"}
+          {isFittingLoading
+            ? "피팅 중..."
+            : showFitting
+            ? "피팅 다시하기"
+            : "피팅하기"}
         </button>
       </div>
     </div>
