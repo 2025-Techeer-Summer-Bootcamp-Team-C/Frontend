@@ -12,8 +12,15 @@ const AddressManagement = lazy(
 
 type ModalType = "personalInfo" | "addresses" | null;
 
+type PersonalInfoData = {
+  name: string;
+  username: string;
+  email: string;
+  phone: string;
+};
+
 type ModalContextType = {
-  openModal: (type: ModalType) => void;
+  openModal: (type: ModalType, initialData?: PersonalInfoData, onSubmitCallback?: (data: PersonalInfoData) => void) => void;
   closeModal: () => void;
   modalType: ModalType;
 };
@@ -22,21 +29,27 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [modalType, setModalType] = useState<ModalType>(null);
+  const [initialData, setInitialData] = useState<PersonalInfoData | null>(null);
+  const [submitCallback, setSubmitCallback] = useState<((data: PersonalInfoData) => void) | null>(null);
 
-  const openModal = (type: ModalType) => {
+  const openModal = (type: ModalType, data?: PersonalInfoData, onSubmitCallback?: (data: PersonalInfoData) => void) => {
     setModalType(type);
+    setInitialData(data || null);
+    setSubmitCallback(() => onSubmitCallback || null);
   };
 
   const closeModal = () => {
     setModalType(null);
+    setInitialData(null);
+    setSubmitCallback(null);
   };
 
-  // Mock user data for forms
-  const mockUserData = {
-    name: "홍길동",
-    username: "hong_gildong",
-    email: "user@example.com",
-    phone: "010-1234-5678",
+  // Default data for forms when no initial data is provided
+  const defaultUserData = {
+    name: "",
+    username: "",
+    email: "",
+    phone: "",
   };
 
   return (
@@ -59,11 +72,17 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
           >
             {modalType === "personalInfo" && (
               <PersonalInfoForm
-                initialData={mockUserData}
+                initialData={initialData || defaultUserData}
                 onClose={closeModal}
                 onSubmit={async (data) => {
                   console.log("개인정보 업데이트:", data);
-                  // 실제로는 auth context나 API 호출
+                  
+                  // ProfileSection의 setPersonalInfo 콜백 호출
+                  if (submitCallback) {
+                    submitCallback(data);
+                  }
+                  
+                  // Mock delay
                   await new Promise((resolve) => setTimeout(resolve, 1000));
                 }}
               />
