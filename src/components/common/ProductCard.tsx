@@ -2,6 +2,7 @@ import { memo } from "react";
 import type { Product } from "@/types/product";
 import type { ProductCardVariant } from "@/types/variants";
 import { usePrefetch } from "@/hooks/usePrefetch";
+import { useFittingContext } from "@/contexts/FittingContext";
 
 interface ProductCardProps {
   variant?: ProductCardVariant;
@@ -12,14 +13,15 @@ interface ProductCardProps {
 const ProductCard = memo(
   ({ variant = "default", product, onProductClick }: ProductCardProps) => {
     const { prefetchProductDetail } = usePrefetch();
+    const { showFitting } = useFittingContext();
 
     const getTextColor = () => {
       return variant === "viewed" ? "text-[#AAAAAA]" : "text-black";
     };
 
     const handleMouseEnter = () => {
-      // 호버 시 상품 상세 정보 prefetch
-      prefetchProductDetail(product.product_id);
+      // 호버 시 상품 상세 정보 prefetch (피팅 상태 고려)
+      prefetchProductDetail(product.product_id, showFitting);
     };
 
     return (
@@ -29,15 +31,15 @@ const ProductCard = memo(
       >
         {/* Product Image */}
         <div
-          className="w-full h-[270px] sm:h-[360px] bg-gray-50 mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow"
+          className="w-full h-[270px] sm:h-[360px] bg-white mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow"
           onClick={onProductClick}
         >
           <img
             src={product.image}
-            alt={product.name}
+            alt={showFitting ? `${product.name} - 피팅 결과` : product.name}
             className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
             style={{
-              imageRendering: 'auto',
+              imageRendering: "auto",
             }}
           />
         </div>
