@@ -6,7 +6,7 @@ interface LayoutConfig {
   footer: FooterVariant;
   showSearch?: boolean;
   showUserActions?: boolean;
-  showNavigation?: boolean;
+  showCategoryMenu?: boolean;
   requiresAuth?: boolean;
   title?: string;
 }
@@ -24,7 +24,7 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     footer: "default",
     showSearch: true,
     showUserActions: true,
-    showNavigation: true,
+    showCategoryMenu: true,
     title: "홈",
   },
   "/cart": {
@@ -32,7 +32,6 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     footer: "cart",
     showSearch: false,
     showUserActions: false,
-    showNavigation: false,
     title: "장바구니",
   },
   "/order": {
@@ -41,7 +40,6 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     showSearch: false,
     showUserActions: false,
     requiresAuth: true,
-    showNavigation: false,
     title: "주문 정보",
   },
   "/summary": {
@@ -50,7 +48,6 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     showSearch: false,
     showUserActions: false,
     requiresAuth: true,
-    showNavigation: false,
     title: "주문 요약",
   },
   "/history": {
@@ -59,7 +56,6 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     showSearch: false,
     showUserActions: false,
     requiresAuth: true,
-    showNavigation: false,
     title: "주문 내역",
   },
   "/mypage": {
@@ -68,7 +64,6 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     showSearch: false,
     showUserActions: true,
     requiresAuth: true,
-    showNavigation: false,
     title: "마이페이지",
   },
 } as const;
@@ -82,7 +77,6 @@ export const DYNAMIC_LAYOUT_CONFIG: RoutePattern[] = [
       footer: "default",
       showSearch: false,
       showUserActions: true,
-      showNavigation: false,
       title: "상품 상세",
     },
   },
@@ -94,7 +88,7 @@ export const DEFAULT_LAYOUT_CONFIG: LayoutConfig = {
   footer: "default",
   showSearch: true,
   showUserActions: true,
-  showNavigation: true,
+  showCategoryMenu: false,
   title: "Techeer Fashion",
 } as const;
 

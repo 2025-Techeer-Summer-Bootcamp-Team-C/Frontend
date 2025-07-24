@@ -146,11 +146,7 @@ const Home = () => {
   return (
     <div className="w-full bg-white relative">
       {/* Main Content */}
-      <div
-        className={`flex justify-center ${
-          isSticky ? "pt-[200px] md:pt-[260px]" : ""
-        }`}
-      >
+      <div className={`flex justify-center ${isSticky ? "pt-[149px]" : ""}`}>
         <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">
           {/* Product Grid */}
           <div className="flex flex-col gap-[60px] md:gap-[80px]">
@@ -160,9 +156,11 @@ const Home = () => {
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center"
               >
                 {row?.map((product) => (
-                  <Suspense 
+                  <Suspense
                     key={product.product_id}
-                    fallback={<div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>}
+                    fallback={
+                      <div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>
+                    }
                   >
                     <ProductCard
                       variant="default"
