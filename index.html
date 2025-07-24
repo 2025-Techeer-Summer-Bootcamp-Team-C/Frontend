@@ -30,18 +30,19 @@
         min-height: 100vh;
       }
       
-      /* Loading spinner for initial render */
+      /* Loading spinner for initial render (matches React Suspense spinner) */
       .loading-spinner {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 40px;
-        height: 40px;
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #333;
+        width: 48px;
+        height: 48px;
+        border: 2px solid transparent;
+        border-bottom: 2px solid #1f2937;
         border-radius: 50%;
         animation: spin 1s linear infinite;
+        z-index: 9999;
       }
       
       @keyframes spin {
@@ -52,6 +53,16 @@
       /* Hide loading spinner when React takes over */
       .app-loaded .loading-spinner {
         display: none;
+      }
+      
+      /* Ensure smooth transition */
+      .loading-spinner {
+        transition: opacity 0.3s ease-out;
+      }
+      
+      .app-loaded .loading-spinner {
+        opacity: 0;
+        pointer-events: none;
       }
     </style>
     
