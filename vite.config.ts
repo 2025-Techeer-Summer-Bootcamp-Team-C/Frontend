@@ -51,31 +51,8 @@ export default defineConfig({
       output: {
         // 효율적인 청크 분할 (React Context 이슈 해결)
         manualChunks: (id) => {
-          // node_modules 처리 최적화 (React import 중복 완전 차단)
+          // 모든 node_modules를 vendor로 통합 (React import 중복 완전 해결)
           if (id.includes('node_modules')) {
-            // React 생태계 라이브러리는 모두 react-vendor로 통합
-            if (id.includes('react') || 
-                id.includes('react-dom') || 
-                id.includes('react-router-dom') ||
-                id.includes('@radix-ui') || 
-                id.includes('@headlessui') ||
-                id.includes('react-hook-form') || 
-                id.includes('@hookform/resolvers') ||
-                id.includes('lucide-react') ||
-                id.includes('@tanstack/react-query')) {
-              return 'react-vendor';
-            }
-            
-            // 순수 유틸리티 (React 무관)
-            if (id.includes('clsx') || 
-                id.includes('tailwind-merge') || 
-                id.includes('class-variance-authority') ||
-                id.includes('zod') ||
-                id.includes('axios')) {
-              return 'utils-vendor';
-            }
-            
-            // 기타 node_modules는 vendor로 그룹화 (React 의존성 제거)
             return 'vendor';
           }
           
