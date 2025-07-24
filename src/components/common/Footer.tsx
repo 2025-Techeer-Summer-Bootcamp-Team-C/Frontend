@@ -1,9 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import type { FooterVariant } from "@/types/variants";
-import { PaymentDialog } from "@/components/dialogs/PaymentDialog";
 import { useCart } from "@/contexts/CartContext";
 import { useOrder } from "@/contexts/OrderContext";
-import { useMemo } from "react";
+import { useMemo, lazy, Suspense } from "react";
+
+// Lazy load dialog
+const PaymentDialog = lazy(() => import("@/components/dialogs/PaymentDialog").then(module => ({ default: module.PaymentDialog })));
 
 interface FooterProps {
   variant?: FooterVariant;
@@ -132,19 +134,21 @@ const Footer = ({
 
                 {/* Continue Button */}
                 {path.includes("/summary") ? (
-                  <PaymentDialog
-                    totalPrice={totalPrice}
-                    buyerInfo={buyerInfo}
-                    onConfirm={() => {
-                      navigate("/summary");
-                    }}
-                  >
-                    <button className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors">
-                      <span className="text-white text-4 font-inter leading-tight">
-                        {buttonText}
-                      </span>
-                    </button>
-                  </PaymentDialog>
+                  <Suspense fallback={<button className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4" disabled><span className="text-white text-4 font-inter leading-tight">{buttonText}</span></button>}>
+                    <PaymentDialog
+                      totalPrice={totalPrice}
+                      buyerInfo={buyerInfo}
+                      onConfirm={() => {
+                        navigate("/summary");
+                      }}
+                    >
+                      <button className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors">
+                        <span className="text-white text-4 font-inter leading-tight">
+                          {buttonText}
+                        </span>
+                      </button>
+                    </PaymentDialog>
+                  </Suspense>
                 ) : (
                   <button
                     onClick={() => {

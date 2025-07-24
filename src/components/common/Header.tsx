@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense, memo, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import LoginDialog from "@/components/dialogs/LoginDialog";
+
+// Lazy load dialog
+const LoginDialog = lazy(() => import("@/components/dialogs/LoginDialog"));
 import { useFilter } from "@/contexts/FilterContext";
 import type { HeaderVariant } from "@/types/variants";
 import { useCart } from "@/contexts/CartContext";
@@ -14,7 +16,7 @@ interface HeaderProps {
   showNavigation?: boolean;
 }
 
-const Header = ({
+const Header = memo(({
   showSearch,
   showUserActions,
   showNavigation,
@@ -97,17 +99,17 @@ const Header = ({
     };
   }, [lastScrollY, location.pathname]);
 
-  const handleLogoClick = () => {
+  const handleLogoClick = useCallback(() => {
     navigate("/");
-  };
+  }, [navigate]);
 
-  const handleCategoryClick = (category: string) => {
+  const handleCategoryClick = useCallback((category: string) => {
     setSelectedCategory(category);
-  };
+  }, [setSelectedCategory]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logoutMutation();
-  };
+  }, [logoutMutation]);
 
   // 카테고리 메뉴 아이템들
   const categoryItems = ["모두 보기", "상의", "하의", "아우터"];
@@ -173,11 +175,13 @@ const Header = ({
                         로그아웃
                       </span>
                     ) : (
-                      <LoginDialog>
-                        <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
-                          로그인
-                        </span>
-                      </LoginDialog>
+                      <Suspense fallback={<span className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center">로그인</span>}>
+                        <LoginDialog>
+                          <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
+                            로그인
+                          </span>
+                        </LoginDialog>
+                      </Suspense>
                     )}
                     <span
                       className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
@@ -258,6 +262,8 @@ const Header = ({
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = "Header";
 
 export default Header;

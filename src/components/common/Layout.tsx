@@ -1,13 +1,14 @@
 import Header from "./Header";
 import Footer from "./Footer";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, lazy, Suspense } from "react";
 import { useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { getLayoutConfig } from "@/config/layoutConfig";
-import VideoSection from "@/components/sections/VideoSection";
-import Audio from "@/components/Audio";
-import OnBoarding from "@/components/sections/OnBoarding";
-import MorphLogo from "@/components/sections/MorphLogo";
+
+const VideoSection = lazy(() => import("@/components/sections/VideoSection"));
+const Audio = lazy(() => import("@/components/Audio"));
+const OnBoarding = lazy(() => import("@/components/sections/OnBoarding"));
+const MorphLogo = lazy(() => import("@/components/sections/MorphLogo"));
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -106,23 +107,25 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
   };
 
   return (
-    <div>
-      {isHomePage && (
-        <>
-          <Audio ref={audioRef} />
-          <VideoSection onVolumeChange={handleVolumeChange} />
-          <OnBoarding textStyle={onboardingTextStyle} />
-          <MorphLogo />
-        </>
-      )}
-      <Header
-        showSearch={layoutConfig.showSearch}
-        showUserActions={layoutConfig.showUserActions}
-        showNavigation={layoutConfig.showNavigation}
-      />
-      <main className="mb-50">{children}</main>
-      <Footer variant={finalFooterVariant} totalPrice={totalPrice} />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div>
+        {isHomePage && (
+          <>
+            <Audio ref={audioRef} />
+            <VideoSection onVolumeChange={handleVolumeChange} />
+            <OnBoarding textStyle={onboardingTextStyle} />
+            <MorphLogo />
+          </>
+        )}
+        <Header
+          showSearch={layoutConfig.showSearch}
+          showUserActions={layoutConfig.showUserActions}
+          showNavigation={layoutConfig.showNavigation}
+        />
+        <main className="mb-50">{children}</main>
+        <Footer variant={finalFooterVariant} totalPrice={totalPrice} />
+      </div>
+    </Suspense>
   );
 };
 
