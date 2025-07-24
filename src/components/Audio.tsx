@@ -1,5 +1,5 @@
 import { useRef, useImperativeHandle, forwardRef } from 'react';
-import audioSrc from "../assets/audio.mp3";
+import audioSrc from "../assets/audio_optimized.mp3";
 
 interface AudioRef {
   setVolume: (volume: number) => void;
