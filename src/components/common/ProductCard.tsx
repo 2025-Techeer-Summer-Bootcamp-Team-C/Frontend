@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { Product } from "@/types/product";
 import type { ProductCardVariant } from "@/types/variants";
 
@@ -7,7 +8,7 @@ interface ProductCardProps {
   onProductClick?: () => void;
 }
 
-const ProductCard = ({
+const ProductCard = memo(({
   variant = "default",
   product,
   onProductClick,
@@ -55,6 +56,9 @@ const ProductCard = ({
       </div>
     </div>
   );
-};
+});
+
+ProductCard.displayName = "ProductCard";
 
 export default ProductCard;
+

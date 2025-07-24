@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
 interface FilterContextType {
@@ -29,19 +29,21 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('모두 보기');
   const [inputValue, setInputValue] = useState<string>('');
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     setSearchQuery(inputValue);
-  };
+  }, [inputValue]);
+
+  const value = useMemo(() => ({
+    searchQuery,
+    selectedCategory,
+    inputValue,
+    setInputValue,
+    setSelectedCategory,
+    handleSearch,
+  }), [searchQuery, selectedCategory, inputValue, setInputValue, setSelectedCategory, handleSearch]);
 
   return (
-    <FilterContext.Provider value={{ 
-      searchQuery, 
-      selectedCategory, 
-      inputValue, 
-      setInputValue, 
-      setSelectedCategory, 
-      handleSearch 
-    }}>
+    <FilterContext.Provider value={value}>
       {children}
     </FilterContext.Provider>
   );

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback, type ReactNode } from "react";
 import type { CompletedOrder, OrderContextType, BuyerInfo } from "@/types/order";
 import type { OrderInformationFormRef } from "@/components/forms/OrderInformationForm";
 
@@ -47,36 +47,36 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
     }
   }, [currentBuyerInfo]);
 
-  const generateOrderId = () => {
+  const generateOrderId = useCallback(() => {
     return `order_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  };
+  }, []);
 
-  const addOrder = (order: Omit<CompletedOrder, 'id'>) => {
+  const addOrder = useCallback((order: Omit<CompletedOrder, 'id'>) => {
     const newOrder: CompletedOrder = {
       ...order,
       id: generateOrderId(),
     };
     
     setOrderHistory(prevHistory => [newOrder, ...prevHistory]);
-  };
+  }, [generateOrderId]);
 
-  const getOrders = () => {
+  const getOrders = useCallback(() => {
     return orderHistory;
-  };
+  }, [orderHistory]);
 
-  const getLatestOrder = () => {
+  const getLatestOrder = useCallback(() => {
     return orderHistory.length > 0 ? orderHistory[0] : null;
-  };
+  }, [orderHistory]);
 
-  const setBuyerInfo = (info: BuyerInfo) => {
+  const setBuyerInfo = useCallback((info: BuyerInfo) => {
     setCurrentBuyerInfo(info);
-  };
+  }, []);
 
-  const submitOrderForm = () => {
+  const submitOrderForm = useCallback(() => {
     orderFormRef.current?.submitForm();
-  };
+  }, []);
 
-  const value: OrderContextType = {
+  const value: OrderContextType = useMemo(() => ({
     orderHistory,
     currentBuyerInfo,
     orderFormRef,
@@ -85,7 +85,16 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
     getLatestOrder,
     setBuyerInfo,
     submitOrderForm,
-  };
+  }), [
+    orderHistory,
+    currentBuyerInfo,
+    orderFormRef,
+    addOrder,
+    getOrders,
+    getLatestOrder,
+    setBuyerInfo,
+    submitOrderForm,
+  ]);
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
 };

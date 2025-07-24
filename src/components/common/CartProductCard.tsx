@@ -1,4 +1,5 @@
 
+import { memo, useCallback } from "react";
 import type { CartItemResponse } from "@/types/cart";
 import { useCart } from "@/contexts/CartContext";
 
@@ -7,22 +8,22 @@ interface CartProductCardProps {
   onProductClick?: () => void;
 }
 
-const CartProductCard = ({
+const CartProductCard = memo(({
   product,
   onProductClick,
 }: CartProductCardProps) => {
   const { increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
 
-  const handleIncrease = () => {
+  const handleIncrease = useCallback(() => {
     increaseQuantity(product.cart_product_id);
-  };
+  }, [increaseQuantity, product.cart_product_id]);
 
-  const handleDecrease = () => {
+  const handleDecrease = useCallback(() => {
     decreaseQuantity(product.cart_product_id);
     if (product.quantity === 1) {
       removeFromCart(product.cart_product_id);
     }
-  };
+  }, [decreaseQuantity, removeFromCart, product.cart_product_id, product.quantity]);
 
   return (
     <div className="w-full max-w-[240px] min-w-[180px] sm:w-[240px]">
@@ -89,6 +90,8 @@ const CartProductCard = ({
       </div>
     </div>
   );
-};
+});
+
+CartProductCard.displayName = "CartProductCard";
 
 export default CartProductCard;

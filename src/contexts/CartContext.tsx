@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from "react";
 import { 
   useCartQuery, 
   useAddCartItemMutation, 
@@ -78,23 +78,23 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
   const totalPrice = isAuthenticated ? (cartData?.total_price || 0) : 0;
 
-  const handleAddToCart = (product: Product, quantity: number) => {
+  const handleAddToCart = useCallback((product: Product, quantity: number) => {
     if (!isAuthenticated) {
       alert("로그인이 필요합니다.");
       return;
     }
     addCartItemMutation.mutate({ productId: product.product_id, quantity });
-  };
+  }, [isAuthenticated, addCartItemMutation]);
 
-  const handleRemoveFromCart = (cartProductId: number) => {
+  const handleRemoveFromCart = useCallback((cartProductId: number) => {
     if (!isAuthenticated) {
       alert("로그인이 필요합니다.");
       return;
     }
     removeCartItemMutation.mutate(cartProductId);
-  };
+  }, [isAuthenticated, removeCartItemMutation]);
 
-  const handleUpdateQuantity = (cartProductId: number, quantity: number) => {
+  const handleUpdateQuantity = useCallback((cartProductId: number, quantity: number) => {
     if (!isAuthenticated) {
       alert("로그인이 필요합니다.");
       return;
@@ -104,9 +104,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     } else {
       updateCartItemMutation.mutate({ cartProductId, quantity });
     }
-  };
+  }, [isAuthenticated, handleRemoveFromCart, updateCartItemMutation]);
 
-  const handleIncreaseQuantity = (cartProductId: number) => {
+  const handleIncreaseQuantity = useCallback((cartProductId: number) => {
     if (!isAuthenticated) {
       alert("로그인이 필요합니다.");
       return;
@@ -117,9 +117,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     if (currentItem) {
       handleUpdateQuantity(cartProductId, currentItem.quantity + 1);
     }
-  };
+  }, [isAuthenticated, cartData, handleUpdateQuantity]);
 
-  const handleDecreaseQuantity = (cartProductId: number) => {
+  const handleDecreaseQuantity = useCallback((cartProductId: number) => {
     if (!isAuthenticated) {
       alert("로그인이 필요합니다.");
       return;
@@ -130,9 +130,17 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     if (currentItem) {
       handleUpdateQuantity(cartProductId, currentItem.quantity - 1);
     }
-  };
+  }, [isAuthenticated, cartData, handleUpdateQuantity]);
 
-  const value: CartContextType = {
+  const clearCart = useCallback(() => {
+    if (isAuthenticated) {
+      cartData?.cart_product.forEach(item => {
+        removeCartItemMutation.mutate(item.cart_product_id);
+      });
+    }
+  }, [isAuthenticated, cartData, removeCartItemMutation]);
+
+  const value: CartContextType = useMemo(() => ({
     cartData: isAuthenticated ? cartData : undefined,
     totalPrice,
     isLoading: isAuthenticated ? isLoading : false,
@@ -145,14 +153,22 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     decreaseQuantity: handleDecreaseQuantity,
     directPurchaseProduct,
     setDirectPurchaseProduct,
-    clearCart: () => {
-      if (isAuthenticated) {
-        cartData?.cart_product.forEach(item => {
-          removeCartItemMutation.mutate(item.cart_product_id);
-        });
-      }
-    },
-  };
+    clearCart,
+  }), [
+    cartData,
+    totalPrice,
+    isLoading,
+    error,
+    isAuthenticated,
+    handleAddToCart,
+    handleRemoveFromCart,
+    handleUpdateQuantity,
+    handleIncreaseQuantity,
+    handleDecreaseQuantity,
+    directPurchaseProduct,
+    setDirectPurchaseProduct,
+    clearCart,
+  ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

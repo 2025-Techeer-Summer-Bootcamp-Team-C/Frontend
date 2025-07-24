@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
 interface FittingContextType {
@@ -21,8 +21,17 @@ export const FittingProvider = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener("resetFittingState", handleResetFittingState);
   }, []);
 
+  const handleSetShowFitting = useCallback((showFitting: boolean) => {
+    setShowFitting(showFitting);
+  }, []);
+
+  const value = useMemo(() => ({
+    showFitting,
+    setShowFitting: handleSetShowFitting,
+  }), [showFitting, handleSetShowFitting]);
+
   return (
-    <FittingContext.Provider value={{ showFitting, setShowFitting }}>
+    <FittingContext.Provider value={value}>
       {children}
     </FittingContext.Provider>
   );
