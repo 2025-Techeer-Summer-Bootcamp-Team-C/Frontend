@@ -168,23 +168,30 @@ const Header = memo(({
                 {showUserActions && (
                   <div className="flex items-center gap-3 md:gap-5">
                     {isLogin ? (
-                      <span
-                        className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
+                      <button
+                        type="button"
+                        className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
                         onClick={handleLogout}
+                        aria-label="로그아웃"
                       >
                         로그아웃
-                      </span>
+                      </button>
                     ) : (
                       <Suspense fallback={<span className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center">로그인</span>}>
                         <LoginDialog>
-                          <span className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity">
+                          <button
+                            type="button"
+                            className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
+                            aria-label="로그인 창 열기"
+                          >
                             로그인
-                          </span>
+                          </button>
                         </LoginDialog>
                       </Suspense>
                     )}
-                    <span
-                      className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
+                    <button
+                      type="button"
+                      className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
                       onClick={() => {
                         if (!isLogin) {
                           alert("로그인이 필요합니다.");
@@ -192,11 +199,13 @@ const Header = memo(({
                         }
                         navigate("/cart");
                       }}
+                      aria-label={`장바구니 (상품 ${cartCount}개)`}
                     >
                       장바구니({cartCount})
-                    </span>
-                    <span
-                      className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
+                    </button>
+                    <button
+                      type="button"
+                      className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
                       onClick={() => {
                         if (!isLogin) {
                           alert("로그인이 필요합니다.");
@@ -204,9 +213,10 @@ const Header = memo(({
                         }
                         navigate("/mypage");
                       }}
+                      aria-label="마이페이지로 이동"
                     >
                       마이페이지
-                    </span>
+                    </button>
                   </div>
                 )}
               </div>

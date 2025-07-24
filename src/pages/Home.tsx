@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import ProductCard from "@/components/common/ProductCard";
 import { useFilter } from "@/contexts/FilterContext";
 import { useFittingContext } from "@/contexts/FittingContext";
-import { useMemo, useState } from "react";
+import { useMemo, useState, lazy, Suspense } from "react";
+
+// Lazy load ProductCard for better code splitting
+const ProductCard = lazy(() => import("@/components/common/ProductCard"));
 // API calls commented out for dummy data testing
 import { useProductsQuery } from "@/hooks/useProducts";
 import { startFittingDetail } from "@/api/fittings";
@@ -158,14 +160,18 @@ const Home = () => {
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center"
               >
                 {row?.map((product) => (
-                  <ProductCard
+                  <Suspense 
                     key={product.product_id}
-                    variant="default"
-                    product={product}
-                    onProductClick={() =>
-                      handleProductClick(product.product_id)
-                    }
-                  />
+                    fallback={<div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>}
+                  >
+                    <ProductCard
+                      variant="default"
+                      product={product}
+                      onProductClick={() =>
+                        handleProductClick(product.product_id)
+                      }
+                    />
+                  </Suspense>
                 ))}
               </div>
             ))}

@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useState, lazy, Suspense } from "react";
-import ProductCard from "@/components/common/ProductCard";
 import { useNavigate } from "react-router-dom";
 
-// Lazy load dialog
+// Lazy load components for better code splitting
+const ProductCard = lazy(() => import("@/components/common/ProductCard"));
 const CartAddDialog = lazy(() => import("@/components/dialogs/CartAddDialog"));
 import { useCart } from "@/contexts/CartContext";
 import { useFittingContext } from "@/contexts/FittingContext";
@@ -338,14 +338,18 @@ const Detail = () => {
                 .filter((product) => product.product_id !== Number(id))
                 .slice(0, 4)
                 .map((product) => (
-                  <ProductCard
+                  <Suspense 
                     key={product.product_id}
-                    variant="viewed"
-                    product={product}
-                    onProductClick={() => {
-                      navigate(`/product/${product.product_id}`);
-                    }}
-                  />
+                    fallback={<div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>}
+                  >
+                    <ProductCard
+                      variant="viewed"
+                      product={product}
+                      onProductClick={() => {
+                        navigate(`/product/${product.product_id}`);
+                      }}
+                    />
+                  </Suspense>
                 ))}
             </div>
           </div>

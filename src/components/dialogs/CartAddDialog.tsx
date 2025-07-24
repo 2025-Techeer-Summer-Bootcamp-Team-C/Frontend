@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import ProductCard from "@/components/common/ProductCard";
 import type { ProductDetail } from "@/types/product";
 import { useProductsQuery } from "@/hooks/useProducts";
+import { lazy, Suspense } from "react";
+
+// Lazy load ProductCard for better code splitting
+const ProductCard = lazy(() => import("@/components/common/ProductCard"));
 
 interface CartAddDialogProps {
   isOpen: boolean;
@@ -91,14 +94,16 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
                     key={item.product_id}
                     className="[&>div]:w-[134.4px] [&>div>div:first-child]:!w-[134.4px] [&>div>div:first-child]:!h-[201.6px]"
                   >
-                    <ProductCard
-                      variant="viewed"
-                      product={item}
-                      onProductClick={() => {
-                        navigate(`/product/${item.product_id}`);
-                        onClose();
-                      }}
-                    />
+                    <Suspense fallback={<div className="w-[134.4px] h-[201.6px] bg-gray-100 animate-pulse rounded-lg"></div>}>
+                      <ProductCard
+                        variant="viewed"
+                        product={item}
+                        onProductClick={() => {
+                          navigate(`/product/${item.product_id}`);
+                          onClose();
+                        }}
+                      />
+                    </Suspense>
                   </div>
                 ))}
             </div>
