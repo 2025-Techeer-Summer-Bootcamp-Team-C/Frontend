@@ -89,7 +89,7 @@ const Detail = () => {
               <div className="flex flex-col gap-4 items-end">
                 {/* Main Product Image */}
                 <div
-                  className="relative w-[532px] h-[800px] bg-gray-200 overflow-hidden group cursor-pointer"
+                  className="relative w-[532px] h-[800px] bg-gray-200 overflow-hidden group"
                   onMouseEnter={() => setIsHovering(true)}
                   onMouseLeave={() => setIsHovering(false)}
                 >
@@ -103,7 +103,7 @@ const Detail = () => {
                       autoPlay
                       loop
                       muted
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain bg-white"
                     />
                   ) : (
                     <img
@@ -111,7 +111,7 @@ const Detail = () => {
                       alt={`${currentProduct.name}${
                         showFitting ? " - 피팅 결과" : " - 모델 착용"
                       }`}
-                      className={`w-full h-full object-cover transition-all duration-300 ${
+                      className={`w-full h-full object-contain bg-white transition-all duration-300 ${
                         showFitting
                           ? "group-hover:blur-sm group-hover:brightness-75"
                           : ""
@@ -125,7 +125,7 @@ const Detail = () => {
                         <button
                           onClick={handleVideoGenerate}
                           disabled={isVideoLoading}
-                          className="bg-white/90 hover:bg-white text-black font-inter font-medium text-[14px] px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="bg-white/90 cursor-pointer hover:bg-white text-black font-inter font-medium text-[14px] px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isVideoLoading ? (
                             <>
@@ -281,46 +281,46 @@ const Detail = () => {
                 </div>
               </div>
               {/* 구성소재 이미지 영역 */}
-              <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
+              <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
                   src={currentProduct.product_images[0]}
                   alt="Product Detail 1"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
             {/* Product Detail Images */}
             <div className="w-full flex justify-between">
-              <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
+              <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
                   src={currentProduct.product_images[1]}
                   alt="Product Detail 1"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
+              <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
                   src={currentProduct.product_images[2]}
                   alt="Product Detail 2"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
 
             {/* Full Width Detail Image */}
             <div className="w-full flex justify-between">
-              <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
+              <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
                   src={currentProduct.product_images[3]}
                   alt="Product Detail Full 1"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <div className="w-[532px] h-[800px] bg-gray-200 rounded-lg overflow-hidden">
+              <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
                   src={currentProduct.product_images[4]}
                   alt="Product Detail Full 2"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>

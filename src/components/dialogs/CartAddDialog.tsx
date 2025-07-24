@@ -42,7 +42,7 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
                 <img
                   src={product.model_image}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
@@ -57,7 +57,7 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
                   {product.content}
                 </p>
                 <p className="text-black text-[12px] font-inter font-medium leading-[18px] tracking-[-0.013em]">
-                  {product.price}원 
+                  {product.price}원
                 </p>
               </div>
             </div>
@@ -83,21 +83,24 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
 
             {/* Products Grid */}
             <div className="grid grid-cols-3 gap-[26px] w-[455.2px]">
-              {products?.products.filter((item) => item.product_id !== product.product_id).slice(0, 6).map((item) => (
-                <div
-                  key={item.product_id}
-                  className="[&>div]:w-[134.4px] [&>div>div:first-child]:!w-[134.4px] [&>div>div:first-child]:!h-[201.6px]"
-                >
-                  <ProductCard
-                    variant="viewed"
-                    product={item}
-                    onProductClick={() => {
-                      navigate(`/product/${item.product_id}`);
-                      onClose();
-                    }}
-                  />
-                </div>
-              ))}
+              {products?.products
+                .filter((item) => item.product_id !== product.product_id)
+                .slice(0, 6)
+                .map((item) => (
+                  <div
+                    key={item.product_id}
+                    className="[&>div]:w-[134.4px] [&>div>div:first-child]:!w-[134.4px] [&>div>div:first-child]:!h-[201.6px]"
+                  >
+                    <ProductCard
+                      variant="viewed"
+                      product={item}
+                      onProductClick={() => {
+                        navigate(`/product/${item.product_id}`);
+                        onClose();
+                      }}
+                    />
+                  </div>
+                ))}
             </div>
           </div>
         </div>

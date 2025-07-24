@@ -50,7 +50,7 @@ function OrderSummary() {
             {isDirectPurchase && (
               <img
                 key={directPurchaseProduct.product_id}
-                className="w-[118px] h-[178px] bg-gray-200 rounded"
+                className="w-[118px] h-[178px] bg-white object-contain rounded"
                 src={directPurchaseProduct.image}
                 alt={directPurchaseProduct.name}
               />
@@ -58,7 +58,7 @@ function OrderSummary() {
             {cartData?.cart_product.map((product) => (
               <img
                 key={product.cart_product_id}
-                className="w-[118px] h-[178px] bg-gray-200 rounded"
+                className="w-[118px] h-[178px] bg-white object-contain rounded"
                 src={product.image}
                 alt={product.name}
               />
@@ -73,16 +73,43 @@ function OrderSummary() {
               <h2 className="text-[17px] font-bold text-black">배송 정보</h2>
               {currentBuyerInfo ? (
                 <>
-                  <p className="text-[17px] font-medium text-black">이름 - <span className="text-gray-500">{currentBuyerInfo.name}</span></p>
-                  <p className="text-[17px] font-medium text-black">우편번호 - <span className="text-gray-500">{currentBuyerInfo.postalCode}</span></p>
-                  <p className="text-[17px] font-medium text-black">주소 - <span className="text-gray-500">{currentBuyerInfo.address}</span></p>
+                  <p className="text-[17px] font-medium text-black">
+                    이름 -{" "}
+                    <span className="text-gray-500">
+                      {currentBuyerInfo.name}
+                    </span>
+                  </p>
+                  <p className="text-[17px] font-medium text-black">
+                    우편번호 -{" "}
+                    <span className="text-gray-500">
+                      {currentBuyerInfo.postalCode}
+                    </span>
+                  </p>
+                  <p className="text-[17px] font-medium text-black">
+                    주소 -{" "}
+                    <span className="text-gray-500">
+                      {currentBuyerInfo.address}
+                    </span>
+                  </p>
                   {currentBuyerInfo.address2 && (
-                    <p className="text-[17px] font-medium text-black">상세주소 - <span className="text-gray-500">{currentBuyerInfo.address2}</span></p>
+                    <p className="text-[17px] font-medium text-black">
+                      상세주소 -{" "}
+                      <span className="text-gray-500">
+                        {currentBuyerInfo.address2}
+                      </span>
+                    </p>
                   )}
-                  <p className="text-[17px] font-medium text-black">전화번호 - <span className="text-gray-500">{currentBuyerInfo.phone}</span></p>
+                  <p className="text-[17px] font-medium text-black">
+                    전화번호 -{" "}
+                    <span className="text-gray-500">
+                      {currentBuyerInfo.phone}
+                    </span>
+                  </p>
                 </>
               ) : (
-                <p className="text-[17px] font-medium text-gray-500">배송 정보를 입력해주세요.</p>
+                <p className="text-[17px] font-medium text-gray-500">
+                  배송 정보를 입력해주세요.
+                </p>
               )}
             </div>
 
