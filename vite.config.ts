@@ -50,46 +50,94 @@ export default defineConfig({
       },
       output: {
         // 효율적인 청크 분할 (React Context 이슈 해결)
-        manualChunks: {
-          // React 핵심 라이브러리는 함께 유지
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+        manualChunks: (id) => {
+          // node_modules 처리 최적화
+          if (id.includes('node_modules')) {
+            // React 핵심 라이브러리는 함께 유지
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'react-vendor';
+            }
+            
+            // UI 라이브러리
+            if (id.includes('@radix-ui') || id.includes('@headlessui')) {
+              return 'ui-vendor';
+            }
+            
+            // 데이터 관리 라이브러리
+            if (id.includes('@tanstack/react-query') || id.includes('axios') || 
+                id.includes('react-hook-form') || id.includes('@hookform/resolvers') || 
+                id.includes('zod')) {
+              return 'data-vendor';
+            }
+            
+            // 유틸리티 (React 의존성 없는 것들만)
+            if (id.includes('clsx') || id.includes('tailwind-merge') || 
+                id.includes('class-variance-authority')) {
+              return 'utils-vendor';
+            }
+            
+            // 아이콘 - Tree shaking 최적화
+            if (id.includes('lucide-react')) {
+              return 'icons-vendor';
+            }
+            
+            // 기타 node_modules는 vendor로 그룹화
+            return 'vendor';
+          }
           
-          // UI 라이브러리
-          'ui-vendor': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-navigation-menu',
-            '@radix-ui/react-scroll-area',
-            '@radix-ui/react-separator',
-            '@radix-ui/react-aspect-ratio',
-            '@radix-ui/react-avatar',
-            '@radix-ui/react-checkbox',
-            '@radix-ui/react-label',
-            '@radix-ui/react-slot'
-          ],
+          // 페이지별 청크 분할
+          if (id.includes('src/pages/Home.tsx')) {
+            return 'home-page';
+          }
+          if (id.includes('src/pages/Detail.tsx')) {
+            return 'detail-page';
+          }
+          if (id.includes('src/pages/MyPage.tsx')) {
+            return 'mypage-page';
+          }
+          if (id.includes('src/pages/Order.tsx') || id.includes('src/pages/Cart.tsx')) {
+            return 'commerce-pages';
+          }
           
-          // 데이터 관리 라이브러리
-          'data-vendor': [
-            '@tanstack/react-query',
-            'axios',
-            'react-hook-form',
-            '@hookform/resolvers',
-            'zod'
-          ],
+          // 대형 섹션 컴포넌트 분할
+          if (id.includes('src/components/sections/OnBoarding.tsx') || 
+              id.includes('src/components/sections/VideoSection.tsx')) {
+            return 'media-sections';
+          }
+          if (id.includes('src/components/sections/VirtualFittingVideos.tsx')) {
+            return 'fitting-sections';
+          }
           
-          // 유틸리티 (React 의존성 없는 것들만)
-          'utils-vendor': [
-            'clsx',
-            'tailwind-merge',
-            'class-variance-authority'
-          ],
+          // 다이얼로그 컴포넌트 분할
+          if (id.includes('src/components/dialogs/')) {
+            return 'dialog-components';
+          }
           
-          // 애니메이션 (별도 분리)
-          'animation-vendor': ['framer-motion'],
+          // ProductCard와 관련 컴포넌트
+          if (id.includes('src/components/common/ProductCard.tsx') || 
+              id.includes('src/components/common/CartProductCard.tsx')) {
+            return 'product-components';
+          }
           
-          // 아이콘
-          'icons-vendor': ['lucide-react']
+          // 폼 관련 컴포넌트
+          if (id.includes('src/components/forms/')) {
+            return 'form-components';
+          }
+          
+          // 기타 공통 컴포넌트
+          if (id.includes('src/components/common/')) {
+            return 'common-components';
+          }
+          
+          // Context 관련
+          if (id.includes('src/contexts/')) {
+            return 'context-providers';
+          }
+          
+          // Hooks와 API
+          if (id.includes('src/hooks/') || id.includes('src/api/')) {
+            return 'hooks-api';
+          }
         },
         
         // 파일명 최적화 (캐시 무효화 방지)
@@ -139,5 +187,9 @@ export default defineConfig({
     fs: {
       allow: ['..'],
     },
+    // 개발 서버 설정 (production에서는 .gz/.br 파일이 자동 제공됨)
+    cors: true,
+    host: true,
+    port: 5173,
   },
 });
