@@ -19,10 +19,38 @@ export const useAddCartItemMutation = () => {
     return useMutation({
         mutationFn: ({ productId, quantity }: { productId: number; quantity: number }) => 
             addCartItem(productId, quantity),
+        onMutate: async ({ productId, quantity }) => {
+            // 진행 중인 쿼리 취소
+            await queryClient.cancelQueries({ queryKey: ["cart"] });
+            
+            // 이전 데이터 백업
+            const previousCartData = queryClient.getQueryData(["cart"]);
+            
+            // Optimistic update - 임시로 장바구니에 아이템 추가
+            queryClient.setQueryData(["cart"], (old: any) => {
+                if (!old) return old;
+                // 임시 아이템 추가 (실제 API 응답과 맞춰야 함)
+                return {
+                    ...old,
+                    items: [...(old.items || []), {
+                        id: `temp-${Date.now()}`,
+                        productId,
+                        quantity,
+                        isOptimistic: true
+                    }]
+                };
+            });
+            
+            return { previousCartData };
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["cart"] });
         },
-        onError: (error) => {
+        onError: (error, _variables, context) => {
+            // 에러 시 이전 데이터로 롤백
+            if (context?.previousCartData) {
+                queryClient.setQueryData(["cart"], context.previousCartData);
+            }
             console.error("장바구니 추가 실패:", error);
         },
     });
