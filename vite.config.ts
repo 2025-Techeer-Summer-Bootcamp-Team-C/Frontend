@@ -51,37 +51,31 @@ export default defineConfig({
       output: {
         // 효율적인 청크 분할 (React Context 이슈 해결)
         manualChunks: (id) => {
-          // node_modules 처리 최적화
+          // node_modules 처리 최적화 (React import 중복 완전 차단)
           if (id.includes('node_modules')) {
-            // React 핵심 라이브러리는 함께 유지
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+            // React 생태계 라이브러리는 모두 react-vendor로 통합
+            if (id.includes('react') || 
+                id.includes('react-dom') || 
+                id.includes('react-router-dom') ||
+                id.includes('@radix-ui') || 
+                id.includes('@headlessui') ||
+                id.includes('react-hook-form') || 
+                id.includes('@hookform/resolvers') ||
+                id.includes('lucide-react') ||
+                id.includes('@tanstack/react-query')) {
               return 'react-vendor';
             }
             
-            // UI 라이브러리
-            if (id.includes('@radix-ui') || id.includes('@headlessui')) {
-              return 'ui-vendor';
-            }
-            
-            // 데이터 관리 라이브러리
-            if (id.includes('@tanstack/react-query') || id.includes('axios') || 
-                id.includes('react-hook-form') || id.includes('@hookform/resolvers') || 
-                id.includes('zod')) {
-              return 'data-vendor';
-            }
-            
-            // 유틸리티 (React 의존성 없는 것들만)
-            if (id.includes('clsx') || id.includes('tailwind-merge') || 
-                id.includes('class-variance-authority')) {
+            // 순수 유틸리티 (React 무관)
+            if (id.includes('clsx') || 
+                id.includes('tailwind-merge') || 
+                id.includes('class-variance-authority') ||
+                id.includes('zod') ||
+                id.includes('axios')) {
               return 'utils-vendor';
             }
             
-            // 아이콘 - Tree shaking 최적화
-            if (id.includes('lucide-react')) {
-              return 'icons-vendor';
-            }
-            
-            // 기타 node_modules는 vendor로 그룹화
+            // 기타 node_modules는 vendor로 그룹화 (React 의존성 제거)
             return 'vendor';
           }
           
