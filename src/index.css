@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -138,14 +137,14 @@
 
 @font-face {
   font-family: "butler";
-  src: url("./fonts/Butler-Black.woff2") format("woff2");
+  src: url("./assets/fonts/Butler-Black.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "pretendard";
-  src: url("./fonts/woff2/Pretendard-Light.woff2") format("woff2");
+  src: url("./assets/fonts/Pretendard-Light.woff2") format("woff2");
   font-weight: 300;
   font-style: normal;
 }
