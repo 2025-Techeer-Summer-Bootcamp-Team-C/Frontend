@@ -1,13 +1,13 @@
 import Header from "./Header";
 import Footer from "./Footer";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { getLayoutConfig } from "@/config/layoutConfig";
-import VideoSection from "@/components/sections/VideoSection";
-import Audio from "@/components/Audio";
-import OnBoarding from "@/components/sections/OnBoarding";
-import MorphLogo from "@/components/sections/MorphLogo";
+
+const VideoSection = lazy(() => import("@/components/sections/VideoSection"));
+const OnBoarding = lazy(() => import("@/components/sections/OnBoarding"));
+const MorphLogo = lazy(() => import("@/components/sections/MorphLogo"));
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,7 +17,6 @@ interface LayoutProps {
 const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
   const location = useLocation();
   const { totalPrice: cartTotalPrice, directPurchaseProduct } = useCart();
-  const audioRef = useRef<{ setVolume: (volume: number) => void }>(null);
   const [onboardingTextStyle, setOnboardingTextStyle] = useState(
     "opacity-0 translate-y-8"
   );
@@ -101,28 +100,25 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
     };
   }, [isHomePage]);
 
-  const handleVolumeChange = (volume: number) => {
-    audioRef.current?.setVolume(volume);
-  };
-
   return (
-    <div>
-      {isHomePage && (
-        <>
-          <Audio ref={audioRef} />
-          <VideoSection onVolumeChange={handleVolumeChange} />
-          <OnBoarding textStyle={onboardingTextStyle} />
-          <MorphLogo />
-        </>
-      )}
-      <Header
-        showSearch={layoutConfig.showSearch}
-        showUserActions={layoutConfig.showUserActions}
-        showNavigation={layoutConfig.showNavigation}
-      />
-      <main className="mb-50">{children}</main>
-      <Footer variant={finalFooterVariant} totalPrice={totalPrice} />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div>
+        {isHomePage && (
+          <>
+            <VideoSection />
+            <OnBoarding textStyle={onboardingTextStyle} />
+            <MorphLogo />
+          </>
+        )}
+        <Header
+          showSearch={layoutConfig.showSearch}
+          showUserActions={layoutConfig.showUserActions}
+          showNavigation={layoutConfig.showNavigation}
+        />
+        <main className="mb-50">{children}</main>
+        <Footer variant={finalFooterVariant} totalPrice={totalPrice} />
+      </div>
+    </Suspense>
   );
 };
 

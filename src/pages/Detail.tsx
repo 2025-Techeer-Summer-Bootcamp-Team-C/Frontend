@@ -1,8 +1,10 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import ProductCard from "@/components/common/ProductCard";
 import { useNavigate } from "react-router-dom";
-import CartAddDialog from "@/components/dialogs/CartAddDialog";
+
+// Lazy load dialog
+const CartAddDialog = lazy(() => import("@/components/dialogs/CartAddDialog"));
 import { useCart } from "@/contexts/CartContext";
 import { useFittingContext } from "@/contexts/FittingContext";
 import type { Product, ProductDetail } from "@/types/product";
@@ -351,11 +353,15 @@ const Detail = () => {
       </div>
 
       {/* Cart Add Dialog */}
-      <CartAddDialog
-        isOpen={isCartDialogOpen}
-        onClose={() => setIsCartDialogOpen(false)}
-        product={currentProduct as unknown as ProductDetail}
-      />
+      {isCartDialogOpen && (
+        <Suspense fallback={<div></div>}>
+          <CartAddDialog
+            isOpen={isCartDialogOpen}
+            onClose={() => setIsCartDialogOpen(false)}
+            product={currentProduct as unknown as ProductDetail}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

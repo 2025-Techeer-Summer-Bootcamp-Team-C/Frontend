@@ -1,4 +1,4 @@
-import onboardingBg from "@/assets/onboarding_bg.jpeg";
+import onboardingBg from "@/assets/onboarding_bg.webp";
 
 const OnBoarding = ({ textStyle }: { textStyle: string }) => {
   return (
