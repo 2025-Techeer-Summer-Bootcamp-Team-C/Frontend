@@ -65,12 +65,12 @@ function OrderHistory() {
         {/* Order Content */}
         <div className="ml-[109px] flex items-start gap-[66px]">
           {/* Product Image */}
-          <div className="w-[118px] h-[178px] bg-gray-200 rounded overflow-hidden">
+          <div className="w-[118px] h-[178px] bg-white rounded overflow-hidden">
             {firstProduct && (
               <img
                 src={firstProduct.image || ""}
                 alt={firstProduct.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             )}
           </div>
