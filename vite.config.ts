@@ -99,6 +99,11 @@ export default defineConfig({
             return 'commerce-pages';
           }
           
+          // React 관련 소스 코드는 모두 함께 그룹화 (useLayoutEffect 공유)
+          if (id.includes('src/contexts/') || id.includes('src/hooks/') || id.includes('src/api/')) {
+            return 'react-core';
+          }
+          
           // 대형 섹션 컴포넌트 분할
           if (id.includes('src/components/sections/OnBoarding.tsx') || 
               id.includes('src/components/sections/VideoSection.tsx')) {
@@ -127,16 +132,6 @@ export default defineConfig({
           // 기타 공통 컴포넌트
           if (id.includes('src/components/common/')) {
             return 'common-components';
-          }
-          
-          // Context 관련
-          if (id.includes('src/contexts/')) {
-            return 'context-providers';
-          }
-          
-          // Hooks와 API
-          if (id.includes('src/hooks/') || id.includes('src/api/')) {
-            return 'hooks-api';
           }
         },
         
