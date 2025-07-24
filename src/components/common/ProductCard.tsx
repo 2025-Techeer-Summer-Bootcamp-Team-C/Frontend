@@ -29,13 +29,16 @@ const ProductCard = memo(
       >
         {/* Product Image */}
         <div
-          className="w-full h-[270px] sm:h-[360px] bg-gray-200 mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow"
+          className="w-full h-[270px] sm:h-[360px] bg-gray-50 mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow"
           onClick={onProductClick}
         >
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+            style={{
+              imageRendering: 'auto',
+            }}
           />
         </div>
 

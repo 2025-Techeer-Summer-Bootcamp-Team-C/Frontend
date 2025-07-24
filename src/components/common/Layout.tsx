@@ -1,12 +1,11 @@
 import Header from "./Header";
 import Footer from "./Footer";
-import React, { useRef, useEffect, useState, lazy, Suspense } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { getLayoutConfig } from "@/config/layoutConfig";
 
 const VideoSection = lazy(() => import("@/components/sections/VideoSection"));
-const Audio = lazy(() => import("@/components/Audio"));
 const OnBoarding = lazy(() => import("@/components/sections/OnBoarding"));
 const MorphLogo = lazy(() => import("@/components/sections/MorphLogo"));
 
@@ -18,7 +17,6 @@ interface LayoutProps {
 const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
   const location = useLocation();
   const { totalPrice: cartTotalPrice, directPurchaseProduct } = useCart();
-  const audioRef = useRef<{ setVolume: (volume: number) => void }>(null);
   const [onboardingTextStyle, setOnboardingTextStyle] = useState(
     "opacity-0 translate-y-8"
   );
@@ -102,17 +100,12 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
     };
   }, [isHomePage]);
 
-  const handleVolumeChange = (volume: number) => {
-    audioRef.current?.setVolume(volume);
-  };
-
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div>
         {isHomePage && (
           <>
-            <Audio ref={audioRef} />
-            <VideoSection onVolumeChange={handleVolumeChange} />
+            <VideoSection />
             <OnBoarding textStyle={onboardingTextStyle} />
             <MorphLogo />
           </>

@@ -1,15 +1,75 @@
-<!doctype html>
-<html lang="en">
+ㅇ<!doctype html>
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="./src/assets/fonts/Pretendard-Light.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preconnect" href="./src/assets/fonts/Butler-Black.woff2" as="font" type="font/woff2" crossorigin>
-    <title>Morph</title>
+    
+    <!-- DNS prefetch for external domains -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    
+    <!-- Preconnect to critical origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Font preloading for critical fonts -->
+    <link rel="preload" href="./src/assets/fonts/Pretendard-ExtraLight.subset.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="./src/assets/fonts/Butler-Black.woff2" as="font" type="font/woff2" crossorigin />
+    
+    <!-- Critical CSS inline -->
+    <style>
+      /* Critical CSS for LCP optimization */
+      body {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff;
+      }
+      
+      #root {
+        min-height: 100vh;
+      }
+      
+      /* Loading spinner for initial render */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #333;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+      
+      /* Hide loading spinner when React takes over */
+      .app-loaded .loading-spinner {
+        display: none;
+      }
+    </style>
+    
+    <!-- Performance optimization meta tags -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
+    
+    <title>Morph - AI 가상 피팅 서비스</title>
+    
+    <!-- SEO and performance meta tags -->
+    <meta name="description" content="AI 기술로 완벽한 가상 피팅 서비스를 경험하세요" />
+    <meta name="theme-color" content="#ffffff" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Initial loading spinner -->
+      <div class="loading-spinner"></div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
