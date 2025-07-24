@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 const MorphLogo = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const shrinkStartPoint = 800; // 축소 시작 지점 (기존 release 지점)
+  const shrinkStartPoint = 900; // 축소 시작 지점 (기존 release 지점)
   const shrinkEndPoint = 2000; // 축소 완료 지점 (1000px 구간에서 축소)
   const rafRef = useRef<number>(0);
 
