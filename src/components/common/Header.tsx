@@ -80,10 +80,10 @@ const Header = memo(
           isHomePage && !isSticky
             ? "relative bg-transparent"
             : "fixed top-0 left-0 bg-transparent"
-        } w-full h-[149px] z-50 hover:bg-white/70 group transition-all duration-300`}
+        } w-full h-[100px] z-50 group transition-all duration-300`}
       >
         {/* Main Header */}
-        <div className="flex items-center h-[149px] justify-center py-5">
+        <div className="flex items-center h-[100px] justify-center py-5">
           <div className="w-full max-w-[1440px] px-4 lg:px-8 xl:px-0">
             <div className="flex items-center justify-between">
               {/* Left Section - Category Menu 또는 Logo */}
@@ -170,20 +170,6 @@ const Header = memo(
                       )}
                       <button
                         type="button"
-                        className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
-                        onClick={() => {
-                          if (!isLogin) {
-                            alert("로그인이 필요합니다.");
-                            return;
-                          }
-                          navigate("/cart");
-                        }}
-                        aria-label={`장바구니 (상품 ${cartCount}개)`}
-                      >
-                        장바구니({cartCount})
-                      </button>
-                      <button
-                        type="button"
                         className="text-black text-[9px] md:text-[10px] font-inter text-center w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
                         onClick={() => {
                           if (!isLogin) {
@@ -195,6 +181,20 @@ const Header = memo(
                         aria-label="마이페이지로 이동"
                       >
                         마이페이지
+                      </button>
+                      <button
+                        type="button"
+                        className="text-black text-[9px] md:text-[10px] font-inter text-center w-[50px] md:w-[62px] h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
+                        onClick={() => {
+                          if (!isLogin) {
+                            alert("로그인이 필요합니다.");
+                            return;
+                          }
+                          navigate("/cart");
+                        }}
+                        aria-label={`장바구니 (상품 ${cartCount}개)`}
+                      >
+                        장바구니({cartCount})
                       </button>
                     </div>
                   )}

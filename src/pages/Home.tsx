@@ -152,7 +152,7 @@ const Home = () => {
       {/* Main Content */}
       <div
         className={`flex justify-center pt-[100px] ${
-          isSticky ? "pt-[249px]" : ""
+          isSticky ? "pt-[200px]" : ""
         }`}
       >
         <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">

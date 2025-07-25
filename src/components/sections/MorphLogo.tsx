@@ -61,9 +61,9 @@ const MorphLogo = () => {
   // 크기 및 위치 계산
   const getLogoStyles = () => {
     const baseSize = 200;
-    const headerSize = 75;
+    const headerSize = 60;
     const baseTop = 300;
-    const headerTop = 65;
+    const headerTop = 40;
 
     switch (positionState) {
       case "fixed":
