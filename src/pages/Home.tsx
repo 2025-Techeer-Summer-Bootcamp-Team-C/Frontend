@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useFilter } from "@/contexts/FilterContext";
 import { useFittingContext } from "@/contexts/FittingContext";
-import { useMemo, useState, lazy, Suspense } from "react";
+import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 
 // Lazy load ProductCard for better code splitting
 const ProductCard = lazy(() => import("@/components/common/ProductCard"));
@@ -11,6 +11,7 @@ import { fetchProducts } from "@/api/products";
 import { useFittingResultsPollingMutation } from "@/hooks/useFittings";
 import { useHeaderSticky } from "@/hooks/useHeaderSticky";
 import { useModal } from "@/contexts/ModalContext";
+import { MorphSpinner } from "@/components/ui/morph-spinner";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -25,13 +26,40 @@ const Home = () => {
     hasLastSelectedImage,
   } = useFittingContext();
   const [buttonText, setButtonText] = useState<string>("피팅하기");
+  const [viewedProducts, setViewedProducts] = useState<string[]>([]);
   const { openModal } = useModal();
   const isSticky = useHeaderSticky();
   const { data: products } = useProductsQuery(showFitting);
 
   const fittingPollingMutation = useFittingResultsPollingMutation();
 
+  // localStorage에서 조회한 상품 목록 로드
+  useEffect(() => {
+    const savedViewedProducts = localStorage.getItem("viewedProducts");
+    if (savedViewedProducts) {
+      try {
+        setViewedProducts(JSON.parse(savedViewedProducts));
+      } catch (error) {
+        console.error("Failed to parse viewed products:", error);
+        localStorage.removeItem("viewedProducts");
+      }
+    }
+  }, []);
+
+  // 조회한 상품 목록을 localStorage에 저장
+  const saveViewedProducts = (products: string[]) => {
+    setViewedProducts(products);
+    localStorage.setItem("viewedProducts", JSON.stringify(products));
+  };
+
   const handleProductClick = (productId: number) => {
+    // 상품 조회 이력 저장 (중복 제거)
+    const productIdStr = productId.toString();
+    const updatedViewedProducts = [
+      ...new Set([...viewedProducts, productIdStr]),
+    ];
+    saveViewedProducts(updatedViewedProducts);
+
     navigate(`/product/${productId}`);
   };
 
@@ -149,6 +177,16 @@ const Home = () => {
 
   return (
     <div className="w-full bg-white relative">
+      {/* 피팅 로딩 전체 화면 오버레이 */}
+      {isFittingLoading && (
+        <div className="fixed inset-0 z-[90] bg-white/80 backdrop-blur-sm flex items-center justify-center">
+          <MorphSpinner
+            size={80}
+            message="AI가 당신에게 완벽한 핏을 찾고 있어요"
+          />
+        </div>
+      )}
+
       {/* Main Content */}
       <div
         className={`flex justify-center pt-[100px] ${
@@ -171,7 +209,11 @@ const Home = () => {
                     }
                   >
                     <ProductCard
-                      variant="default"
+                      variant={
+                        viewedProducts.includes(product.product_id.toString())
+                          ? "viewed"
+                          : "default"
+                      }
                       product={product}
                       onProductClick={() =>
                         handleProductClick(product.product_id)
@@ -217,7 +259,7 @@ const Home = () => {
           onClick={handleFittingClick}
           disabled={isFittingLoading}
         >
-          {/* 진행 배경 애니메이션 */}
+          {/* 진행 배경 애니메이션
           {isFittingLoading && (
             <div
               className="absolute inset-0 bg-green-400"
@@ -225,7 +267,7 @@ const Home = () => {
                 animation: "slideRight 3s linear forwards",
               }}
             />
-          )}
+          )} */}
 
           {/* 버튼 텍스트 */}
           <span className="relative z-10 font-medium">

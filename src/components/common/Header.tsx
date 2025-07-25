@@ -125,9 +125,7 @@ const Header = memo(
                         key={index}
                         onClick={() => handleCategoryClick(item)}
                         className={`text-black text-[15px] font-inter leading-4 cursor-pointer hover:opacity-70 transition-all whitespace-nowrap ${
-                          selectedCategory === item
-                            ? "font-bold"
-                            : "font-normal"
+                          selectedCategory === item ? "font-bold" : "font-light"
                         }`}
                       >
                         {item}
