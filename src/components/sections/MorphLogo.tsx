@@ -85,7 +85,7 @@ const MorphLogo = () => {
         };
 
       case "scaling":
-        // 3단계: fixed로 돌아가면서 크기 축소
+        // 3단계: fixed로 돌아가면서 크기 축소(top은 200px 구간 후 고정)
         const logoSize = baseSize - scrollProgress * (baseSize - headerSize);
         const topPosition =
           baseTop - 200 - scrollProgress * (baseTop - 200 - headerTop);

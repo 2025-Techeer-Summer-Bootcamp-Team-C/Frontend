@@ -9,8 +9,11 @@ const PersonalInfoForm = lazy(
 const AddressManagement = lazy(
   () => import("@/components/forms/AddressManagement")
 );
+const PhotoSelectionModal = lazy(
+  () => import("@/components/modals/PhotoSelectionModal")
+);
 
-type ModalType = "personalInfo" | "addresses" | null;
+type ModalType = "personalInfo" | "addresses" | "photoSelection" | null;
 
 type PersonalInfoData = {
   name: string;
@@ -36,7 +39,8 @@ type ModalContextType = {
     initialData?: PersonalInfoData, 
     onSubmitCallback?: (data: PersonalInfoData) => void,
     onAddressCallback?: (addresses: Address[]) => void,
-    initialAddresses?: Address[]
+    initialAddresses?: Address[],
+    onPhotoSelectionCallback?: (selectedPhoto: File | string) => void
   ) => void;
   closeModal: () => void;
   modalType: ModalType;
@@ -50,19 +54,22 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [submitCallback, setSubmitCallback] = useState<((data: PersonalInfoData) => void) | null>(null);
   const [addressCallback, setAddressCallback] = useState<((addresses: Address[]) => void) | null>(null);
   const [initialAddresses, setInitialAddresses] = useState<Address[]>([]);
+  const [photoSelectionCallback, setPhotoSelectionCallback] = useState<((selectedPhoto: File | string) => void) | null>(null);
 
   const openModal = (
     type: ModalType, 
     data?: PersonalInfoData, 
     onSubmitCallback?: (data: PersonalInfoData) => void,
     onAddressCallback?: (addresses: Address[]) => void,
-    initialAddressData?: Address[]
+    initialAddressData?: Address[],
+    onPhotoSelectionCallback?: (selectedPhoto: File | string) => void
   ) => {
     setModalType(type);
     setInitialData(data || null);
     setSubmitCallback(() => onSubmitCallback || null);
     setAddressCallback(() => onAddressCallback || null);
     setInitialAddresses(initialAddressData || []);
+    setPhotoSelectionCallback(() => onPhotoSelectionCallback || null);
   };
 
   const closeModal = () => {
@@ -71,6 +78,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     setSubmitCallback(null);
     setAddressCallback(null);
     setInitialAddresses([]);
+    setPhotoSelectionCallback(null);
   };
 
   // Default data for forms when no initial data is provided
@@ -121,6 +129,12 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
                 onClose={closeModal}
                 onAddressUpdate={addressCallback}
                 initialAddresses={initialAddresses}
+              />
+            )}
+            {modalType === "photoSelection" && (
+              <PhotoSelectionModal 
+                onClose={closeModal}
+                onPhotoSelect={photoSelectionCallback}
               />
             )}
           </Suspense>

@@ -13,7 +13,7 @@ interface ProductCardProps {
 const ProductCard = memo(
   ({ variant = "default", product, onProductClick }: ProductCardProps) => {
     const { prefetchProductDetail } = usePrefetch();
-    const { showFitting } = useFittingContext();
+    const { showFitting, isFittingLoading } = useFittingContext();
 
     const getTextColor = () => {
       return variant === "viewed" ? "text-[#AAAAAA]" : "text-black";
@@ -31,17 +31,30 @@ const ProductCard = memo(
       >
         {/* Product Image */}
         <div
-          className="w-full h-[270px] sm:h-[360px] bg-white mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow"
+          className="w-full h-[270px] sm:h-[360px] bg-white mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow relative"
           onClick={onProductClick}
         >
           <img
             src={product.image}
             alt={showFitting ? `${product.name} - 피팅 결과` : product.name}
-            className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+            className={`w-full h-full object-contain hover:scale-105 transition-transform duration-300 ${
+              isFittingLoading ? 'opacity-50' : ''
+            }`}
             style={{
               imageRendering: "auto",
             }}
           />
+          
+          {/* 피팅 로딩 오버레이 */}
+          {isFittingLoading && (
+            <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-2">
+                {/* 스피너 */}
+                <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
+                <span className="text-xs text-gray-600 font-inter">피팅 중...</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Product Info Container */}
