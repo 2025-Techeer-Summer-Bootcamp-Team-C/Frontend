@@ -1,5 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import type { ProductDetail } from "@/types/product";
 import { useProductsQuery } from "@/hooks/useProducts";
 import { lazy, Suspense } from "react";
@@ -33,9 +38,11 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
         <div className="w-full h-full bg-white flex flex-col overflow-y-auto">
           {/* Header */}
           <div className="pt-[53px] px-[40px]">
-            <h2 className="text-black text-[15px] font-inter font-medium leading-[23px] tracking-[-0.017em]">
-              장바구니에 추가됨
-            </h2>
+            <SheetHeader>
+              <SheetTitle className="text-black text-[15px] font-inter font-medium leading-[23px] tracking-[-0.017em]">
+                장바구니에 추가됨
+              </SheetTitle>
+            </SheetHeader>
           </div>
 
           <div className="flex justify-start items-center">
@@ -94,7 +101,11 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
                     key={item.product_id}
                     className="[&>div]:w-[134.4px] [&>div>div:first-child]:!w-[134.4px] [&>div>div:first-child]:!h-[201.6px]"
                   >
-                    <Suspense fallback={<div className="w-[134.4px] h-[201.6px] bg-gray-100 animate-pulse rounded-lg"></div>}>
+                    <Suspense
+                      fallback={
+                        <div className="w-[134.4px] h-[201.6px] bg-gray-100 animate-pulse rounded-lg"></div>
+                      }
+                    >
                       <ProductCard
                         variant="viewed"
                         product={item}

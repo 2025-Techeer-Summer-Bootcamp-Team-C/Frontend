@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Lazy load components for better code splitting
@@ -7,6 +7,7 @@ const ProductCard = lazy(() => import("@/components/common/ProductCard"));
 const CartAddDialog = lazy(() => import("@/components/dialogs/CartAddDialog"));
 import { useCart } from "@/contexts/CartContext";
 import { useFittingContext } from "@/contexts/FittingContext";
+import { useOrder } from "@/contexts/OrderContext";
 import type { Product, ProductDetail } from "@/types/product";
 import { useProductDetailQuery } from "@/hooks/useProducts";
 import { useProductsQuery } from "@/hooks/useProducts";
@@ -16,12 +17,14 @@ import { Play, Loader2 } from "lucide-react";
 const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { setDirectPurchaseProduct, addToCart } = useCart();
+  const { addToCart, isAuthenticated } = useCart();
   const { showFitting } = useFittingContext();
+  const { createSingleProductOrder } = useOrder();
   const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const quantitySelectorRef = useRef<HTMLDivElement>(null);
   const { data: productList } = useProductsQuery(showFitting);
   const { data: currentProduct } = useProductDetailQuery(
     Number(id),
@@ -37,16 +40,46 @@ const Detail = () => {
     (product) => product.product_id === Number(id)
   )?.image;
 
-  const handlePurchaseClick = () => {
+  // 외부 클릭 시 수량 선택기 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        quantitySelectorRef.current &&
+        !quantitySelectorRef.current.contains(event.target as Node)
+      ) {
+        setShowQuantitySelector(false);
+      }
+    };
+
     if (showQuantitySelector) {
-      // 수량 선택 완료 후 주문 페이지로 이동
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showQuantitySelector]);
+
+  const handlePurchaseClick = async () => {
+    // 로그인 상태 확인
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    if (showQuantitySelector) {
+      // 수량 선택 완료 후 주문 생성 API 호출
       if (currentProduct) {
-        setDirectPurchaseProduct({
-          ...currentProduct,
-          quantity: purchaseQuantity,
-          image: currentProduct.model_image,
-        });
-        navigate("/order");
+        try {
+          await createSingleProductOrder(
+            currentProduct.product_id,
+            purchaseQuantity,
+            currentProduct.model_image
+          );
+          navigate("/order");
+        } catch (error) {
+          alert("주문 생성에 실패했습니다.");
+        }
       }
     } else {
       // 수량 선택 UI 표시
@@ -61,6 +94,12 @@ const Detail = () => {
   };
 
   const handleAddToCart = () => {
+    // 로그인 상태 확인
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
     if (currentProduct) {
       addToCart(currentProduct as unknown as Product, 1);
       setIsCartDialogOpen(true);
@@ -177,47 +216,48 @@ const Detail = () => {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-0 w-full">
-                  <button
-                    className="bg-white border border-black text-black text-[10px] font-inter py-[13px] w-[215px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
-                    onClick={handlePurchaseClick}
-                  >
-                    {showQuantitySelector ? (
-                      <div className="flex items-center justify-between w-full px-4">
-                        <span>수량</span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleQuantityChange(purchaseQuantity - 1);
-                            }}
-                            className="w-5 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
-                          >
-                            -
-                          </button>
-                          <span className="min-w-[20px] text-center">
-                            {purchaseQuantity}
-                          </span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleQuantityChange(purchaseQuantity + 1);
-                            }}
-                            className="w-5 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
-                          >
-                            +
-                          </button>
-                        </div>
+                  {showQuantitySelector ? (
+                    <div
+                      ref={quantitySelectorRef}
+                      className="bg-white border border-black text-black text-[10px] font-inter py-[13px] w-[215px] h-[39px] flex items-center justify-between px-4"
+                    >
+                      <span>수량</span>
+                      <div className="flex items-center gap-2">
                         <button
-                          onClick={handlePurchaseClick}
-                          className="w-10 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
+                          onClick={() =>
+                            handleQuantityChange(purchaseQuantity - 1)
+                          }
+                          className="w-5 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
                         >
-                          확인
+                          -
+                        </button>
+                        <span className="min-w-[20px] text-center">
+                          {purchaseQuantity}
+                        </span>
+                        <button
+                          onClick={() =>
+                            handleQuantityChange(purchaseQuantity + 1)
+                          }
+                          className="w-5 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
+                        >
+                          +
                         </button>
                       </div>
-                    ) : (
-                      "구매하기"
-                    )}
-                  </button>
+                      <button
+                        onClick={handlePurchaseClick}
+                        className="w-10 h-5 flex items-center justify-center hover:bg-gray-200 rounded"
+                      >
+                        확인
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="bg-white border border-black text-black text-[10px] font-inter py-[13px] w-[215px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
+                      onClick={handlePurchaseClick}
+                    >
+                      구매하기
+                    </button>
+                  )}
                   <button
                     className="bg-white border border-black text-black text-[10px] font-inter py-[13px] px-[62px] w-[207px] h-[39px] flex items-center justify-center hover:bg-gray-50 transition-colors whitespace-nowrap"
                     onClick={handleAddToCart}
@@ -338,9 +378,11 @@ const Detail = () => {
                 .filter((product) => product.product_id !== Number(id))
                 .slice(0, 4)
                 .map((product) => (
-                  <Suspense 
+                  <Suspense
                     key={product.product_id}
-                    fallback={<div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>}
+                    fallback={
+                      <div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>
+                    }
                   >
                     <ProductCard
                       variant="viewed"

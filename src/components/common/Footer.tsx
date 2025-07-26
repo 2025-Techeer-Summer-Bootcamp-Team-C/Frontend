@@ -30,7 +30,7 @@ const Footer = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { setDirectPurchaseProduct, cartData, directPurchaseProduct } = useCart();
-  const { submitOrderForm, currentBuyerInfo } = useOrder();
+  const { submitOrderForm, currentBuyerInfo, createCartOrder, getLatestOrder } = useOrder();
   const path = location.pathname;
 
   // PaymentDialog에 전달할 구매자 정보 계산 (summary 페이지에서만)
@@ -41,11 +41,19 @@ const Footer = ({
       ? `${currentBuyerInfo.address} ${currentBuyerInfo.address2}`
       : currentBuyerInfo.address;
     
-    // 구매 상품명 계산
+    // 구매 상품명 계산 - 우선순위: 최신 주문 > 직접 구매 > 장바구니
     let productName = '';
-    const isDirectPurchase = !!directPurchaseProduct;
+    const latestOrder = getLatestOrder();
     
-    if (isDirectPurchase && directPurchaseProduct) {
+    if (latestOrder && latestOrder.products.length > 0) {
+      // API 응답 데이터에서 상품명 가져오기
+      const firstProduct = latestOrder.products[0];
+      if (latestOrder.products.length === 1) {
+        productName = firstProduct.name;
+      } else {
+        productName = `${firstProduct.name} 외 ${latestOrder.products.length - 1}개`;
+      }
+    } else if (directPurchaseProduct) {
       productName = directPurchaseProduct.name;
     } else if (cartData?.cart_product && cartData.cart_product.length > 0) {
       const firstProduct = cartData.cart_product[0];
@@ -62,7 +70,7 @@ const Footer = ({
       address: fullAddress,
       productName: productName
     };
-  }, [path, currentBuyerInfo, directPurchaseProduct, cartData]);
+  }, [path, currentBuyerInfo, directPurchaseProduct, cartData, getLatestOrder]);
 
   // 최종적으로 사용할 buyerInfo (props로 전달된 것이 있으면 우선, 없으면 계산된 값)
   const buyerInfo = propBuyerInfo || calculatedBuyerInfo;
@@ -151,18 +159,31 @@ const Footer = ({
                   </Suspense>
                 ) : (
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (onContinue) {
                         submitOrderForm();
                         onContinue();
                       } else if (path.includes("/order")) {
                         submitOrderForm();
                       } else {
-                        // 장바구니에서 주문으로 넘어갈 때 직접 구매 상품 초기화
+                        // 장바구니에서 주문으로 넘어갈 때
                         if (path.includes("/cart")) {
-                          setDirectPurchaseProduct(null);
+                          try {
+                            // 장바구니 상품들로 주문 생성
+                            if (cartData?.cart_product?.length) {
+                              const cartProductIds = cartData.cart_product.map(item => item.product_id);
+                              await createCartOrder(cartProductIds, cartData);
+                              // 주문 생성 후 장바구니 클리어 (중요: totalPrice 계산 오류 방지)
+                              // clearCart(); // 이미 PaymentDialog에서 처리되므로 여기서는 하지 않음
+                            }
+                            setDirectPurchaseProduct(null);
+                            navigate("/order");
+                          } catch (error) {
+                            alert('주문 생성에 실패했습니다.');
+                          }
+                        } else {
+                          navigate("/order");
                         }
-                        navigate("/order");
                       }
                     }}
                     className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4 hover:bg-gray-800 transition-colors"

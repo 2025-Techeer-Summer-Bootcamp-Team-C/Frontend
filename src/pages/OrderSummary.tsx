@@ -3,16 +3,53 @@ import { useOrder } from "@/contexts/OrderContext";
 
 function OrderSummary() {
   const { cartData, directPurchaseProduct } = useCart();
-  const { currentBuyerInfo } = useOrder();
+  const { currentBuyerInfo, getLatestOrder } = useOrder();
 
-  // 직접 구매 상품이 있으면 그것만, 없으면 장바구니 상품들 사용
-  const isDirectPurchase = !!directPurchaseProduct;
-  const displayPrice = isDirectPurchase
-    ? directPurchaseProduct.price * directPurchaseProduct.quantity
-    : cartData?.total_price || 0;
-  const displayProductCount = isDirectPurchase
-    ? directPurchaseProduct.quantity
-    : cartData?.cart_product.length || 0;
+  // 최신 주문 정보 가져오기 (API 응답 데이터)
+  const latestOrder = getLatestOrder();
+
+  // API 응답 데이터가 있으면 사용, 없으면 기존 장바구니/직접구매 데이터 사용
+  const orderData = latestOrder
+    ? {
+        orderDate: latestOrder.orderDate,
+        products: latestOrder.products,
+        totalPrice: latestOrder.totalPrice,
+        productCount: latestOrder.products.reduce(
+          (total, product) => total + product.quantity,
+          0
+        ),
+      }
+    : {
+        orderDate: new Date().toISOString(),
+        products: directPurchaseProduct
+          ? [
+              {
+                cart_product_id: directPurchaseProduct.product_id,
+                product_id: directPurchaseProduct.product_id,
+                name: directPurchaseProduct.name,
+                image: directPurchaseProduct.image || "",
+                quantity: directPurchaseProduct.quantity,
+                price: directPurchaseProduct.price,
+              },
+            ]
+          : cartData?.cart_product?.map((item) => ({
+              cart_product_id: item.cart_product_id,
+              product_id: item.cart_product_id,
+              name: item.name,
+              image: item.image,
+              quantity: item.quantity,
+              price: item.price,
+            })) || [],
+        totalPrice: directPurchaseProduct
+          ? directPurchaseProduct.price * directPurchaseProduct.quantity
+          : cartData?.total_price || 0,
+        productCount: directPurchaseProduct
+          ? directPurchaseProduct.quantity
+          : cartData?.cart_product?.length || 0,
+      };
+
+  const displayPrice = orderData.totalPrice;
+  const displayProductCount = orderData.productCount;
 
   // 사용자 크레딧 정보
   const userCredit = 1000000;
@@ -30,7 +67,7 @@ function OrderSummary() {
             <span className="flex items-center gap-2 text-xl font-medium text-black">
               날짜 -
               <div className="text-xl font-medium text-gray-500">
-                {new Date().toLocaleDateString("ko-KR")}
+                {new Date(orderData.orderDate).toLocaleDateString("ko-KR")}
               </div>
             </span>
           </div>
@@ -47,15 +84,7 @@ function OrderSummary() {
 
           {/* 상품 이미지들 */}
           <div className="flex gap-10 mb-16">
-            {isDirectPurchase && (
-              <img
-                key={directPurchaseProduct.product_id}
-                className="w-[118px] h-[178px] bg-white object-contain rounded"
-                src={directPurchaseProduct.image}
-                alt={directPurchaseProduct.name}
-              />
-            )}
-            {cartData?.cart_product.map((product) => (
+            {orderData.products.map((product) => (
               <img
                 key={product.cart_product_id}
                 className="w-[118px] h-[178px] bg-white object-contain rounded"

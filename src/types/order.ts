@@ -1,21 +1,44 @@
 import type { CartResponse } from "./cart";
 
-export type Order = {
-  id: number;
+// 백엔드 API 응답 타입들
+export interface OrderedProduct {
+  product_id: number;
+  product_name: string;
+  quantity: number;
+  price_per_item: number;
+  total_price: number;
+}
+
+export interface SingleOrderResponse {
+  order_id: number;
+  user_id: number;
+  product_id: number;
+  product_name: string;
+  quantity: number;
+  price_per_item: number;
+  total_price: number;
+  status: string;
+  created_at: string;
+}
+
+export interface CartOrderResponse {
+  order_id: number;
   user_id: number;
   total_price: number;
-  address: string;
+  status: string;
   created_at: string;
-  updated_at: string;
-  is_deleted: boolean;
-};
+  ordered_products: OrderedProduct[];
+  message: string;
+}
 
-export type OrderItem = {
-  id: number;
-  order_id: number;
+export interface SingleOrderRequest {
   product_id: number;
-  count: number;
-};
+  quantity?: number;
+}
+
+export interface CartOrderRequest {
+  cart_product_ids: number[];
+}
 
 // 새로운 프론트엔드용 주문 타입들
 export interface BuyerInfo {
@@ -29,7 +52,7 @@ export interface BuyerInfo {
 }
 
 export interface CompletedOrder {
-  id: string;
+  id: number;
   orderNumber: string;
   orderDate: string;
   products: CartResponse['cart_product'];
@@ -42,9 +65,11 @@ export interface OrderContextType {
   orderHistory: CompletedOrder[];
   currentBuyerInfo: BuyerInfo | null;
   orderFormRef: React.RefObject<any>;
-  addOrder: (order: Omit<CompletedOrder, 'id'>) => void;
+  addOrder: (order: CompletedOrder) => void; // API 응답의 complete한 주문 데이터 받음 (order_id 포함)
   getOrders: () => CompletedOrder[];
   getLatestOrder: () => CompletedOrder | null;
   setBuyerInfo: (info: BuyerInfo) => void;
   submitOrderForm: () => void;
+  createSingleProductOrder: (productId: number, quantity: number, productImage?: string) => Promise<void>;
+  createCartOrder: (cartProductIds: number[], cartData?: any) => Promise<void>;
 }
