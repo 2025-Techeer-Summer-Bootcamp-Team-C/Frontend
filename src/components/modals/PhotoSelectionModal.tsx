@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { FileUpload } from "@/components/ui/file-upload";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useUser } from "@/hooks/useUser";
 
 interface PhotoSelectionModalProps {
   onClose: () => void;
-  onPhotoSelect: ((selectedPhoto: File | string) => void) | null;
+  onPhotoSelect: ((selectedPhoto: File | string | number) => void) | null;
 }
 
 export default function PhotoSelectionModal({
@@ -12,14 +13,32 @@ export default function PhotoSelectionModal({
   onPhotoSelect,
 }: PhotoSelectionModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedHistoryImageId, setSelectedHistoryImageId] = useState<number | null>(null);
+  const { userImages, loading, error } = useUser();
+
+  console.log(
+    "PhotoSelectionModal - userImages:",
+    userImages,
+    "loading:",
+    loading,
+    "error:",
+    error
+  );
 
   const handleFileUpload = (files: File[]) => {
     setSelectedFile(files[0] || null);
+    setSelectedHistoryImageId(null); // 새 파일 선택 시 히스토리 선택 해제
+  };
+
+  const handleHistoryPhotoSelect = (userImageId: number) => {
+    setSelectedHistoryImageId(userImageId);
+    setSelectedFile(null); // 히스토리 사진 선택 시 새 파일 선택 해제
   };
 
   const handleStartFitting = () => {
-    if (selectedFile && onPhotoSelect) {
-      onPhotoSelect(selectedFile);
+    const selectedPhoto = selectedFile || selectedHistoryImageId;
+    if (selectedPhoto && onPhotoSelect) {
+      onPhotoSelect(selectedPhoto);
     }
     onClose();
   };
@@ -44,12 +63,45 @@ export default function PhotoSelectionModal({
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             사진 히스토리
           </h3>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-            <p className="text-gray-500">
-              이전에 업로드한 사진들이 여기에 표시됩니다.
-            </p>
-            <p className="text-sm text-gray-400 mt-2">API 연동 후 구현 예정</p>
-          </div>
+          {loading ? (
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+              <p className="text-gray-500">사진을 불러오는 중...</p>
+            </div>
+          ) : error ? (
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+              <p className="text-red-500">사진을 불러오는데 실패했습니다.</p>
+              <p className="text-sm text-gray-400 mt-2">{error}</p>
+            </div>
+          ) : userImages.length === 0 ? (
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+              <p className="text-gray-500">아직 업로드한 사진이 없습니다.</p>
+            </div>
+          ) : (
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {userImages.map((image) => (
+                <div
+                  key={image.id}
+                  className={`relative aspect-[10/16] w-35 flex-shrink-0 cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
+                    selectedHistoryImageId === image.id
+                      ? "border-black ring-2 ring-black ring-offset-2"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                  onClick={() => handleHistoryPhotoSelect(image.id)}
+                >
+                  <img
+                    src={image.image}
+                    alt="사용자 사진"
+                    className="w-full h-full object-cover"
+                  />
+                  {image.is_fitting && (
+                    <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                      피팅완료
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* 버튼 영역 */}
@@ -62,7 +114,7 @@ export default function PhotoSelectionModal({
           </button>
           <button
             onClick={handleStartFitting}
-            disabled={!selectedFile}
+            disabled={!selectedFile && !selectedHistoryImageId}
             className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             피팅 시작하기
