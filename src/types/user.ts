@@ -1,3 +1,13 @@
+export interface UserImage {
+  id: number;
+  user: number;
+  image: string;
+  is_fitting: boolean;
+  created_at: string;
+  updated_at: string | null;
+  deleted_at: string | null;
+}
+
 export interface User {
   id: number;
   username: string;
@@ -5,10 +15,11 @@ export interface User {
   password: string;
   user_gender: "M" | "F";
   created_at: string;
-  updated_at: string;
-  is_deleted: boolean;
-  image: string;
-  credit: number;
+  updated_at: string | null;
+  deleted_at: string | null;
+  is_fitting: boolean;
+  profile_image: string | null;
+  user_images: UserImage[];
 }
 
 export interface SignUpRequest {
