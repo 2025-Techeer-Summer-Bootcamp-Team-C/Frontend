@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { generateFittingVideo, getFittingVideoStatus } from "../api/fittings";
-import { fetchProducts } from "../api/products";
+import { generateFittingVideo, getFittingVideoStatus, startFittingDetail } from "../api/fittings";
+import { fetchProductFittingImage, fetchProducts } from "../api/products";
 import type { FittingVideoStatusResponse } from "../api/fittings";
-import type { ProductListResponse } from "../types/product";
+import type { ProductFittingImageResponse } from "../api/products";
 import { AxiosError } from "axios";
 
 /**
@@ -11,11 +11,11 @@ import { AxiosError } from "axios";
  * status가 pending 또는 processing인 경우 자동 재시도
  */
 export const useGenerateFittingVideoMutation = () => {
-  return useMutation<FittingVideoStatusResponse, Error, number>({
-    mutationFn: async (product_id: number) => {
+  return useMutation<FittingVideoStatusResponse, Error, { product_id: number, user_image_id: number }>({
+    mutationFn: async ({ product_id, user_image_id }) => {
       try {
         // 먼저 영상 생성 요청
-        await generateFittingVideo(product_id);
+        await generateFittingVideo(product_id, user_image_id);
       } catch (error) {
         // 400 에러(이미 완료됨)인 경우는 정상 처리
         if (!(error instanceof AxiosError && error.response?.status === 400)) {
@@ -24,7 +24,7 @@ export const useGenerateFittingVideoMutation = () => {
       }
       
       // 상태 확인
-      const status = await getFittingVideoStatus(product_id);
+      const status = await getFittingVideoStatus(product_id, user_image_id);
       
       // pending이나 processing 상태면 에러를 던져서 재시도 유발
       if (status.status === "pending" || status.status === "processing") {
@@ -65,71 +65,73 @@ export const useGenerateFittingVideoMutation = () => {
 };
 
 /**
- * 피팅 결과 폴링 뮤테이션 훅
- * fetchProducts(show_fitting=true)를 활용하여 피팅 결과 이미지가 업데이트될 때까지 폴링
- * 성공 시 React Query 캐시를 업데이트하여 중복 호출 방지
- * 최소 3초간 로딩 상태 보장
+ * 새로운 피팅 시작 + 폴링 뮤테이션 훅 
+ * startFittingDetail 호출 후 개별 상품별로 피팅 결과 폴링
+ * userImageId에 대한 모든 상품의 피팅 결과를 개별적으로 폴링
  */
 export const useFittingResultsPollingMutation = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<ProductListResponse, Error, { 
-    previousImageUrls?: string[]; 
-    onProgress?: (progress: string) => void; 
+  return useMutation<{ userImageId: number; results: Record<number, ProductFittingImageResponse> }, Error, { 
+    imageFile: File;
+    productIds: number[];
+    onProgress?: (completedCount: number, totalCount: number) => void; 
   }>({
-    mutationFn: async ({ previousImageUrls, onProgress }) => {
-      // 피팅 폴링과 최소 3초 대기를 병렬로 실행
-      const [response] = await Promise.all([
+    mutationFn: async ({ imageFile, productIds, onProgress }) => {
+      // 1. 먼저 새로운 피팅 시작
+      console.log("새로운 피팅 시작 - startFittingDetail 호출");
+      const fittingResponse = await startFittingDetail(imageFile);
+      
+      if (!fittingResponse.user_image_id) {
+        throw new Error("피팅 시작 실패: user_image_id가 없습니다");
+      }
+      
+      const userImageId = fittingResponse.user_image_id;
+      console.log("새 피팅 시작 - user_image_id:", userImageId);
+      
+      const results: Record<number, ProductFittingImageResponse> = {};
+      let completedCount = 0;
+      
+      // 2. 최소 3초 대기와 피팅 결과 폴링을 병렬로 실행
+      const [fittingResults] = await Promise.all([
         (async () => {
-          // show_fitting=true로 상품 목록 조회
-          const response = await fetchProducts(true);
-          
-          // 이전 이미지 URL들과 비교하여 변경되었는지 확인
-          if (previousImageUrls && previousImageUrls.length > 0) {
-            const currentImageUrls = response.products
-              .filter(product => product.image)
-              .map(product => product.image);
-            
-            // 모든 이미지가 변경되었는지 확인 (일부만 변경된 경우 재시도)
-            if (currentImageUrls.length !== previousImageUrls.length) {
-              // 상품 개수가 달라진 경우는 완료로 간주
-              console.log("상품 개수 변경됨:", previousImageUrls.length, "→", currentImageUrls.length);
-            } else {
-              // 모든 이미지가 변경되었는지 확인
-              const allImagesChanged = currentImageUrls.every((url, index) => 
-                url !== previousImageUrls[index]
-              );
+          // 각 상품별로 피팅 결과 확인
+          const promises = productIds.map(async (productId) => {
+            try {
+              const result = await fetchProductFittingImage(productId, userImageId);
+              results[productId] = result;
+              completedCount++;
               
-              if (!allImagesChanged) {
-                const changedCount = currentImageUrls.filter((url, index) => 
-                  url !== previousImageUrls[index]
-                ).length;
-                const progressMessage = `피팅 진행 중: ${changedCount}/${currentImageUrls.length}개 완료`;
-                console.log(progressMessage);
-                
-                // 진행 상황을 콜백으로 전달
-                if (onProgress) {
-                  onProgress(progressMessage);
-                }
-                
-                throw new Error(`피팅 이미지가 아직 업데이트 중입니다 (${changedCount}/${currentImageUrls.length}개 완료)`);
+              // 진행 상황 콜백 호출
+              if (onProgress) {
+                onProgress(completedCount, productIds.length);
               }
+              
+              return { productId, result };
+            } catch (error: any) {
+              // 404 에러는 아직 피팅이 완료되지 않았음을 의미
+              if (error?.response?.status === 404) {
+                throw new Error(`Product ${productId} fitting not ready yet`);
+              }
+              throw error;
             }
-          }
+          });
           
-          return response;
+          // 모든 상품의 피팅 결과를 기다림
+          await Promise.all(promises);
+          return results;
         })(),
         // 최소 3초 대기
         new Promise<void>(resolve => setTimeout(resolve, 3000))
       ]);
       
-      return response;
+      return { userImageId, results: fittingResults };
     },
-    retry: (failureCount, error) => {
-      // 피팅 이미지가 업데이트되지 않은 경우에만 재시도
-      if (error.message.includes("피팅 이미지가 아직 업데이트") || 
-          error.message.includes("피팅 이미지가 아직 업데이트 중입니다")) {
-        return failureCount < 60; // 최대 60회 재시도 (2분)
+    retry: (failureCount, error: any) => {
+      // 404 에러나 피팅이 아직 준비되지 않은 경우 재시도
+      if (error?.message?.includes("fitting not ready yet") || 
+          error?.message?.includes("404")) {
+        return failureCount < 30; // 최대 30회 재시도 (1분)
       }
       return false;
     },
@@ -138,11 +140,17 @@ export const useFittingResultsPollingMutation = () => {
       return 2000;
     },
     onSuccess: (data) => {
+      const completedProducts = Object.keys(data.results).length;
       console.log("피팅 결과 조회 성공:", data);
-      console.log(`총 ${data.products.length}개의 피팅 결과를 찾았습니다.`);
+      console.log(`총 ${completedProducts}개의 피팅 결과를 찾았습니다.`);
       
-      // React Query 캐시 업데이트 - showFitting=true인 쿼리 캐시 업데이트
-      queryClient.setQueryData(["products", { showFitting: true }], data);
+      // React Query 캐시 업데이트 - 개별 피팅 결과 캐시 업데이트
+      Object.entries(data.results).forEach(([productId, result]) => {
+        queryClient.setQueryData(
+          ["productFittingImage", parseInt(productId), data.userImageId], 
+          result
+        );
+      });
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -166,18 +174,23 @@ export interface CompletedFittingVideo {
   status: 'completed';
 }
 
-export const useFittingVideos = () => {
+export const useFittingVideos = (user_image_id?: number) => {
   return useQuery<CompletedFittingVideo[], Error>({
-    queryKey: ["fittingVideos"],
+    queryKey: ["fittingVideos", user_image_id],
     queryFn: async () => {
       try {
+        // user_image_id가 없으면 빈 배열 반환
+        if (!user_image_id) {
+          return [];
+        }
+
         // 1. 모든 상품 정보 가져오기
         const productsResponse = await fetchProducts();
         
         // 2. 각 상품에 대해 영상 상태 확인
         const videoStatusPromises = productsResponse.products.map(async (product) => {
           try {
-            const statusResponse = await getFittingVideoStatus(product.product_id);
+            const statusResponse = await getFittingVideoStatus(product.product_id, user_image_id);
             
             // status가 'completed'이고 video_url이 있는 경우만 반환
             if (statusResponse.status === 'completed' && statusResponse.video_url) {
@@ -205,6 +218,7 @@ export const useFittingVideos = () => {
         throw error;
       }
     },
+    enabled: !!user_image_id, // user_image_id가 있을 때만 쿼리 실행
     staleTime: 1 * 60 * 1000, // 1분간 데이터를 신선하다고 간주
     gcTime: 5 * 60 * 1000, // 5분간 캐시 유지
   });
