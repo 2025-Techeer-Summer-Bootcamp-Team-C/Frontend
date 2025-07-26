@@ -8,6 +8,10 @@ interface FittingContextType {
   setIsFittingLoading: (loading: boolean) => void;
   lastSelectedImage: File | null;
   setLastSelectedImage: (image: File | null) => void;
+  lastSelectedUserImageId: number | null;
+  setLastSelectedUserImageId: (id: number | null) => void;
+  currentUserImageId: number | null;
+  setCurrentUserImageId: (id: number | null) => void;
   hasLastSelectedImage: boolean;
 }
 
@@ -17,6 +21,8 @@ export const FittingProvider = ({ children }: { children: ReactNode }) => {
   const [showFitting, setShowFitting] = useState(false);
   const [isFittingLoading, setIsFittingLoading] = useState(false);
   const [lastSelectedImage, setLastSelectedImage] = useState<File | null>(null);
+  const [lastSelectedUserImageId, setLastSelectedUserImageId] = useState<number | null>(null);
+  const [currentUserImageId, setCurrentUserImageId] = useState<number | null>(null);
 
   // 로그아웃 시 피팅 상태 초기화 이벤트 감지
   useEffect(() => {
@@ -24,6 +30,8 @@ export const FittingProvider = ({ children }: { children: ReactNode }) => {
       setShowFitting(false);
       setIsFittingLoading(false);
       setLastSelectedImage(null);
+      setLastSelectedUserImageId(null);
+      setCurrentUserImageId(null);
     };
 
     window.addEventListener("resetFittingState", handleResetFittingState);
@@ -42,7 +50,18 @@ export const FittingProvider = ({ children }: { children: ReactNode }) => {
     setLastSelectedImage(image);
   }, []);
 
-  const hasLastSelectedImage = useMemo(() => lastSelectedImage !== null, [lastSelectedImage]);
+  const handleSetLastSelectedUserImageId = useCallback((id: number | null) => {
+    setLastSelectedUserImageId(id);
+  }, []);
+
+  const handleSetCurrentUserImageId = useCallback((id: number | null) => {
+    setCurrentUserImageId(id);
+  }, []);
+
+  const hasLastSelectedImage = useMemo(() => 
+    lastSelectedImage !== null || lastSelectedUserImageId !== null, 
+    [lastSelectedImage, lastSelectedUserImageId]
+  );
 
   const value = useMemo(() => ({
     showFitting,
@@ -51,8 +70,12 @@ export const FittingProvider = ({ children }: { children: ReactNode }) => {
     setIsFittingLoading: handleSetIsFittingLoading,
     lastSelectedImage,
     setLastSelectedImage: handleSetLastSelectedImage,
+    lastSelectedUserImageId,
+    setLastSelectedUserImageId: handleSetLastSelectedUserImageId,
+    currentUserImageId,
+    setCurrentUserImageId: handleSetCurrentUserImageId,
     hasLastSelectedImage,
-  }), [showFitting, handleSetShowFitting, isFittingLoading, handleSetIsFittingLoading, lastSelectedImage, handleSetLastSelectedImage, hasLastSelectedImage]);
+  }), [showFitting, handleSetShowFitting, isFittingLoading, handleSetIsFittingLoading, lastSelectedImage, handleSetLastSelectedImage, lastSelectedUserImageId, handleSetLastSelectedUserImageId, currentUserImageId, handleSetCurrentUserImageId, hasLastSelectedImage]);
 
   return (
     <FittingContext.Provider value={value}>
