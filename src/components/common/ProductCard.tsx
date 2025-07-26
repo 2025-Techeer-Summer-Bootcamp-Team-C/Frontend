@@ -31,7 +31,7 @@ const ProductCard = memo(
       >
         {/* Product Image */}
         <div
-          className="w-full h-[270px] sm:h-[360px] bg-white mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow"
+          className="w-full h-[270px] sm:h-[360px] bg-white mb-2 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow relative"
           onClick={onProductClick}
         >
           <img

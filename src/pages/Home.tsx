@@ -1,39 +1,99 @@
 import { useNavigate } from "react-router-dom";
 import { useFilter } from "@/contexts/FilterContext";
 import { useFittingContext } from "@/contexts/FittingContext";
-import { useMemo, useState, lazy, Suspense } from "react";
+import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 
 // Lazy load ProductCard for better code splitting
 const ProductCard = lazy(() => import("@/components/common/ProductCard"));
-// API calls commented out for dummy data testing
 import { useProductsQuery } from "@/hooks/useProducts";
 import { startFittingDetail } from "@/api/fittings";
 import { fetchProducts } from "@/api/products";
 import { useFittingResultsPollingMutation } from "@/hooks/useFittings";
 import { useHeaderSticky } from "@/hooks/useHeaderSticky";
+import { useModal } from "@/contexts/ModalContext";
+import { MorphSpinner } from "@/components/ui/morph-spinner";
 
 const Home = () => {
   const navigate = useNavigate();
   const { searchQuery } = useFilter();
-  const { showFitting, setShowFitting } = useFittingContext();
-  const [isFittingLoading, setIsFittingLoading] = useState(false);
-  const [fittingProgress, setFittingProgress] = useState<string>("");
+  const {
+    showFitting,
+    setShowFitting,
+    isFittingLoading,
+    setIsFittingLoading,
+    lastSelectedImage,
+    setLastSelectedImage,
+    hasLastSelectedImage,
+  } = useFittingContext();
+  const [buttonText, setButtonText] = useState<string>("피팅하기");
+  const [viewedProducts, setViewedProducts] = useState<string[]>([]);
+  const { openModal } = useModal();
   const isSticky = useHeaderSticky();
-  // API calls commented out for dummy data testing
   const { data: products } = useProductsQuery(showFitting);
-  // const { data: categories } = useCategoriesQuery();
 
   const fittingPollingMutation = useFittingResultsPollingMutation();
 
+  // localStorage에서 조회한 상품 목록 로드
+  useEffect(() => {
+    const savedViewedProducts = localStorage.getItem("viewedProducts");
+    if (savedViewedProducts) {
+      try {
+        setViewedProducts(JSON.parse(savedViewedProducts));
+      } catch (error) {
+        console.error("Failed to parse viewed products:", error);
+        localStorage.removeItem("viewedProducts");
+      }
+    }
+  }, []);
+
+  // 조회한 상품 목록을 localStorage에 저장
+  const saveViewedProducts = (products: string[]) => {
+    setViewedProducts(products);
+    localStorage.setItem("viewedProducts", JSON.stringify(products));
+  };
+
   const handleProductClick = (productId: number) => {
+    // 상품 조회 이력 저장 (중복 제거)
+    const productIdStr = productId.toString();
+    const updatedViewedProducts = [
+      ...new Set([...viewedProducts, productIdStr]),
+    ];
+    saveViewedProducts(updatedViewedProducts);
+
     navigate(`/product/${productId}`);
   };
 
-  const handleFittingClick = async () => {
+  const handleFittingClick = () => {
     if (isFittingLoading || fittingPollingMutation.isPending) return;
 
+    openModal(
+      "photoSelection",
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      handlePhotoSelection
+    );
+  };
+
+  const handlePhotoSelection = async (selectedPhoto: File | string) => {
+    console.log("선택된 사진:", selectedPhoto);
+
+    // 선택된 이미지를 컨텍스트에 저장
+    if (selectedPhoto instanceof File) {
+      setLastSelectedImage(selectedPhoto);
+    }
+
     setIsFittingLoading(true);
-    setFittingProgress("피팅 작업을 시작하는 중...");
+    setButtonText("피팅 중...");
+
+    // 2초 후 완료 텍스트로 변경
+    setTimeout(() => {
+      setButtonText("완료!");
+    }, 2000);
+
+    // 최소 3초 로딩 보장을 위한 타이머 시작
+    const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 3000));
 
     try {
       // 1. 현재 피팅 이미지 URL들을 가져와서 비교 기준점 설정
@@ -50,70 +110,42 @@ const Home = () => {
       }
 
       // 2. 피팅 작업 시작
-      const response = await startFittingDetail();
-
-      setFittingProgress(
-        `피팅 작업이 시작되었습니다! (${response.total_products}개 상품)`
-      );
+      await startFittingDetail();
 
       // 3. 피팅 결과 폴링 시작 (이미지 변경 감지)
-      setFittingProgress("피팅 결과를 기다리는 중...");
-
-      const fittingResults = await fittingPollingMutation.mutateAsync({
+      await fittingPollingMutation.mutateAsync({
         previousImageUrls:
           previousImageUrls.length > 0 ? previousImageUrls : undefined,
-        onProgress: (progress: string) => {
-          setFittingProgress(progress);
-        },
       });
 
-      // 4. 피팅 결과 받아오기 성공
-      setFittingProgress(
-        `피팅 완료! ${fittingResults.products.length}개 상품 결과를 받았습니다.`
-      );
-
-      // 피팅 상태 업데이트 - 피팅 결과 보기 모드로 전환
-      setShowFitting(true);
+      // 4. 최소 3초와 실제 API 완료 시간 중 더 긴 시간까지 대기
+      await minLoadingTime;
 
       // refetch 제거: 폴링에서 이미 최신 데이터를 받아옴
     } catch (error) {
-      // 에러 처리
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "가상 피팅 요청 중 오류가 발생했습니다.";
+      // 에러가 발생해도 일단 피팅 모드로 전환 (이미 피팅된 결과가 있는 경우 등)
+      console.log("피팅 처리 중 에러:", error);
 
-      // 400 에러 (이미 피팅된 결과가 있음)인 경우 바로 피팅 결과 보기
-      if (
-        (error as any).response?.status === 400 &&
-        (error as any).response?.data?.error.includes("이미 가상")
-      ) {
-        setFittingProgress(
-          "이미 피팅된 결과가 있습니다. 피팅 결과를 가져오는 중..."
-        );
-
-        // 이미 피팅된 결과가 있으므로 바로 피팅 모드로 전환
-        setShowFitting(true);
-        setFittingProgress("이미 피팅된 결과를 표시합니다.");
-        // 별도의 API 호출 없이 useProductsQuery가 showFitting=true로 자동 refetch됨
-      } else if (
-        (error as any).response?.status === 400 &&
-        (error as any).response?.data?.error.includes("사용자 사진")
-      ) {
-        setFittingProgress("사용자 사진이 없습니다. 사진을 추가해 주세요.");
-      } else if (
-        (error as any).response?.status === 400 &&
-        (error as any).response?.data?.error.includes("상품이")
-      ) {
-        setFittingProgress("상품이 없습니다. 상품을 추가해 주세요.");
-      } else {
-        setFittingProgress(`에러: ${errorMessage}`);
-      }
+      // 에러 발생시에도 최소 3초는 대기
+      await minLoadingTime;
     } finally {
+      // 로딩 상태 해제 및 이미지 변경
+      setShowFitting(true);
       setIsFittingLoading(false);
-      // 진행 상태 메시지는 잠시 후 제거
-      setTimeout(() => setFittingProgress(""), 3000);
+      setButtonText(showFitting ? "피팅 다시하기" : "피팅하기");
     }
+  };
+
+  // 이전에 선택한 이미지로 바로 피팅하기
+  const handleQuickFitting = async () => {
+    if (
+      !lastSelectedImage ||
+      isFittingLoading ||
+      fittingPollingMutation.isPending
+    )
+      return;
+
+    await handlePhotoSelection(lastSelectedImage);
   };
 
   // Using dummy data instead of API
@@ -145,8 +177,22 @@ const Home = () => {
 
   return (
     <div className="w-full bg-white relative">
+      {/* 피팅 로딩 전체 화면 오버레이 */}
+      {isFittingLoading && (
+        <div className="fixed inset-0 z-[90] bg-white/80 backdrop-blur-sm flex items-center justify-center">
+          <MorphSpinner
+            size={80}
+            message="AI가 당신에게 완벽한 핏을 찾고 있어요"
+          />
+        </div>
+      )}
+
       {/* Main Content */}
-      <div className={`flex justify-center ${isSticky ? "pt-[149px]" : ""}`}>
+      <div
+        className={`flex justify-center pt-[100px] ${
+          isSticky ? "pt-[200px]" : ""
+        }`}
+      >
         <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">
           {/* Product Grid */}
           <div className="flex flex-col gap-[60px] md:gap-[80px]">
@@ -163,7 +209,11 @@ const Home = () => {
                     }
                   >
                     <ProductCard
-                      variant="default"
+                      variant={
+                        viewedProducts.includes(product.product_id.toString())
+                          ? "viewed"
+                          : "default"
+                      }
                       product={product}
                       onProductClick={() =>
                         handleProductClick(product.product_id)
@@ -178,35 +228,51 @@ const Home = () => {
       </div>
 
       {/* 피팅하기 플로팅 버튼 - 동영상/온보딩 섹션이 z-index로 가림 */}
-      <div className="fixed flex flex-col gap-1 bottom-6 right-6 z-50">
-        {/* 진행 상태 메시지 */}
-        {fittingProgress && (
-          <div className="mb-2 w-[240px] bg-white text-black px-4 py-2 rounded-lg shadow-lg text-sm">
-            {fittingProgress}
-          </div>
-        )}
-
+      <div className="fixed flex flex-col gap-2 bottom-6 right-6 z-50">
         {/* 피팅 모드 토글 버튼 (피팅 완료 후) */}
         {showFitting && !isFittingLoading && (
           <button
-            className="mb-2 w-[240px] bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition-colors font-inter text-sm"
+            className="w-[240px] bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition-colors font-inter text-sm"
             onClick={() => setShowFitting(false)}
           >
             원본 상품 보기
           </button>
         )}
 
+        {/* 바로 피팅하기 버튼 (이전 선택 이미지가 있는 경우) */}
+        {hasLastSelectedImage && !isFittingLoading && (
+          <button
+            className="w-[240px] bg-white border border-black border-solid border-2 text-black px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition-colors font-inter text-sm"
+            onClick={handleQuickFitting}
+          >
+            바로 피팅하기
+          </button>
+        )}
+
         {/* 메인 피팅 버튼 */}
         <button
-          className="w-[240px] bg-black text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gray-800 transition-colors font-inter text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`w-[240px] px-6 py-3 rounded-lg shadow-lg font-inter text-sm disabled:cursor-not-allowed relative overflow-hidden ${
+            isFittingLoading
+              ? "bg-black text-white"
+              : "bg-black text-white hover:bg-gray-800 transition-colors disabled:opacity-50"
+          }`}
           onClick={handleFittingClick}
           disabled={isFittingLoading}
         >
-          {isFittingLoading
-            ? "피팅 중..."
-            : showFitting
-            ? "피팅 다시하기"
-            : "피팅하기"}
+          {/* 진행 배경 애니메이션
+          {isFittingLoading && (
+            <div
+              className="absolute inset-0 bg-green-400"
+              style={{
+                animation: "slideRight 3s linear forwards",
+              }}
+            />
+          )} */}
+
+          {/* 버튼 텍스트 */}
+          <span className="relative z-10 font-medium">
+            {isFittingLoading ? buttonText : "피팅하기"}
+          </span>
         </button>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { CartProvider } from "./CartContext";
 import { FilterProvider } from "./FilterContext";
 import { OrderProvider } from "./OrderContext";
 import { FittingProvider } from "./FittingContext";
+import { ModalProvider } from "./ModalContext";
 
 // QueryClient를 컴포넌트 외부에서 생성하여 재생성 방지
 const queryClient = new QueryClient({
@@ -41,15 +42,17 @@ interface AllProvidersProps {
 const AllProviders = ({ children }: AllProvidersProps) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <FilterProvider>
-        <FittingProvider>
-          <CartProvider>
-            <OrderProvider>
-              {children}
-            </OrderProvider>
-          </CartProvider>
-        </FittingProvider>
-      </FilterProvider>
+      <ModalProvider>
+        <FilterProvider>
+          <FittingProvider>
+            <CartProvider>
+              <OrderProvider>
+                {children}
+              </OrderProvider>
+            </CartProvider>
+          </FittingProvider>
+        </FilterProvider>
+      </ModalProvider>
     </QueryClientProvider>
   );
 };

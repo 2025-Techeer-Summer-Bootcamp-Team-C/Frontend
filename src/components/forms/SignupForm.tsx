@@ -6,9 +6,7 @@ import {
   FormField,
   FormItem,
   FormMessage,
-  FormLabel,
 } from "@/components/ui/form";
-import { FileUpload } from "@/components/ui/file-upload";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSignUpMutation } from "@/hooks/useAuth";
@@ -43,7 +41,10 @@ const SignupForm = ({ onSwitchToLogin }: SignupFormProps) => {
         password: values.password,
         password2: values.password2,
         email: values.email,
-        profile_image: values.profile_image && values.profile_image.length > 0 ? values.profile_image[0] : null,
+        profile_image:
+          values.profile_image && values.profile_image.length > 0
+            ? values.profile_image[0]
+            : null,
       };
 
       signUp(submitData, {
@@ -168,30 +169,6 @@ const SignupForm = ({ onSwitchToLogin }: SignupFormProps) => {
             )}
           />
 
-          {/* Profile Image Upload */}
-          <FormField
-            control={form.control}
-            name="profile_image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-black font-inter text-[14px] font-medium">
-                  Profile Image (선택사항)
-                </FormLabel>
-                <FormControl>
-                  <div className="bg-white/30 border border-[#5C5C5C] shadow-[4px_4px_13px_rgba(242,113,144,0.15)] rounded-md">
-                    <FileUpload
-                      onChange={(files) => {
-                        field.onChange(files);
-                      }}
-                      disabled={isPending}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           {/* Sign up Button */}
           <Button
             type="submit"
@@ -207,7 +184,6 @@ const SignupForm = ({ onSwitchToLogin }: SignupFormProps) => {
               "SIGN UP"
             )}
           </Button>
-
 
           {/* Already have account */}
           <button

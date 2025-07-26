@@ -61,9 +61,9 @@ const MorphLogo = () => {
   // 크기 및 위치 계산
   const getLogoStyles = () => {
     const baseSize = 200;
-    const headerSize = 75;
+    const headerSize = 60;
     const baseTop = 300;
-    const headerTop = 65;
+    const headerTop = 40;
 
     switch (positionState) {
       case "fixed":
@@ -85,7 +85,7 @@ const MorphLogo = () => {
         };
 
       case "scaling":
-        // 3단계: fixed로 돌아가면서 크기 축소
+        // 3단계: fixed로 돌아가면서 크기 축소(top은 200px 구간 후 고정)
         const logoSize = baseSize - scrollProgress * (baseSize - headerSize);
         const topPosition =
           baseTop - 200 - scrollProgress * (baseTop - 200 - headerTop);

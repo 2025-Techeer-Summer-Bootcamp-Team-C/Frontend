@@ -135,6 +135,18 @@
   }
 }
 
+@keyframes slideRight {
+  0% {
+    transform: translateX(-100%);
+  }
+  66.67% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
 @font-face {
   font-family: "butler";
   src: url("./assets/fonts/Butler-Black.woff2") format("woff2");
