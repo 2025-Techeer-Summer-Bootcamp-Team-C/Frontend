@@ -71,7 +71,7 @@ const OnBoarding = () => {
       <img
         src={onboardingBg}
         alt="onboarding"
-        className="w-full h-full object-cover py-[100px] px-[50px]"
+        className="w-full h-full object-cover pt-[100px] pb-[50px]"
       />
       {/* 텍스트 영역 - 동적 애니메이션 */}
       <div

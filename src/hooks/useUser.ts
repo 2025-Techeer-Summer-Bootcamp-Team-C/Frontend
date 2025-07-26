@@ -1,7 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { getUserImages } from '../api/users';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deleteUserImage, getUserImages } from '../api/users';
 
 export const useUser = () => {
+  const queryClient = useQueryClient();
+
   const {
     data: userImages,
     isLoading: loading,
@@ -27,10 +29,26 @@ export const useUser = () => {
     staleTime: 5 * 60 * 1000, // 5분간 fresh 상태 유지
   });
 
+  // 이미지 삭제 뮤테이션
+  const deleteImageMutation = useMutation({
+    mutationFn: deleteUserImage,
+    onSuccess: () => {
+      // 삭제 성공 시 사용자 이미지 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ['userImages'] });
+    },
+    onError: (error) => {
+      console.error('Failed to delete user image:', error);
+    },
+  });
+
   return {
     userImages: userImages || [],
     loading,
     error: error?.message || null,
     refetchUserImages,
+    deleteImage: deleteImageMutation.mutate,
+    isDeleting: deleteImageMutation.isPending,
+    deleteError: deleteImageMutation.error,
   };
 };
+

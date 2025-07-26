@@ -157,6 +157,6 @@
 @font-face {
   font-family: "pretendard";
   src: url("./assets/fonts/Pretendard-ExtraLight.subset.woff2") format("woff2");
-  font-weight: 300;
-  font-style: normal;
+  font-weight: 100;
+  font-style: light;
 }

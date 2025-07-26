@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FileUpload } from "@/components/ui/file-upload";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useUser } from "@/hooks/useUser";
+import { X } from "lucide-react";
 
 interface PhotoSelectionModalProps {
   onClose: () => void;
@@ -14,7 +15,7 @@ export default function PhotoSelectionModal({
 }: PhotoSelectionModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedHistoryImageId, setSelectedHistoryImageId] = useState<number | null>(null);
-  const { userImages, loading, error } = useUser();
+  const { userImages, loading, error, deleteImage, isDeleting } = useUser();
 
   console.log(
     "PhotoSelectionModal - userImages:",
@@ -41,6 +42,17 @@ export default function PhotoSelectionModal({
       onPhotoSelect(selectedPhoto);
     }
     onClose();
+  };
+
+  const handleDeleteImage = (e: React.MouseEvent, imageId: number) => {
+    e.stopPropagation(); // 이미지 선택 이벤트 방지
+    if (window.confirm("정말 이 사진을 삭제하시겠습니까?")) {
+      deleteImage(imageId);
+      // 삭제하려는 이미지가 현재 선택된 이미지라면 선택 해제
+      if (selectedHistoryImageId === imageId) {
+        setSelectedHistoryImageId(null);
+      }
+    }
   };
 
   return (
@@ -93,8 +105,17 @@ export default function PhotoSelectionModal({
                     alt="사용자 사진"
                     className="w-full h-full object-cover"
                   />
+                  {/* 삭제 버튼 */}
+                  <button
+                    onClick={(e) => handleDeleteImage(e, image.id)}
+                    disabled={isDeleting}
+                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed z-10"
+                    title="사진 삭제"
+                  >
+                    <X size={16} />
+                  </button>
                   {image.is_fitting && (
-                    <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                    <div className="absolute top-10 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
                       피팅완료
                     </div>
                   )}

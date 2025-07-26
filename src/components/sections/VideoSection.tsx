@@ -9,7 +9,7 @@ const VideoSection = memo(() => {
   const [isLoaded, setIsLoaded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const videos = [video1, video2, video3];
+  const videos = [video3, video1, video2];
 
   const handleVideoEnded = useCallback(() => {
     const nextVideo = (currentVideo + 1) % videos.length;

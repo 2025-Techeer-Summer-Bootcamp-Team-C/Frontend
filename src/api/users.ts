@@ -15,3 +15,8 @@ export const getUserImages = async (): Promise<GetUserImagesResponse> => {
   );
   return response.data;
 };
+
+// 사용자 이미지 삭제
+export const deleteUserImage = async (imageId: number): Promise<void> => {
+  await axiosInstance.delete(`/api/v1/users/images/${imageId}`);
+};
