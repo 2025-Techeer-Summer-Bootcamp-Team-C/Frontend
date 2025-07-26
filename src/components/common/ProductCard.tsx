@@ -20,8 +20,8 @@ const ProductCard = memo(
     };
 
     const handleMouseEnter = () => {
-      // 호버 시 상품 상세 정보 prefetch (피팅 상태 고려)
-      prefetchProductDetail(product.product_id, showFitting);
+      // 호버 시 상품 상세 정보 prefetch
+      prefetchProductDetail(product.product_id);
     };
 
     return (

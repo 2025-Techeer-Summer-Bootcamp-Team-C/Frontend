@@ -9,7 +9,10 @@ import { useCart } from "@/contexts/CartContext";
 import { useFittingContext } from "@/contexts/FittingContext";
 import { useOrder } from "@/contexts/OrderContext";
 import type { Product, ProductDetail } from "@/types/product";
-import { useProductDetailQuery } from "@/hooks/useProducts";
+import {
+  useProductDetailQuery,
+  useProductFittingImageMutation,
+} from "@/hooks/useProducts";
 import { useProductsQuery } from "@/hooks/useProducts";
 import { useGenerateFittingVideoMutation } from "@/hooks/useFittings";
 import { Play, Loader2 } from "lucide-react";
@@ -18,27 +21,39 @@ const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart, isAuthenticated } = useCart();
-  const { showFitting } = useFittingContext();
+  const { showFitting, currentUserImageId } = useFittingContext();
   const { createSingleProductOrder } = useOrder();
   const [isCartDialogOpen, setIsCartDialogOpen] = useState(false);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [showQuantitySelector, setShowQuantitySelector] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const quantitySelectorRef = useRef<HTMLDivElement>(null);
-  const { data: productList } = useProductsQuery(showFitting);
-  const { data: currentProduct } = useProductDetailQuery(
-    Number(id),
-    showFitting
-  );
+  const { data: productList } = useProductsQuery();
+  const { data: currentProduct } = useProductDetailQuery(Number(id));
   const {
     mutate: generateVideo,
     data: videoData,
     isPending: isVideoLoading,
   } = useGenerateFittingVideoMutation();
 
-  const image = productList?.products.find(
-    (product) => product.product_id === Number(id)
-  )?.image;
+  // showFitting이 true일 때만 해당 상품의 피팅 이미지 조회
+  const fittingImageQuery = useProductFittingImageMutation();
+
+  // useEffect로 API 호출 (렌더링 중 side effect 방지)
+  useEffect(() => {
+    if (showFitting && currentUserImageId && id) {
+      fittingImageQuery.mutate({
+        productId: Number(id),
+        userImageId: currentUserImageId,
+      });
+    }
+  }, [showFitting, currentUserImageId, id]); // fittingImageQuery는 의존성에서 제외
+
+  // 이미지 결정 로직: 피팅 모드일 때 피팅 이미지, 아니면 원본 이미지
+  const displayImage =
+    showFitting && fittingImageQuery.data?.fitting_image
+      ? fittingImageQuery.data.fitting_image
+      : currentProduct?.model_image;
 
   // 외부 클릭 시 수량 선택기 닫기
   useEffect(() => {
@@ -107,8 +122,11 @@ const Detail = () => {
   };
 
   const handleVideoGenerate = () => {
-    if (currentProduct) {
-      generateVideo(currentProduct.product_id);
+    if (currentProduct && currentUserImageId) {
+      generateVideo({
+        product_id: currentProduct.product_id,
+        user_image_id: currentUserImageId,
+      });
     }
   };
 
@@ -117,7 +135,7 @@ const Detail = () => {
   }
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white mt-[100px]">
       {/* Main Content */}
       <div className="flex justify-center">
         <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">
@@ -146,7 +164,7 @@ const Detail = () => {
                     />
                   ) : (
                     <img
-                      src={image}
+                      src={displayImage}
                       alt={`${currentProduct.name}${
                         showFitting ? " - 피팅 결과" : " - 모델 착용"
                       }`}

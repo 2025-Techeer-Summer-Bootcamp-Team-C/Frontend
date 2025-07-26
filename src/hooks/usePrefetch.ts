@@ -8,19 +8,19 @@ export const usePrefetch = () => {
   const queryClient = useQueryClient();
 
   // 상품 목록 prefetch
-  const prefetchProducts = async (showFitting?: boolean) => {
+  const prefetchProducts = async () => {
     await queryClient.prefetchQuery({
-      queryKey: ["products", { showFitting }],
-      queryFn: () => fetchProducts(showFitting),
+      queryKey: ["products"],
+      queryFn: () => fetchProducts(),
       staleTime: 5 * 60 * 1000, // 5분
     });
   };
 
   // 상품 상세 prefetch (호버 시 미리 로드)
-  const prefetchProductDetail = async (productId: number, showFitting?: boolean) => {
+  const prefetchProductDetail = async (productId: number) => {
     await queryClient.prefetchQuery({
-      queryKey: ["product", productId, { showFitting }],
-      queryFn: () => fetchProductDetail(productId, showFitting),
+      queryKey: ["product", productId],
+      queryFn: () => fetchProductDetail(productId),
       staleTime: 5 * 60 * 1000,
     });
   };

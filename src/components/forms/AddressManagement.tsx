@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -333,10 +334,14 @@ const AddressManagement = ({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle>배송지 관리</CardTitle>
+    <>
+      <DialogHeader>
+        <DialogTitle>배송지 관리</DialogTitle>
+      </DialogHeader>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>배송지 관리</CardTitle>
           <Button onClick={handleAdd} size="sm">
             새 주소 추가
           </Button>
@@ -410,6 +415,7 @@ const AddressManagement = ({
         </div>
       </CardContent>
     </Card>
+    </>
   );
 };
 
