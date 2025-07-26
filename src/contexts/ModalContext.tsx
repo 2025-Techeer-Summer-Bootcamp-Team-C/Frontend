@@ -40,7 +40,7 @@ type ModalContextType = {
     onSubmitCallback?: (data: PersonalInfoData) => void,
     onAddressCallback?: (addresses: Address[]) => void,
     initialAddresses?: Address[],
-    onPhotoSelectionCallback?: (selectedPhoto: File | string) => void
+    onPhotoSelectionCallback?: (selectedPhoto: File | string | number) => void
   ) => void;
   closeModal: () => void;
   modalType: ModalType;
@@ -54,7 +54,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [submitCallback, setSubmitCallback] = useState<((data: PersonalInfoData) => void) | null>(null);
   const [addressCallback, setAddressCallback] = useState<((addresses: Address[]) => void) | null>(null);
   const [initialAddresses, setInitialAddresses] = useState<Address[]>([]);
-  const [photoSelectionCallback, setPhotoSelectionCallback] = useState<((selectedPhoto: File | string) => void) | null>(null);
+  const [photoSelectionCallback, setPhotoSelectionCallback] = useState<((selectedPhoto: File | string | number) => void) | null>(null);
 
   const openModal = (
     type: ModalType, 
@@ -62,7 +62,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     onSubmitCallback?: (data: PersonalInfoData) => void,
     onAddressCallback?: (addresses: Address[]) => void,
     initialAddressData?: Address[],
-    onPhotoSelectionCallback?: (selectedPhoto: File | string) => void
+    onPhotoSelectionCallback?: (selectedPhoto: File | string | number) => void
   ) => {
     setModalType(type);
     setInitialData(data || null);
@@ -102,9 +102,11 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
         <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
           <Suspense
             fallback={
-              <div className="flex items-center justify-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              </div>
+              <>
+                <div className="flex items-center justify-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+              </>
             }
           >
             {modalType === "personalInfo" && (

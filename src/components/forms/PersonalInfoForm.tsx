@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 
 const personalInfoSchema = z.object({
@@ -81,10 +82,14 @@ const PersonalInfoForm = ({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>개인정보 수정</CardTitle>
-      </CardHeader>
+    <>
+      <DialogHeader>
+        <DialogTitle>개인정보 수정</DialogTitle>
+      </DialogHeader>
+      <Card>
+        <CardHeader>
+          <CardTitle>개인정보 수정</CardTitle>
+        </CardHeader>
       <CardContent>
         <Form {...form}>
           <form
@@ -168,6 +173,7 @@ const PersonalInfoForm = ({
         </Form>
       </CardContent>
     </Card>
+    </>
   );
 };
 

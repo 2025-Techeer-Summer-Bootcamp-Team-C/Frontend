@@ -5,10 +5,13 @@ import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 
 // Lazy load ProductCard for better code splitting
 const ProductCard = lazy(() => import("@/components/common/ProductCard"));
-import { useProductsQuery } from "@/hooks/useProducts";
-import { startFittingDetail } from "@/api/fittings";
-import { fetchProducts } from "@/api/products";
+import {
+  useProductsQuery,
+  useAllProductsFittingImages,
+} from "@/hooks/useProducts";
+import { fetchProductFittingImage, type ProductFittingImageResponse } from "@/api/products";
 import { useFittingResultsPollingMutation } from "@/hooks/useFittings";
+import { getUserImages } from "@/api/users";
 import { useHeaderSticky } from "@/hooks/useHeaderSticky";
 import { useModal } from "@/contexts/ModalContext";
 import { MorphSpinner } from "@/components/ui/morph-spinner";
@@ -23,15 +26,26 @@ const Home = () => {
     setIsFittingLoading,
     lastSelectedImage,
     setLastSelectedImage,
+    lastSelectedUserImageId,
+    setLastSelectedUserImageId,
+    currentUserImageId,
+    setCurrentUserImageId,
     hasLastSelectedImage,
   } = useFittingContext();
   const [buttonText, setButtonText] = useState<string>("피팅하기");
   const [viewedProducts, setViewedProducts] = useState<string[]>([]);
   const { openModal } = useModal();
   const isSticky = useHeaderSticky();
-  const { data: products } = useProductsQuery(showFitting);
+  const { data: products } = useProductsQuery();
 
   const fittingPollingMutation = useFittingResultsPollingMutation();
+
+  // 피팅 모드일 때 개별 상품별 피팅 이미지 폴링
+  const { fittingResults, resetFittingResults, setManualFittingResults } = useAllProductsFittingImages(
+    products?.products?.map((p) => p.product_id) || [],
+    currentUserImageId,
+    showFitting && currentUserImageId !== null
+  );
 
   // localStorage에서 조회한 상품 목록 로드
   useEffect(() => {
@@ -45,6 +59,13 @@ const Home = () => {
       }
     }
   }, []);
+
+  // 홈 페이지로 돌아올 때마다 피팅 모드 해제
+  useEffect(() => {
+    setShowFitting(false);
+    setCurrentUserImageId(null);
+    resetFittingResults();
+  }, []); // 컴포넌트 마운트 시에만 실행
 
   // 조회한 상품 목록을 localStorage에 저장
   const saveViewedProducts = (products: string[]) => {
@@ -76,12 +97,16 @@ const Home = () => {
     );
   };
 
-  const handlePhotoSelection = async (selectedPhoto: File | string) => {
+  const handlePhotoSelection = async (selectedPhoto: File | string | number) => {
     console.log("선택된 사진:", selectedPhoto);
 
     // 선택된 이미지를 컨텍스트에 저장
     if (selectedPhoto instanceof File) {
       setLastSelectedImage(selectedPhoto);
+      setLastSelectedUserImageId(null); // File 선택 시 user_image_id 초기화
+    } else if (typeof selectedPhoto === 'number') {
+      setLastSelectedUserImageId(selectedPhoto);
+      setLastSelectedImage(null); // user_image_id 선택 시 File 초기화
     }
 
     setIsFittingLoading(true);
@@ -96,41 +121,110 @@ const Home = () => {
     const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 3000));
 
     try {
-      // 1. 현재 피팅 이미지 URL들을 가져와서 비교 기준점 설정
-      let previousImageUrls: string[] = [];
-      try {
-        const currentProducts = await fetchProducts(true);
-        if (currentProducts.products) {
-          previousImageUrls = currentProducts.products
-            .filter((product) => product.image)
-            .map((product) => product.image);
+      // 선택된 사진이 숫자(user_image_id)인 경우 - 기존 피팅 결과 불러오기
+      if (typeof selectedPhoto === 'number') {
+        console.log("기존 피팅 결과 불러오기 - user_image_id:", selectedPhoto);
+        
+        if (products?.products) {
+          // 기존 피팅 결과 리셋
+          resetFittingResults();
+          
+          // 상태 업데이트
+          setCurrentUserImageId(selectedPhoto);
+          setShowFitting(true);
+          
+          console.log("기존 피팅 결과 직접 조회 시작");
+          
+          // 모든 상품에 대해 기존 피팅 결과를 병렬로 조회
+          const existingResults = await Promise.allSettled(
+            products.products.map(async (product) => {
+              try {
+                const result = await fetchProductFittingImage(product.product_id, selectedPhoto);
+                console.log(`상품 ${product.product_id} 기존 피팅 결과 발견:`, result);
+                return { productId: product.product_id, result };
+              } catch (error) {
+                console.log(`상품 ${product.product_id} 기존 피팅 결과 없음`);
+                return null;
+              }
+            })
+          );
+          
+          // 성공한 결과들만 필터링해서 state에 반영
+          const successfulResults: Record<number, ProductFittingImageResponse> = {};
+          existingResults.forEach((promiseResult) => {
+            if (promiseResult.status === 'fulfilled' && promiseResult.value) {
+              const { productId, result } = promiseResult.value;
+              successfulResults[productId] = result;
+            }
+          });
+          
+          console.log("기존 피팅 결과 조회 완료:", successfulResults);
+          
+          // 조회한 결과를 state에 반영
+          if (Object.keys(successfulResults).length > 0) {
+            setManualFittingResults(successfulResults);
+            console.log("기존 피팅 결과를 state에 반영 완료");
+          }
         }
-      } catch (error) {
-        console.log("현재 피팅 결과를 가져올 수 없음:", error);
+        
+        // 최소 3초 대기
+        await minLoadingTime;
+        
+      } else if (selectedPhoto instanceof File) {
+        // 새로운 파일 업로드인 경우 - 새 피팅 시작 + 폴링
+        console.log("새로운 피팅 시작");
+        
+        if (products?.products) {
+          // 기존 피팅 결과 리셋
+          resetFittingResults();
+
+          // useFittingResultsPollingMutation을 사용하여 피팅 시작 + 폴링
+          const fittingResults = await fittingPollingMutation.mutateAsync({
+            imageFile: selectedPhoto,
+            productIds: products.products.map(p => p.product_id),
+            onProgress: (completed, total) => {
+              console.log(`피팅 진행률: ${completed}/${total}`);
+            }
+          });
+
+          console.log("새 피팅 완료:", fittingResults);
+          
+          // 상태 업데이트
+          setCurrentUserImageId(fittingResults.userImageId);
+          setShowFitting(true);
+          
+          // 새로 생성된 피팅 결과를 state에 반영
+          if (fittingResults.results && Object.keys(fittingResults.results).length > 0) {
+            setManualFittingResults(fittingResults.results);
+            console.log("새 피팅 결과를 state에 반영 완료");
+          }
+        }
+
+        // 최소 3초 대기 (폴링 내부에서 이미 처리됨)
+        await minLoadingTime;
       }
-
-      // 2. 피팅 작업 시작
-      await startFittingDetail();
-
-      // 3. 피팅 결과 폴링 시작 (이미지 변경 감지)
-      await fittingPollingMutation.mutateAsync({
-        previousImageUrls:
-          previousImageUrls.length > 0 ? previousImageUrls : undefined,
-      });
-
-      // 4. 최소 3초와 실제 API 완료 시간 중 더 긴 시간까지 대기
-      await minLoadingTime;
-
-      // refetch 제거: 폴링에서 이미 최신 데이터를 받아옴
+      
     } catch (error) {
       // 에러가 발생해도 일단 피팅 모드로 전환 (이미 피팅된 결과가 있는 경우 등)
       console.log("피팅 처리 중 에러:", error);
 
       // 에러 발생시에도 최소 3초는 대기
       await minLoadingTime;
+
+      // 기존 사용자 이미지가 있다면 그것을 사용
+      try {
+        const userImages = await getUserImages();
+        if (userImages.data && userImages.data.length > 0) {
+          const latestUserImage = userImages.data[userImages.data.length - 1];
+          setCurrentUserImageId(latestUserImage.id);
+          resetFittingResults(); // 폴링 전 상태 리셋
+          setShowFitting(true);
+        }
+      } catch (userImageError) {
+        console.error("사용자 이미지 조회 실패:", userImageError);
+      }
     } finally {
-      // 로딩 상태 해제 및 이미지 변경
-      setShowFitting(true);
+      // 로딩 상태 해제
       setIsFittingLoading(false);
       setButtonText(showFitting ? "피팅 다시하기" : "피팅하기");
     }
@@ -139,13 +233,17 @@ const Home = () => {
   // 이전에 선택한 이미지로 바로 피팅하기
   const handleQuickFitting = async () => {
     if (
-      !lastSelectedImage ||
+      (!lastSelectedImage && !lastSelectedUserImageId) ||
       isFittingLoading ||
       fittingPollingMutation.isPending
     )
       return;
 
-    await handlePhotoSelection(lastSelectedImage);
+    // 마지막 선택된 이미지 우선 순위: File > user_image_id
+    const lastSelected = lastSelectedImage || lastSelectedUserImageId;
+    if (lastSelected) {
+      await handlePhotoSelection(lastSelected);
+    }
   };
 
   // Using dummy data instead of API
@@ -214,7 +312,15 @@ const Home = () => {
                           ? "viewed"
                           : "default"
                       }
-                      product={product}
+                      product={{
+                        ...product,
+                        // 피팅 모드일 때 피팅 이미지를 사용, 아니면 원본 이미지 사용
+                        image:
+                          showFitting &&
+                          fittingResults[product.product_id]?.fitting_image
+                            ? fittingResults[product.product_id].fitting_image
+                            : product.image,
+                      }}
                       onProductClick={() =>
                         handleProductClick(product.product_id)
                       }
@@ -233,7 +339,11 @@ const Home = () => {
         {showFitting && !isFittingLoading && (
           <button
             className="w-[240px] bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition-colors font-inter text-sm"
-            onClick={() => setShowFitting(false)}
+            onClick={() => {
+              setShowFitting(false);
+              setCurrentUserImageId(null);
+              resetFittingResults();
+            }}
           >
             원본 상품 보기
           </button>

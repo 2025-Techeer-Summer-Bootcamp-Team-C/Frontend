@@ -2,8 +2,8 @@ import axiosInstance from "./axiosInstance";
 
 export interface FittingDetailResponse {
   message: string;
-  task_group_id: string;
   total_products: number;
+  user_image_id: number;
 }
 
 export interface FittingDetailError {
@@ -12,15 +12,25 @@ export interface FittingDetailError {
 
 /**
  * 가상 피팅 상세 API 호출
- * POST /api/v1/fittings/images/detail
+ * POST /api/v1/fittings/images/detail/
  * 
+ * @param profileImage 사용자 프로필 이미지 파일
  * @returns Promise<FittingDetailResponse>
  * @throws Error when API call fails
  */
-export const startFittingDetail = async (): Promise<FittingDetailResponse> => {
+export const startFittingDetail = async (profileImage: File): Promise<FittingDetailResponse> => {
   try {
+    const formData = new FormData();
+    formData.append('profile_image', profileImage);
+
     const response = await axiosInstance.post<FittingDetailResponse>(
-      "api/v1/fittings/images/detail"
+      "api/v1/fittings/images/detail",
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
     );
     return response.data;
   } catch (error: any) {
@@ -28,6 +38,8 @@ export const startFittingDetail = async (): Promise<FittingDetailResponse> => {
     throw error;
   }
 };
+
+
 
 
 
@@ -43,21 +55,30 @@ export interface FittingVideoStatusResponse {
 
 /**
  * 가상 피팅 영상 생성 요청
- * POST /api/v1/fittings/{product_id}/video
+ * POST /api/v1/fittings/{product_id}/videos/{user_image_id}
  * 
  * @param product_id 상품 ID
+ * @param user_image_id 사용자 이미지 ID
  * @returns Promise<FittingVideoGenerateResponse>
  */
-export const generateFittingVideo = async (product_id: number): Promise<FittingVideoGenerateResponse> => {
+export const generateFittingVideo = async (product_id: number, user_image_id: number): Promise<FittingVideoGenerateResponse> => {
   const response = await axiosInstance.post<FittingVideoGenerateResponse>(
-    `api/v1/fittings/${product_id}/videos`
+    `api/v1/fittings/${product_id}/videos/${user_image_id}`
   );
   return response.data;
 };
 
-export const getFittingVideoStatus = async (product_id: number): Promise<FittingVideoStatusResponse> => {
+/**
+ * 가상 피팅 영상 상태 조회
+ * GET /api/v1/fittings/{product_id}/videos/{user_image_id}
+ * 
+ * @param product_id 상품 ID
+ * @param user_image_id 사용자 이미지 ID
+ * @returns Promise<FittingVideoStatusResponse>
+ */
+export const getFittingVideoStatus = async (product_id: number, user_image_id: number): Promise<FittingVideoStatusResponse> => {
   const response = await axiosInstance.get<FittingVideoStatusResponse>(
-    `api/v1/fittings/${product_id}/videos/status`
+    `api/v1/fittings/${product_id}/videos/${user_image_id}`
   );
   return response.data;
 };
