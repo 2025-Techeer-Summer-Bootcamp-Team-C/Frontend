@@ -12,8 +12,6 @@ import type { PaymentDialogVariant } from "@/types/variants";
 import { X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useOrder } from "@/contexts/OrderContext";
-import type { BuyerInfo } from "@/types/order";
-import type { CompletedOrder } from "@/types/order";
 
 interface PaymentDialogProps {
   children: React.ReactNode; // Dialog를 여는 버튼
@@ -42,68 +40,30 @@ export const PaymentDialog = ({
     useState<PaymentDialogVariant>("confirm");
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const { cartData, clearCart, directPurchaseProduct } = useCart();
-  const { addOrder, currentBuyerInfo } = useOrder();
+  const { getLatestOrder } = useOrder();
   const formatPrice = (price: number) => {
     return price.toLocaleString("ko-KR");
   };
 
-  const generateOrderNumber = () => {
-    const now = new Date();
-    const year = now.getFullYear().toString().slice(-2);
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    const time = now.getHours().toString().padStart(2, '0') + 
-                 now.getMinutes().toString().padStart(2, '0') + 
-                 now.getSeconds().toString().padStart(2, '0');
-    return `${year}${month}${day}${time}`;
-  };
-
-  const getDummyBuyerInfo = (): BuyerInfo => ({
-    name: "홍길동",
-    address: "서울특별시 강남구 테헤란로 123",
-    address2: "",
-    postalCode: "06154",
-    region: "대한민국",
-    regionCode: "+82",
-    phone: "010-1234-5678"
-  });
-
   const handleConfirm = () => {
-    // 1. 주문 정보 생성 및 저장 (clearCart 전에 실행)
-    const generatedOrderNumber = generateOrderNumber();
-    
-    // 실제 구매 상품 정보 결정 (직접 구매 vs 장바구니)
-    const isDirectPurchase = !!directPurchaseProduct;
-    const actualProducts = isDirectPurchase 
-      ? [{
-          cart_product_id: directPurchaseProduct.product_id,
-          name: directPurchaseProduct.name,
-          image: directPurchaseProduct.image || '',
-          count: directPurchaseProduct.quantity,
-          price: directPurchaseProduct.price
-        }]
-      : cartData?.cart_product || [];
-    
-    const actualTotalPrice = isDirectPurchase
-      ? directPurchaseProduct.price * directPurchaseProduct.quantity
-      : cartData?.total_price || 0;
-    
-    const orderInfo = {
-      orderNumber: generatedOrderNumber,
-      orderDate: new Date().toISOString(),
-      products: actualProducts,
-      totalPrice: actualTotalPrice,
-      buyerInfo: currentBuyerInfo || getDummyBuyerInfo(),
-      status: 'completed' as const
-    };
-    addOrder(orderInfo as CompletedOrder);
-    
-    // 2. UI 상태 변경
+    // 이미 생성된 주문에 대한 결제 승인 처리
+    const latestOrder = getLatestOrder();
+
+    if (!latestOrder) {
+      alert("주문 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    console.log("결제 승인:", latestOrder);
+
+    // 장바구니에서 온 경우 장바구니 클리어
+    if (!directPurchaseProduct && cartData?.cart_product?.length) {
+      clearCart();
+    }
+
+    // UI 상태 변경 - 결제 완료
     setCurrentVariant("complete");
     onConfirm?.();
-    
-    // 3. 장바구니 클리어
-    clearCart();
   };
 
   const handleComplete = () => {
@@ -169,20 +129,28 @@ export const PaymentDialog = ({
                 <div className="flex items-center gap-10">
                   <div className="flex items-end gap-5 w-[400px]">
                     <span>이름</span>
-                    <span className="text-gray-600">{buyerInfo?.name || '-'}</span>
+                    <span className="text-gray-600">
+                      {buyerInfo?.name || "-"}
+                    </span>
                   </div>
                   <div className="flex items-end gap-5 w-full">
                     <span>전화번호</span>
-                    <span className="text-gray-600">{buyerInfo?.phone || '-'}</span>
+                    <span className="text-gray-600">
+                      {buyerInfo?.phone || "-"}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-end gap-5 w-full">
                   <span>주소</span>
-                    <span className="text-gray-600">{buyerInfo?.address || '-'}</span>
+                  <span className="text-gray-600">
+                    {buyerInfo?.address || "-"}
+                  </span>
                 </div>
                 <div className="flex items-end gap-5 w-full">
                   <span>구매 상품명</span>
-                    <span className="text-gray-600">{buyerInfo?.productName || '-'}</span>
+                  <span className="text-gray-600">
+                    {buyerInfo?.productName || "-"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -240,9 +208,9 @@ export const PaymentDialog = ({
                 onClick={handleConfirm}
                 disabled={!isTermsAccepted}
                 className={`text-[15px] font-medium leading-6 h-10 px-6 flex items-center justify-center transition-colors ${
-                  isTermsAccepted 
-                    ? 'bg-black text-white hover:bg-gray-800' 
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  isTermsAccepted
+                    ? "bg-black text-white hover:bg-gray-800"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
                 결제하기
@@ -256,7 +224,7 @@ export const PaymentDialog = ({
           <div className="px-12 py-6 text-center flex flex-col items-center">
             <h1 className="text-3xl font-bold mb-5">결재 완료</h1>
             <p className="text-lg text-gray-500 mb-9">
-              주문번호 : {orderNumber}
+              주문번호 : {getLatestOrder()?.orderNumber || orderNumber}
             </p>
             <p className="text-base mb-16">
               결재가 완료 되었습니다.

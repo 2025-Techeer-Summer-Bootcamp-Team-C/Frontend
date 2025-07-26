@@ -97,21 +97,21 @@ export const getLayoutConfig = (pathname: string): LayoutConfig => {
   // pathname 정규화 (trailing slash 제거, query parameter 제거)
   const normalizedPathname = pathname.split("?")[0].replace(/\/$/, "") || "/";
 
-  // 디버깅용 로그 (개발 환경에서만)
-  if (process.env.NODE_ENV === "development") {
-    console.log("🔍 getLayoutConfig Debug:", {
-      originalPathname: pathname,
-      normalizedPathname,
-      availableStaticRoutes: Object.keys(STATIC_LAYOUT_CONFIG),
-    });
-  }
+  // // 디버깅용 로그 (개발 환경에서만)
+  // if (process.env.NODE_ENV === "development") {
+  //   console.log("🔍 getLayoutConfig Debug:", {
+  //     originalPathname: pathname,
+  //     normalizedPathname,
+  //     availableStaticRoutes: Object.keys(STATIC_LAYOUT_CONFIG),
+  //   });
+  // }
 
   // 1. 정적 경로 우선 확인
   if (normalizedPathname in STATIC_LAYOUT_CONFIG) {
     const config = STATIC_LAYOUT_CONFIG[normalizedPathname];
-    if (process.env.NODE_ENV === "development") {
-      console.log("✅ Found static config:", config);
-    }
+    // if (process.env.NODE_ENV === "development") {
+    //   console.log("✅ Found static config:", config);
+    // }
     return config;
   }
 
@@ -119,25 +119,25 @@ export const getLayoutConfig = (pathname: string): LayoutConfig => {
   for (const { pattern, config } of DYNAMIC_LAYOUT_CONFIG) {
     if (typeof pattern === "string") {
       if (normalizedPathname === pattern) {
-        if (process.env.NODE_ENV === "development") {
-          console.log("✅ Found dynamic string config:", config);
-        }
+        // if (process.env.NODE_ENV === "development") {
+        //   console.log("✅ Found dynamic string config:", config);
+        // }
         return config;
       }
     } else {
       if (pattern.test(normalizedPathname)) {
-        if (process.env.NODE_ENV === "development") {
-          console.log("✅ Found dynamic regex config:", config);
-        }
+        // if (process.env.NODE_ENV === "development") {
+        //   console.log("✅ Found dynamic regex config:", config);
+        // }
         return config;
       }
     }
   }
 
   // 3. 기본 설정 반환
-  if (process.env.NODE_ENV === "development") {
-    console.log("⚠️ Using default config for:", normalizedPathname);
-  }
+  // if (process.env.NODE_ENV === "development") {
+  //   console.log("⚠️ Using default config for:", normalizedPathname);
+  // }
   return DEFAULT_LAYOUT_CONFIG;
 };
 
