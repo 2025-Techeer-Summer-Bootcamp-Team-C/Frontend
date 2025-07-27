@@ -1,7 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import onboardingBg from "@/assets/onboarding_bg.webp";
 
-const OnBoarding = () => {
+interface OnBoardingProps {
+  scale?: number;
+  translateY?: number;
+  opacity?: number;
+}
+
+const OnBoarding = ({
+  scale = 1,
+  translateY = 0,
+  opacity = 1,
+}: OnBoardingProps) => {
   const [textOpacity, setTextOpacity] = useState(0);
   const [textTransformY, setTextTransformY] = useState(50);
   const rafRef = useRef<number>(0);
@@ -26,6 +36,7 @@ const OnBoarding = () => {
     rafRef.current = requestAnimationFrame(() => {
       const scrollY = window.scrollY;
 
+      // 기존 텍스트 애니메이션
       if (scrollY < fadeInStart) {
         // 애니메이션 시작 전 - 숨김 상태
         setTextOpacity(0);
@@ -66,12 +77,21 @@ const OnBoarding = () => {
     };
   }, [handleScroll]);
   return (
-    <div className="relative z-[60] w-full h-[1000px] bg-white">
-      {/* 배경 이미지 */}
+    <div
+      className="relative z-[60] w-full h-[1000px] bg-white overflow-hidden transition-all duration-300 ease-out"
+      style={{
+        transform: `translateY(${translateY}px)`,
+      }}
+    >
+      {/* 배경 이미지 - 스케일 애니메이션 적용 */}
       <img
         src={onboardingBg}
         alt="onboarding"
-        className="w-full h-full object-cover pt-[100px] pb-[50px]"
+        className="w-full h-full object-cover pt-[100px] pb-[50px] transition-transform duration-300 ease-out"
+        style={{
+          transform: `scale(${scale})`,
+          opacity: opacity,
+        }}
       />
       {/* 텍스트 영역 - 동적 애니메이션 */}
       <div
