@@ -24,8 +24,8 @@ export const fetchProductDetail = async (
 };
 
 // 카테고리별 상품 조회
-export const fetchCategories = async (): Promise<CategoryResponse> => {
-  const response = await axiosInstance.get<CategoryResponse>("api/v1/categories/");
+export const fetchCategoryProducts = async (categoryId: number): Promise<CategoryResponse> => {
+  const response = await axiosInstance.get<CategoryResponse>(`api/v1/categories/${categoryId}`);
   return response.data;
 };
 

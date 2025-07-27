@@ -9,7 +9,8 @@ import {
   useProductsQuery,
   useAllProductsFittingImages,
 } from "@/hooks/useProducts";
-import { fetchProductFittingImage, type ProductFittingImageResponse } from "@/api/products";
+import { fetchProductFittingImage, fetchCategoryProducts, type ProductFittingImageResponse } from "@/api/products";
+import type { Product, CategoryResponse } from "@/types/product";
 import { useFittingResultsPollingMutation } from "@/hooks/useFittings";
 import { getUserImages } from "@/api/users";
 import { useHeaderSticky } from "@/hooks/useHeaderSticky";
@@ -18,7 +19,7 @@ import { MorphSpinner } from "@/components/ui/morph-spinner";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { searchQuery } = useFilter();
+  const { searchQuery, selectedCategoryId } = useFilter();
   const {
     showFitting,
     setShowFitting,
@@ -34,6 +35,7 @@ const Home = () => {
   } = useFittingContext();
   const [buttonText, setButtonText] = useState<string>("피팅하기");
   const [viewedProducts, setViewedProducts] = useState<string[]>([]);
+  const [categoryProducts, setCategoryProducts] = useState<CategoryResponse | null>(null);
   const { openModal } = useModal();
   const isSticky = useHeaderSticky();
   const { data: products } = useProductsQuery();
@@ -66,6 +68,26 @@ const Home = () => {
     setCurrentUserImageId(null);
     resetFittingResults();
   }, []); // 컴포넌트 마운트 시에만 실행
+
+  // 카테고리별 상품 조회
+  useEffect(() => {
+    const loadCategoryProducts = async () => {
+      if (selectedCategoryId === null) {
+        setCategoryProducts(null);
+        return;
+      }
+
+      try {
+        const data = await fetchCategoryProducts(selectedCategoryId);
+        setCategoryProducts(data);
+      } catch (error) {
+        console.error("카테고리별 상품 조회 실패:", error);
+        setCategoryProducts(null);
+      }
+    };
+
+    loadCategoryProducts();
+  }, [selectedCategoryId]);
 
   // 조회한 상품 목록을 localStorage에 저장
   const saveViewedProducts = (products: string[]) => {
@@ -246,29 +268,43 @@ const Home = () => {
     }
   };
 
-  // Using dummy data instead of API
   // 검색어와 카테고리로 상품 필터링
-  const filteredProducts = useMemo(
-    () =>
-      products?.products?.filter((product) => {
-        const matchesSearch = product.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
+  const filteredProducts = useMemo(() => {
+    let sourceProducts: Product[] = [];
+    
+    if (selectedCategoryId !== null && categoryProducts) {
+      // 카테고리 상품의 경우 속성명을 통일 (id -> product_id)
+      sourceProducts = categoryProducts.data?.products?.map((product: any) => ({
+        ...product,
+        product_id: product.id || product.product_id, // id를 product_id로 매핑
+      })) || [];
+    } else {
+      sourceProducts = products?.products || [];
+    }
 
-        // 카테고리 매칭: category_id를 통해 카테고리 이름 찾기
-        // const productCategory = categories?.find(cat => cat.categoryName === product.category_name)?.name;
-        // const matchesCategory = selectedCategory === "모두 보기" || productCategory === selectedCategory;
+    const filtered = sourceProducts.filter((product: Product) => {
+      if (!product || !product.name || !product.product_id) return false;
+      
+      const matchesSearch = product.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
 
-        return matchesSearch;
-      }),
-    [products?.products, searchQuery]
-  );
+      return matchesSearch;
+    });
+
+    return filtered;
+  }, [products?.products, categoryProducts, searchQuery, selectedCategoryId]);
 
   // 필터링된 상품을 4개씩 그룹화하여 행으로 나눔
   const productRows = useMemo(() => {
+    if (!filteredProducts || filteredProducts.length === 0) return [];
+    
     const rows = [];
-    for (let i = 0; i < (filteredProducts?.length ?? 0); i += 4) {
-      rows.push(filteredProducts?.slice(i, i + 4));
+    for (let i = 0; i < filteredProducts.length; i += 4) {
+      const row = filteredProducts.slice(i, i + 4).filter(product => product && product.product_id);
+      if (row.length > 0) {
+        rows.push(row);
+      }
     }
     return rows;
   }, [filteredProducts]);
@@ -299,34 +335,38 @@ const Home = () => {
                 key={rowIndex}
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center"
               >
-                {row?.map((product) => (
-                  <Suspense
-                    key={product.product_id}
-                    fallback={
-                      <div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>
-                    }
-                  >
-                    <ProductCard
-                      variant={
-                        viewedProducts.includes(product.product_id.toString())
-                          ? "viewed"
-                          : "default"
+                {row?.map((product) => {
+                  if (!product || !product.product_id) return null;
+                  
+                  return (
+                    <Suspense
+                      key={product.product_id}
+                      fallback={
+                        <div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>
                       }
-                      product={{
-                        ...product,
-                        // 피팅 모드일 때 피팅 이미지를 사용, 아니면 원본 이미지 사용
-                        image:
-                          showFitting &&
-                          fittingResults[product.product_id]?.fitting_image
-                            ? fittingResults[product.product_id].fitting_image
-                            : product.image,
-                      }}
-                      onProductClick={() =>
-                        handleProductClick(product.product_id)
-                      }
-                    />
-                  </Suspense>
-                ))}
+                    >
+                      <ProductCard
+                        variant={
+                          viewedProducts.includes(product.product_id.toString())
+                            ? "viewed"
+                            : "default"
+                        }
+                        product={{
+                          ...product,
+                          // 피팅 모드일 때 피팅 이미지를 사용, 아니면 원본 이미지 사용
+                          image:
+                            showFitting &&
+                            fittingResults[product.product_id]?.fitting_image
+                              ? fittingResults[product.product_id].fitting_image
+                              : product.image,
+                        }}
+                        onProductClick={() =>
+                          handleProductClick(product.product_id)
+                        }
+                      />
+                    </Suspense>
+                  );
+                })}
               </div>
             ))}
           </div>

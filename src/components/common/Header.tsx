@@ -32,8 +32,8 @@ const Header = memo(
       inputValue,
       setInputValue,
       handleSearch,
-      selectedCategory,
-      setSelectedCategory,
+      selectedCategoryId,
+      setSelectedCategoryId,
     } = useFilter();
     const [isLogin, setIsLogin] = useState(false);
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -68,10 +68,32 @@ const Header = memo(
     const cartCount = cartData?.cart_product?.length || 0;
 
     const handleCategoryClick = useCallback(
-      (category: string) => {
-        setSelectedCategory(category);
+      (categoryName: string) => {
+        let categoryId: number | null = null;
+        
+        switch (categoryName) {
+          case "상의":
+            categoryId = 1;
+            break;
+          case "하의":
+            categoryId = 2;
+            break;
+          case "아우터":
+            categoryId = 3;
+            break;
+          case "모두 보기":
+          default:
+            categoryId = null;
+            break;
+        }
+
+        setSelectedCategoryId(categoryId);
+        // 홈페이지가 아닌 경우 홈페이지로 이동
+        if (location.pathname !== "/") {
+          navigate("/");
+        }
       },
-      [setSelectedCategory]
+      [setSelectedCategoryId, location.pathname, navigate]
     );
 
     const toggleSearch = useCallback(() => {
@@ -120,17 +142,25 @@ const Header = memo(
                 {showCategoryMenu ? (
                   // Category Menu (Home 페이지)
                   <div className="flex flex-wrap items-center gap-4 md:gap-6">
-                    {categoryItems.map((item, index) => (
-                      <span
-                        key={index}
-                        onClick={() => handleCategoryClick(item)}
-                        className={`text-black text-[15px] font-inter leading-4 cursor-pointer hover:opacity-70 transition-all whitespace-nowrap ${
-                          selectedCategory === item ? "font-bold" : "font-light"
-                        }`}
-                      >
-                        {item}
-                      </span>
-                    ))}
+                    {categoryItems.map((item, index) => {
+                      const isSelected = 
+                        (item === "모두 보기" && selectedCategoryId === null) ||
+                        (item === "상의" && selectedCategoryId === 1) ||
+                        (item === "하의" && selectedCategoryId === 2) ||
+                        (item === "아우터" && selectedCategoryId === 3);
+
+                      return (
+                        <span
+                          key={index}
+                          onClick={() => handleCategoryClick(item)}
+                          className={`text-black text-[15px] font-inter leading-4 cursor-pointer hover:opacity-70 transition-all whitespace-nowrap ${
+                            isSelected ? "font-bold" : "font-light"
+                          }`}
+                        >
+                          {item}
+                        </span>
+                      );
+                    })}
                   </div>
                 ) : (
                   // Logo (다른 페이지들)
