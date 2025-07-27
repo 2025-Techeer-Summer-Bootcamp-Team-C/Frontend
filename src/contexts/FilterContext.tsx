@@ -3,10 +3,10 @@ import type { ReactNode } from 'react';
 
 interface FilterContextType {
   searchQuery: string;
-  selectedCategory: string;
+  selectedCategoryId: number | null;
   inputValue: string;
   setInputValue: (value: string) => void;
-  setSelectedCategory: (category: string) => void;
+  setSelectedCategoryId: (categoryId: number | null) => void;
   handleSearch: () => void;
 }
 
@@ -26,7 +26,7 @@ interface FilterProviderProps {
 
 export const FilterProvider = ({ children }: FilterProviderProps) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('모두 보기');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null); // null = 모두 보기
   const [inputValue, setInputValue] = useState<string>('');
 
   const handleSearch = useCallback(() => {
@@ -35,12 +35,12 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
 
   const value = useMemo(() => ({
     searchQuery,
-    selectedCategory,
+    selectedCategoryId,
     inputValue,
     setInputValue,
-    setSelectedCategory,
+    setSelectedCategoryId,
     handleSearch,
-  }), [searchQuery, selectedCategory, inputValue, setInputValue, setSelectedCategory, handleSearch]);
+  }), [searchQuery, selectedCategoryId, inputValue, setInputValue, setSelectedCategoryId, handleSearch]);
 
   return (
     <FilterContext.Provider value={value}>

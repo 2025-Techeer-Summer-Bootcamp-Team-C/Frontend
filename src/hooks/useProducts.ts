@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   fetchProducts,
   fetchProductDetail,
-  fetchCategories,
+  fetchCategoryProducts,
   fetchProductFittingImage,
   type ProductFittingImageResponse,
 } from "../api/products";
@@ -31,12 +31,12 @@ export const useProductDetailQuery = (productId: number) => {
 };
 
 // 카테고리 쿼리
-export const useCategoriesQuery = () => {
+export const useCategoriesQuery = (categoryId: number) => {
   return useQuery({
-    queryKey: ["categories"],
-    queryFn: fetchCategories,
-    staleTime: 30 * 60 * 1000, // 30분 (카테고리는 자주 변경되지 않음)
-    gcTime: 60 * 60 * 1000, // 1시간
+    queryKey: ["categories", categoryId],
+    queryFn: () => fetchCategoryProducts(categoryId),
+    staleTime: 5 * 60 * 1000, // 5분 (카테고리는 자주 변경되지 않음)
+    gcTime: 10 * 60 * 1000, // 10분
   });
 };
 

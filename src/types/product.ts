@@ -23,6 +23,21 @@ export interface ProductListResponse {
   products: Product[];
 }
 
+export type Category = {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  is_deleted: boolean;
+};
+
+
 export interface CategoryResponse {
-  [categoryName: string]: Product[];
+  status: string;
+  message: string;
+  data: {
+    id: number;
+    name: string;
+    products: Product[];
+  }
 }
