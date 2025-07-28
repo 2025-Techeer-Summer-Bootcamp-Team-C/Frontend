@@ -1,5 +1,18 @@
-import { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback, type ReactNode } from "react";
-import type { CompletedOrder, OrderContextType, BuyerInfo } from "@/types/order";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+  type ReactNode,
+} from "react";
+import type {
+  CompletedOrder,
+  OrderContextType,
+  BuyerInfo,
+} from "@/types/order";
 import type { OrderInformationFormRef } from "@/components/forms/OrderInformationForm";
 import { useCreateSingleOrder, useCreateCartOrder } from "@/hooks/useOrders";
 
@@ -11,51 +24,59 @@ interface OrderProviderProps {
 
 export const OrderProvider = ({ children }: OrderProviderProps) => {
   const [orderHistory, setOrderHistory] = useState<CompletedOrder[]>([]);
-  const [currentBuyerInfo, setCurrentBuyerInfo] = useState<BuyerInfo | null>(null);
+  const [currentBuyerInfo, setCurrentBuyerInfo] = useState<BuyerInfo | null>(
+    null
+  );
   const orderFormRef = useRef<OrderInformationFormRef>(null);
-  
+
   // Order API 훅들
   const createSingleOrderMutation = useCreateSingleOrder();
   const createCartOrderMutation = useCreateCartOrder();
 
   // localStorage에서 주문 내역 로드 (API 우선, localStorage는 백업)
   useEffect(() => {
-    const savedOrders = localStorage.getItem('orderHistory');
+    const savedOrders = localStorage.getItem("orderHistory");
     if (savedOrders) {
       try {
         setOrderHistory(JSON.parse(savedOrders));
       } catch (error) {
-        console.error('Failed to parse order history from localStorage:', error);
+        console.error(
+          "Failed to parse order history from localStorage:",
+          error
+        );
       }
     }
 
     // currentBuyerInfo도 localStorage에서 로드
-    const savedBuyerInfo = localStorage.getItem('currentBuyerInfo');
+    const savedBuyerInfo = localStorage.getItem("currentBuyerInfo");
     if (savedBuyerInfo) {
       try {
         setCurrentBuyerInfo(JSON.parse(savedBuyerInfo));
       } catch (error) {
-        console.error('Failed to parse buyer info from localStorage:', error);
+        console.error("Failed to parse buyer info from localStorage:", error);
       }
     }
   }, []);
 
   // 주문 내역 변경 시 localStorage에 저장 (API 데이터 백업)
   useEffect(() => {
-    localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+    localStorage.setItem("orderHistory", JSON.stringify(orderHistory));
   }, [orderHistory]);
 
   // currentBuyerInfo 변경 시 localStorage에 저장
   useEffect(() => {
     if (currentBuyerInfo) {
-      localStorage.setItem('currentBuyerInfo', JSON.stringify(currentBuyerInfo));
+      localStorage.setItem(
+        "currentBuyerInfo",
+        JSON.stringify(currentBuyerInfo)
+      );
     }
   }, [currentBuyerInfo]);
 
   // API에서 제공하는 order_id를 그대로 사용하므로 generateOrderId 함수 제거
   const addOrder = useCallback((order: CompletedOrder) => {
     // API 응답의 order_id가 이미 포함된 완전한 주문 데이터를 받음
-    setOrderHistory(prevHistory => [order, ...prevHistory]);
+    setOrderHistory((prevHistory) => [order, ...prevHistory]);
   }, []);
 
   // API 데이터 기반 주문 조회 - 주문 내역은 API 응답으로 생성된 데이터 사용
@@ -79,121 +100,182 @@ export const OrderProvider = ({ children }: OrderProviderProps) => {
   }, []);
 
   // API 기반 단일 상품 주문 생성 - 모든 정보는 API 응답에서 가져옴
-  const createSingleProductOrder = useCallback(async (productId: number, quantity: number, productImage?: string) => {
-    try {
-      const orderData = { product_id: productId, quantity };
-      const response = await createSingleOrderMutation.mutateAsync(orderData);
-      
-      // API 응답 데이터를 기반으로 주문 정보 구성 (API의 order_id 사용)
-      const orderInfo: CompletedOrder = {
-        id: response.order_id, // API 응답의 order_id를 그대로 사용 (number 타입)
-        orderNumber: response.order_id.toString(),
-        orderDate: response.created_at,
-        products: [{
-          cart_product_id: response.product_id,
-          product_id: response.product_id,
-          name: response.product_name,
-          image: productImage || '', // 이미지는 프론트엔드에서 추가 제공
-          quantity: response.quantity,
-          price: response.price_per_item
-        }],
-        totalPrice: response.total_price,
-        buyerInfo: currentBuyerInfo || {
-          name: "",
-          address: "",
-          address2: "",
-          postalCode: "",
-          region: "",
-          regionCode: "",
-          phone: ""
-        },
-        status: 'completed' as const
-      };
-      
-      // API 응답 기반 주문 데이터를 orderHistory에 추가
-      addOrder(orderInfo);
-      
-    } catch (error) {
-      console.error('단일 상품 주문 생성 실패:', error);
-      throw error;
-    }
-  }, [createSingleOrderMutation, currentBuyerInfo, addOrder]);
+  const createSingleProductOrder = useCallback(
+    async (productId: number, quantity: number, productImage?: string) => {
+      try {
+        const orderData = { product_id: productId, quantity };
+        const response = await createSingleOrderMutation.mutateAsync(orderData);
+
+        // API 응답 데이터를 기반으로 주문 정보 구성 (API의 order_id 사용)
+        const orderInfo: CompletedOrder = {
+          id: response.order_id, // API 응답의 order_id를 그대로 사용 (number 타입)
+          orderNumber: response.order_id.toString(),
+          orderDate: response.created_at,
+          products: [
+            {
+              cart_product_id: response.product_id,
+              product_id: response.product_id,
+              name: response.product_name,
+              image: productImage || "", // 이미지는 프론트엔드에서 추가 제공
+              quantity: response.quantity,
+              price: response.price_per_item,
+            },
+          ],
+          totalPrice: response.total_price,
+          buyerInfo: currentBuyerInfo || {
+            name: "",
+            address: "",
+            address2: "",
+            postalCode: "",
+            region: "",
+            regionCode: "",
+            phone: "",
+          },
+          status: "completed" as const,
+          initial_credit: response.initial_credit,
+          deducted_credit: response.deducted_credit,
+          remaining_credit: response.remaining_credit,
+        };
+
+        // API 응답 기반 주문 데이터를 orderHistory에 추가
+        addOrder(orderInfo);
+      } catch (error) {
+        // 백엔드 에러 메시지 추출 및 알러트
+        let errorMessage = "주문 생성 중 오류가 발생했습니다.";
+        if (error && typeof error === "object" && "response" in error) {
+          const axiosError = error as any;
+          if (axiosError.response?.data?.message) {
+            errorMessage = axiosError.response.data.message;
+          } else if (axiosError.response?.data?.error) {
+            errorMessage = axiosError.response.data.error;
+          } else if (axiosError.response?.data?.detail) {
+            errorMessage = axiosError.response.data.detail;
+          } else if (axiosError.message) {
+            errorMessage = axiosError.message;
+          }
+        }
+
+        alert(errorMessage);
+        throw error;
+      }
+    },
+    [createSingleOrderMutation, currentBuyerInfo, addOrder]
+  );
 
   // API 기반 장바구니 주문 생성 - 모든 정보는 API 응답에서 가져옴
-  const createCartOrder = useCallback(async (cartProductIds: number[], cartData?: any) => {
-    try {
-      const orderData = { cart_product_ids: cartProductIds };
-      const response = await createCartOrderMutation.mutateAsync(orderData);
-      
-      // 장바구니 데이터에서 이미지 정보 매핑용 맵 생성
-      const imageMap = new Map<number, string>();
-      if (cartData?.cart_product) {
-        cartData.cart_product.forEach((item: any) => {
-          imageMap.set(item.product_id, item.image);
-        });
+  const createCartOrder = useCallback(
+    async (cartProductIds: number[], cartData?: any) => {
+      try {
+        const orderData = { cart_product_ids: cartProductIds };
+        const response = await createCartOrderMutation.mutateAsync(orderData);
+
+        // 장바구니 데이터에서 이미지 정보 매핑용 맵 생성
+        const imageMap = new Map<number, string>();
+        if (cartData?.cart_product) {
+          cartData.cart_product.forEach((item: any) => {
+            imageMap.set(item.product_id, item.image);
+          });
+        }
+
+        // API 응답 데이터를 기반으로 주문 정보 구성 (API의 order_id 사용)
+        const orderInfo: CompletedOrder = {
+          id: response.order_id, // API 응답의 order_id를 그대로 사용 (number 타입)
+          orderNumber: response.order_id.toString(),
+          orderDate: response.created_at,
+          products: response.ordered_products.map((product) => ({
+            cart_product_id: product.product_id,
+            product_id: product.product_id,
+            name: product.product_name,
+            image: imageMap.get(product.product_id) || "", // 장바구니 데이터에서 이미지 정보 가져오기
+            quantity: product.quantity,
+            price: product.price_per_item,
+          })),
+          totalPrice: response.total_price,
+          buyerInfo: currentBuyerInfo || {
+            name: "",
+            address: "",
+            address2: "",
+            postalCode: "",
+            region: "",
+            regionCode: "",
+            phone: "",
+          },
+          status: "completed" as const,
+          initial_credit: response.initial_credit,
+          deducted_credit: response.deducted_credit,
+          remaining_credit: response.remaining_credit,
+        };
+
+        // API 응답 기반 주문 데이터를 orderHistory에 추가
+        addOrder(orderInfo);
+      } catch (error) {
+        console.error("장바구니 주문 생성 실패:", error);
+
+        // 백엔드 에러 메시지 추출 및 알러트
+        let errorMessage = "주문 생성 중 오류가 발생했습니다.";
+        if (error && typeof error === "object" && "response" in error) {
+          const axiosError = error as any;
+          if (axiosError.response?.data?.message) {
+            errorMessage = axiosError.response.data.message;
+          } else if (axiosError.response?.data?.error) {
+            errorMessage = axiosError.response.data.error;
+          } else if (axiosError.response?.data?.detail) {
+            errorMessage = axiosError.response.data.detail;
+          } else if (axiosError.message) {
+            errorMessage = axiosError.message;
+          }
+        }
+
+        alert(errorMessage);
+        throw error;
       }
-      
-      // API 응답 데이터를 기반으로 주문 정보 구성 (API의 order_id 사용)
-      const orderInfo: CompletedOrder = {
-        id: response.order_id, // API 응답의 order_id를 그대로 사용 (number 타입)
-        orderNumber: response.order_id.toString(),
-        orderDate: response.created_at,
-        products: response.ordered_products.map(product => ({
-          cart_product_id: product.product_id,
-          product_id: product.product_id,
-          name: product.product_name,
-          image: imageMap.get(product.product_id) || '', // 장바구니 데이터에서 이미지 정보 가져오기
-          quantity: product.quantity,
-          price: product.price_per_item
-        })),
-        totalPrice: response.total_price,
-        buyerInfo: currentBuyerInfo || {
-          name: "",
-          address: "",
-          address2: "",
-          postalCode: "",
-          region: "",
-          regionCode: "",
-          phone: ""
-        },
-        status: 'completed' as const
-      };
-      
-      // API 응답 기반 주문 데이터를 orderHistory에 추가
-      addOrder(orderInfo);
-      
-    } catch (error) {
-      console.error('장바구니 주문 생성 실패:', error);
-      throw error;
-    }
-  }, [createCartOrderMutation, currentBuyerInfo, addOrder]);
+    },
+    [createCartOrderMutation, currentBuyerInfo, addOrder]
+  );
+
+  // 최신 주문의 크레딧 정보만 조회 (중복 합산 방지)
+  const getOrderCredit = useCallback(() => {
+    const latestOrder = orderHistory.length > 0 ? orderHistory[0] : null;
+    return {
+      initial_credit: latestOrder?.initial_credit || 0,
+      deducted_credit: latestOrder?.deducted_credit || 0,
+      remaining_credit: latestOrder?.remaining_credit || 0,
+    };
+  }, [orderHistory]);
 
   // API 연동 완료된 OrderContext 값 - 모든 주문 관련 기능이 API 기반으로 동작
-  const value: OrderContextType = useMemo(() => ({
-    orderHistory, // API 응답으로 생성된 주문 내역
-    currentBuyerInfo,
-    orderFormRef,
-    addOrder, // API 응답 데이터를 orderHistory에 추가
-    getOrders, // API 기반 주문 내역 조회
-    getLatestOrder, // API 기반 최신 주문 조회
-    setBuyerInfo,
-    submitOrderForm,
-    createSingleProductOrder, // API 호출 + 응답 데이터 처리
-    createCartOrder, // API 호출 + 응답 데이터 처리
-  }), [
-    orderHistory,
-    currentBuyerInfo,
-    orderFormRef,
-    addOrder,
-    getOrders,
-    getLatestOrder,
-    setBuyerInfo,
-    submitOrderForm,
-    createSingleProductOrder,
-    createCartOrder,
-  ]);
+  const value: OrderContextType = useMemo(
+    () => ({
+      orderHistory, // API 응답으로 생성된 주문 내역
+      currentBuyerInfo,
+      orderFormRef,
+      addOrder, // API 응답 데이터를 orderHistory에 추가
+      getOrders, // API 기반 주문 내역 조회
+      getLatestOrder, // API 기반 최신 주문 조회
+      setBuyerInfo,
+      submitOrderForm,
+      createSingleProductOrder, // API 호출 + 응답 데이터 처리
+      createCartOrder, // API 호출 + 응답 데이터 처리
+      getOrderCredit, // 주문 크레딧 조회
+    }),
+    [
+      orderHistory,
+      currentBuyerInfo,
+      orderFormRef,
+      addOrder,
+      getOrders,
+      getLatestOrder,
+      setBuyerInfo,
+      submitOrderForm,
+      createSingleProductOrder,
+      createCartOrder,
+      getOrderCredit,
+    ]
+  );
 
-  return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
+  return (
+    <OrderContext.Provider value={value}>{children}</OrderContext.Provider>
+  );
 };
 
 export const useOrder = () => {

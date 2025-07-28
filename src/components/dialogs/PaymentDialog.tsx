@@ -15,7 +15,6 @@ import { useOrder } from "@/contexts/OrderContext";
 
 interface PaymentDialogProps {
   children: React.ReactNode; // Dialog를 여는 버튼
-  totalPrice?: number; // 'confirm' 상태일 때 필요한 가격
   orderNumber?: string; // 'complete' 상태일 때 필요한 주문번호
   buyerInfo?: {
     name: string;
@@ -29,7 +28,6 @@ interface PaymentDialogProps {
 
 export const PaymentDialog = ({
   children,
-  totalPrice = 0,
   orderNumber = "01234567890",
   buyerInfo,
   onConfirm,
@@ -40,10 +38,13 @@ export const PaymentDialog = ({
     useState<PaymentDialogVariant>("confirm");
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const { cartData, clearCart, directPurchaseProduct } = useCart();
-  const { getLatestOrder } = useOrder();
+  const { getLatestOrder, getOrderCredit } = useOrder();
   const formatPrice = (price: number) => {
     return price.toLocaleString("ko-KR");
   };
+
+  const { initial_credit, deducted_credit, remaining_credit } =
+    getOrderCredit();
 
   const handleConfirm = () => {
     // 이미 생성된 주문에 대한 결제 승인 처리
@@ -114,8 +115,8 @@ export const PaymentDialog = ({
             {/* Credit Information */}
             <div className="mb-5 bg-[#F7F7F7] rounded-md py-4 px-8 text-center">
               <p className="text-xl font-medium leading-loose">
-                ₩1,000,000 - ₩{formatPrice(totalPrice)} = ₩
-                {formatPrice(1000000 - totalPrice)}
+                ₩{formatPrice(initial_credit)} - ₩{formatPrice(deducted_credit)}{" "}
+                = ₩{formatPrice(remaining_credit)}
               </p>
               <p className="text-[13px] font-medium">
                 [현재 크레딧 - 사용 크레딧 = 크레딧 잔액]

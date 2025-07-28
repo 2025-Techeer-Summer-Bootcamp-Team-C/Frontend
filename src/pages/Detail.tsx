@@ -36,6 +36,21 @@ const Detail = () => {
     isPending: isVideoLoading,
   } = useGenerateFittingVideoMutation();
 
+  // 0: 상품설명, 1: 구성소재
+  const productInfo = currentProduct?.content.split("/") || [];
+  const categoryId = currentProduct?.category_id;
+
+  // 카테고리별 사이즈 컬럼 정의
+  const getSizeColumns = (categoryId: number | undefined) => {
+    if (categoryId === 1 || categoryId === 3) {
+      return ["가슴둘레", "앞면길이", "소매길이", "등너비", "팔너비"];
+    } else if (categoryId === 2) {
+      return ["허리둘레", "엉덩이둘레", "앞면길이", "앞면밑위", "윗면밑위"];
+    } else {
+      return ["가슴둘레", "허리둘레", "엉덩이둘레", "어깨너비", "소매길이"]; // 기본값
+    }
+  };
+
   // showFitting이 true일 때만 해당 상품의 피팅 이미지 조회
   const fittingImageQuery = useProductFittingImageMutation();
 
@@ -92,9 +107,7 @@ const Detail = () => {
             currentProduct.model_image
           );
           navigate("/order");
-        } catch (error) {
-          alert("주문 생성에 실패했습니다.");
-        }
+        } catch (error) {}
       }
     } else {
       // 수량 선택 UI 표시
@@ -140,7 +153,7 @@ const Detail = () => {
       <div className="flex justify-center">
         <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">
           {/* Product Main Section */}
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-[100px] mb-[120px]">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-[100px] mb-[200px]">
             {/* Product Images Gallery */}
             <div className="flex-1">
               <div className="flex flex-col gap-4 items-end">
@@ -207,9 +220,6 @@ const Detail = () => {
               <div className="sticky top-[280px] flex flex-col gap-[35px]">
                 {/* Product Basic Info */}
                 <div className="flex flex-col gap-[5px] w-auto">
-                  <p className="text-black text-[13px] font-inter leading-tight whitespace-nowrap">
-                    재고 상태
-                  </p>
                   <h1 className="text-black text-[20px] font-inter leading-tight whitespace-nowrap">
                     {currentProduct.name}
                   </h1>
@@ -220,17 +230,6 @@ const Detail = () => {
 
                 {/* Divider Line */}
                 <div className="w-full h-[0.5px] bg-black"></div>
-
-                {/* Color and Product Code */}
-                <div className="flex items-center gap-[5px]">
-                  <p className="text-black text-[10px] font-inter leading-tight whitespace-nowrap">
-                    색상
-                  </p>
-                  <div className="w-[0.5px] h-[10px] bg-black"></div>
-                  <p className="text-black text-[10px] font-inter leading-tight whitespace-nowrap">
-                    상품코드
-                  </p>
-                </div>
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-0 w-full">
@@ -283,26 +282,67 @@ const Detail = () => {
                     장바구니 추가하기
                   </button>
                 </div>
-
                 {/* Product Description */}
-                <p className="text-black text-[10px] font-inter leading-tight whitespace-nowrap">
-                  상품설명
-                </p>
-
-                {/* Additional Information */}
-                <div className="flex flex-col gap-[14px] w-auto">
-                  <p className="text-black text-[10px] font-inter leading-tight whitespace-nowrap">
-                    제품 사이즈
-                  </p>
-                  <p className="text-black text-[10px] font-inter leading-tight whitespace-nowrap">
-                    혼용률, 세탁 방법 및 원산지
-                  </p>
-                  <p className="text-black text-[10px] font-inter leading-tight whitespace-nowrap">
-                    오프라인 매장에 재고 상태 보기
-                  </p>
-                  <p className="text-black text-[10px] font-inter leading-tight whitespace-nowrap">
-                    배송, 교환 및 반품
-                  </p>
+                <div className="flex flex-col gap-[20px]">
+                  <div className="flex flex-col gap-[5px]">
+                    <p className="text-black text-[16px] font-inter leading-tight">
+                      상품설명
+                    </p>
+                    <p className="text-black text-[14px] font-inter leading-tight break-words">
+                      {productInfo[0] || ""}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-[5px]">
+                    <p className="text-black text-[16px] font-inter leading-tight">
+                      구성 소재
+                    </p>
+                    <p className="text-black text-[14px] font-inter leading-tight break-words">
+                      {productInfo[1] || ""}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-[5px]">
+                    <p className="text-black text-[16px] font-inter leading-tight">
+                      사이즈 정보
+                    </p>
+                    <p className="text-black text-[14px] font-inter leading-tight">
+                      프리 사이즈
+                    </p>
+                    {productInfo[2] && (
+                      <div className="overflow-x-auto">
+                        <table className="w-full border-collapse border border-gray-300">
+                          <thead>
+                            <tr className="bg-gray-50">
+                              {getSizeColumns(categoryId).map(
+                                (column, index) => (
+                                  <th
+                                    key={index}
+                                    className="border border-gray-300 px-2 py-1 text-[12px] font-inter text-black"
+                                  >
+                                    {column}
+                                  </th>
+                                )
+                              )}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              {productInfo[2]
+                                .split(",")
+                                .slice(0, 5)
+                                .map((size, index) => (
+                                  <td
+                                    key={index}
+                                    className="border border-gray-300 px-2 py-1 text-[12px] font-inter text-black text-center"
+                                  >
+                                    {size.trim()}
+                                  </td>
+                                ))}
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -310,43 +350,6 @@ const Detail = () => {
 
           {/* Content Sections */}
           <div className="flex flex-col gap-[80px] mb-[120px]">
-            {/* 구성소재 Section */}
-            <div className="flex justify-between mb-[120px] w-[1216px]">
-              {/* 구성소재 소개 영역 */}
-              <div className="flex flex-col rounded-lg justify-end">
-                <h2 className="text-black text-[20px] lg:text-[24px] font-inter leading-tight mb-8">
-                  구성소재
-                </h2>
-                <div className="flex flex-col gap-8">
-                  <div>
-                    <h3 className="text-black text-[16px] font-inter leading-tight mb-4">
-                      메인 소재
-                    </h3>
-                    <p className="text-black text-[14px] font-inter leading-relaxed">
-                      100% 프리미엄 코튼을 사용하여 부드러운 착용감과 뛰어난
-                      내구성을 제공합니다.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-black text-[16px] font-inter leading-tight mb-4">
-                      관리 방법
-                    </h3>
-                    <p className="text-black text-[14px] font-inter leading-relaxed">
-                      찬물 세탁을 권장하며, 표백제 사용을 피해주세요.
-                      드라이클리닝도 가능합니다.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {/* 구성소재 이미지 영역 */}
-              <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
-                <img
-                  src={currentProduct.product_images[0]}
-                  alt="Product Detail 1"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            </div>
             {/* Product Detail Images */}
             <div className="w-full flex justify-between">
               <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">

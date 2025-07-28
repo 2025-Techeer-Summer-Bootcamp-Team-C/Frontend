@@ -14,17 +14,10 @@ export default function PhotoSelectionModal({
   onPhotoSelect,
 }: PhotoSelectionModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedHistoryImageId, setSelectedHistoryImageId] = useState<number | null>(null);
+  const [selectedHistoryImageId, setSelectedHistoryImageId] = useState<
+    number | null
+  >(null);
   const { userImages, loading, error, deleteImage, isDeleting } = useUser();
-
-  console.log(
-    "PhotoSelectionModal - userImages:",
-    userImages,
-    "loading:",
-    loading,
-    "error:",
-    error
-  );
 
   const handleFileUpload = (files: File[]) => {
     setSelectedFile(files[0] || null);

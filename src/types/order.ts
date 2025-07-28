@@ -59,6 +59,9 @@ export interface CompletedOrder {
   totalPrice: number;
   buyerInfo: BuyerInfo;
   status: 'completed' | 'shipping' | 'delivered';
+  initial_credit: number;
+  deducted_credit: number;
+  remaining_credit: number;
 }
 
 export interface OrderContextType {
@@ -72,4 +75,9 @@ export interface OrderContextType {
   submitOrderForm: () => void;
   createSingleProductOrder: (productId: number, quantity: number, productImage?: string) => Promise<void>;
   createCartOrder: (cartProductIds: number[], cartData?: any) => Promise<void>;
+  getOrderCredit: () => {
+    initial_credit: number;
+    deducted_credit: number;
+    remaining_credit: number;
+  };
 }
