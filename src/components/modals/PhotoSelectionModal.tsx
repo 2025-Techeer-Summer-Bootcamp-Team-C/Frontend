@@ -54,7 +54,7 @@ export default function PhotoSelectionModal({
         <DialogTitle>전신사진 선택</DialogTitle>
       </DialogHeader>
 
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-[550px]">
         {/* 파일 업로드 섹션 */}
         <div>
           <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -102,7 +102,7 @@ export default function PhotoSelectionModal({
                   <button
                     onClick={(e) => handleDeleteImage(e, image.id)}
                     disabled={isDeleting}
-                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed z-10"
+                    className="absolute top-2 right-2 bg-gray-300 hover:bg-gray-400 text-white rounded-full p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed z-10"
                     title="사진 삭제"
                   >
                     <X size={16} />
