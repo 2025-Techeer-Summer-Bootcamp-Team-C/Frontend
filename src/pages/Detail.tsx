@@ -354,33 +354,32 @@ const Detail = () => {
             <div className="w-full flex justify-between">
               <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
-                  src={currentProduct.product_images[1]}
+                  src={currentProduct.product_images[0]}
                   alt="Product Detail 1"
                   className="w-full h-full object-contain"
                 />
               </div>
               <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
-                  src={currentProduct.product_images[2]}
+                  src={currentProduct.product_images[1]}
                   alt="Product Detail 2"
                   className="w-full h-full object-contain"
                 />
               </div>
             </div>
 
-            {/* Full Width Detail Image */}
             <div className="w-full flex justify-between">
               <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
-                  src={currentProduct.product_images[3]}
-                  alt="Product Detail Full 1"
+                  src={currentProduct.product_images[2]}
+                  alt="Product Detail 3"
                   className="w-full h-full object-contain"
                 />
               </div>
               <div className="w-[532px] h-[800px] bg-white rounded-lg overflow-hidden">
                 <img
-                  src={currentProduct.product_images[4]}
-                  alt="Product Detail Full 2"
+                  src={currentProduct.product_images[3]}
+                  alt="Product Detail 4"
                   className="w-full h-full object-contain"
                 />
               </div>
