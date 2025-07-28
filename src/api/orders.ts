@@ -22,6 +22,9 @@ export interface SingleOrderResponse {
   total_price: number;
   status: string;
   created_at: string;
+  initial_credit: number;
+  deducted_credit: number;
+  remaining_credit: number;
 }
 
 // 주문된 상품 정보 타입
@@ -42,6 +45,9 @@ export interface CartOrderResponse {
   created_at: string;
   ordered_products: OrderedProduct[];
   message: string;
+  initial_credit: number;
+  deducted_credit: number;
+  remaining_credit: number;
 }
 
 // 단일 상품 주문 생성
@@ -50,7 +56,6 @@ export const createSingleOrder = async (orderData: SingleOrderRequest): Promise<
     const response = await axiosInstance.post('/api/v1/orders/single/', orderData);
     return response.data;
   } catch (error) {
-    console.error('단일 상품 주문 생성 실패:', error);
     throw error;
   }
 };
@@ -61,7 +66,6 @@ export const createCartOrder = async (orderData: CartOrderRequest): Promise<Cart
     const response = await axiosInstance.post('/api/v1/orders/cart/', orderData);
     return response.data;
   } catch (error) {
-    console.error('장바구니 주문 생성 실패:', error);
     throw error;
   }
 };

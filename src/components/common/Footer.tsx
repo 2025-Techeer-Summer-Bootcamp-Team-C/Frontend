@@ -5,7 +5,11 @@ import { useOrder } from "@/contexts/OrderContext";
 import { useMemo, lazy, Suspense } from "react";
 
 // Lazy load dialog
-const PaymentDialog = lazy(() => import("@/components/dialogs/PaymentDialog").then(module => ({ default: module.PaymentDialog })));
+const PaymentDialog = lazy(() =>
+  import("@/components/dialogs/PaymentDialog").then((module) => ({
+    default: module.PaymentDialog,
+  }))
+);
 
 interface FooterProps {
   variant?: FooterVariant;
@@ -29,29 +33,33 @@ const Footer = ({
 }: FooterProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setDirectPurchaseProduct, cartData, directPurchaseProduct } = useCart();
-  const { submitOrderForm, currentBuyerInfo, createCartOrder, getLatestOrder } = useOrder();
+  const { setDirectPurchaseProduct, cartData, directPurchaseProduct } =
+    useCart();
+  const { submitOrderForm, currentBuyerInfo, createCartOrder, getLatestOrder } =
+    useOrder();
   const path = location.pathname;
 
   // PaymentDialog에 전달할 구매자 정보 계산 (summary 페이지에서만)
   const calculatedBuyerInfo = useMemo(() => {
     if (!path.includes("/summary") || !currentBuyerInfo) return undefined;
-    
-    const fullAddress = currentBuyerInfo.address2 
+
+    const fullAddress = currentBuyerInfo.address2
       ? `${currentBuyerInfo.address} ${currentBuyerInfo.address2}`
       : currentBuyerInfo.address;
-    
+
     // 구매 상품명 계산 - 우선순위: 최신 주문 > 직접 구매 > 장바구니
-    let productName = '';
+    let productName = "";
     const latestOrder = getLatestOrder();
-    
+
     if (latestOrder && latestOrder.products.length > 0) {
       // API 응답 데이터에서 상품명 가져오기
       const firstProduct = latestOrder.products[0];
       if (latestOrder.products.length === 1) {
         productName = firstProduct.name;
       } else {
-        productName = `${firstProduct.name} 외 ${latestOrder.products.length - 1}개`;
+        productName = `${firstProduct.name} 외 ${
+          latestOrder.products.length - 1
+        }개`;
       }
     } else if (directPurchaseProduct) {
       productName = directPurchaseProduct.name;
@@ -60,15 +68,17 @@ const Footer = ({
       if (cartData.cart_product.length === 1) {
         productName = firstProduct.name;
       } else {
-        productName = `${firstProduct.name} 외 ${cartData.cart_product.length - 1}개`;
+        productName = `${firstProduct.name} 외 ${
+          cartData.cart_product.length - 1
+        }개`;
       }
     }
-    
+
     return {
       name: currentBuyerInfo.name,
       phone: currentBuyerInfo.phone,
       address: fullAddress,
-      productName: productName
+      productName: productName,
     };
   }, [path, currentBuyerInfo, directPurchaseProduct, cartData, getLatestOrder]);
 
@@ -142,9 +152,19 @@ const Footer = ({
 
                 {/* Continue Button */}
                 {path.includes("/summary") ? (
-                  <Suspense fallback={<button className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4" disabled><span className="text-white text-4 font-inter leading-tight">{buttonText}</span></button>}>
+                  <Suspense
+                    fallback={
+                      <button
+                        className="w-[162px] h-[44px] bg-black flex items-center justify-center gap-2.5 px-auto py-4"
+                        disabled
+                      >
+                        <span className="text-white text-4 font-inter leading-tight">
+                          {buttonText}
+                        </span>
+                      </button>
+                    }
+                  >
                     <PaymentDialog
-                      totalPrice={totalPrice}
                       buyerInfo={buyerInfo}
                       onConfirm={() => {
                         navigate("/summary");
@@ -171,7 +191,9 @@ const Footer = ({
                           try {
                             // 장바구니 상품들로 주문 생성
                             if (cartData?.cart_product?.length) {
-                              const cartProductIds = cartData.cart_product.map(item => item.product_id);
+                              const cartProductIds = cartData.cart_product.map(
+                                (item) => item.product_id
+                              );
                               await createCartOrder(cartProductIds, cartData);
                               // 주문 생성 후 장바구니 클리어 (중요: totalPrice 계산 오류 방지)
                               // clearCart(); // 이미 PaymentDialog에서 처리되므로 여기서는 하지 않음
@@ -179,7 +201,10 @@ const Footer = ({
                             setDirectPurchaseProduct(null);
                             navigate("/order");
                           } catch (error) {
-                            alert('주문 생성에 실패했습니다.');
+                            console.error(
+                              "주문 생성 중 오류가 발생했습니다:",
+                              error
+                            );
                           }
                         } else {
                           navigate("/order");

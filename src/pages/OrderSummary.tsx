@@ -3,7 +3,7 @@ import { useOrder } from "@/contexts/OrderContext";
 
 function OrderSummary() {
   const { cartData, directPurchaseProduct } = useCart();
-  const { currentBuyerInfo, getLatestOrder } = useOrder();
+  const { currentBuyerInfo, getLatestOrder, getOrderCredit } = useOrder();
 
   // 최신 주문 정보 가져오기 (API 응답 데이터)
   const latestOrder = getLatestOrder();
@@ -48,12 +48,11 @@ function OrderSummary() {
           : cartData?.cart_product?.length || 0,
       };
 
-  const displayPrice = orderData.totalPrice;
   const displayProductCount = orderData.productCount;
 
   // 사용자 크레딧 정보
-  const userCredit = 1000000;
-  const remainingCredit = userCredit - displayPrice;
+  const { initial_credit, deducted_credit, remaining_credit } =
+    getOrderCredit();
 
   return (
     <div className="min-h-screen w-[1216px] mx-auto bg-white">
@@ -148,9 +147,9 @@ function OrderSummary() {
               <div className="space-y-3">
                 <p className="text-[17px] font-medium text-black">크레딧</p>
                 <p className="text-[17px] font-medium text-black">
-                  ₩{userCredit.toLocaleString()} - ₩
-                  {displayPrice.toLocaleString()}= ₩
-                  {remainingCredit.toLocaleString()}
+                  ₩{initial_credit.toLocaleString()} - ₩
+                  {deducted_credit.toLocaleString()}= ₩
+                  {remaining_credit.toLocaleString()}
                 </p>
                 <p className="text-[13px] font-medium text-black">
                   현재 크레딧 - 사용 크레딧 = 크레딧 잔액

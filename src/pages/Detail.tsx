@@ -107,9 +107,7 @@ const Detail = () => {
             currentProduct.model_image
           );
           navigate("/order");
-        } catch (error) {
-          alert("주문 생성에 실패했습니다.");
-        }
+        } catch (error) {}
       }
     } else {
       // 수량 선택 UI 표시
@@ -314,11 +312,16 @@ const Detail = () => {
                         <table className="w-full border-collapse border border-gray-300">
                           <thead>
                             <tr className="bg-gray-50">
-                              {getSizeColumns(categoryId).map((column, index) => (
-                                <th key={index} className="border border-gray-300 px-2 py-1 text-[12px] font-inter text-black">
-                                  {column}
-                                </th>
-                              ))}
+                              {getSizeColumns(categoryId).map(
+                                (column, index) => (
+                                  <th
+                                    key={index}
+                                    className="border border-gray-300 px-2 py-1 text-[12px] font-inter text-black"
+                                  >
+                                    {column}
+                                  </th>
+                                )
+                              )}
                             </tr>
                           </thead>
                           <tbody>
