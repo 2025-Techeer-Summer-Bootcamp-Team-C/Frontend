@@ -144,7 +144,7 @@ export const useFittingResultsPollingMutation = () => {
       // 404 에러나 피팅이 아직 준비되지 않은 경우 재시도
       if (error?.message?.includes("fitting not ready yet") || 
           error?.message?.includes("404")) {
-        return failureCount < 30; // 최대 30회 재시도 (1분)
+        return failureCount < 300; // 최대 300회 재시도 (5분)
       }
       return false;
     },
