@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { fetchProducts, fetchProductDetail } from "../api/products";
+import type { ProductDetail } from "../types/product";
 
 /**
  * 상품 데이터 prefetching을 위한 커스텀 훅
@@ -17,12 +18,19 @@ export const usePrefetch = () => {
   };
 
   // 상품 상세 prefetch (호버 시 미리 로드)
-  const prefetchProductDetail = async (productId: number) => {
+  const prefetchProductDetail = async (productId: number): Promise<ProductDetail | undefined> => {
+    const cachedData = queryClient.getQueryData<ProductDetail>(["product", productId]);
+    if (cachedData) {
+      return cachedData;
+    }
+
     await queryClient.prefetchQuery({
       queryKey: ["product", productId],
       queryFn: () => fetchProductDetail(productId),
       staleTime: 5 * 60 * 1000,
     });
+
+    return queryClient.getQueryData<ProductDetail>(["product", productId]);
   };
 
   return {
