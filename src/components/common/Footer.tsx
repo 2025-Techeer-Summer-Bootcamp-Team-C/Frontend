@@ -118,21 +118,6 @@ const Footer = ({
                 </div>
               )}
 
-              {/* Gift Option - Cart Only */}
-              {isCart && (
-                <div className="flex items-center gap-[19px]">
-                  <span className="text-black text-[10px] font-inter leading-tight">
-                    선물용으로 주문하시겠습니까?
-                  </span>
-                  <button
-                    onClick={() => {}}
-                    className="text-black text-[10px] font-inter leading-tight hover:opacity-70 transition-opacity cursor-pointer"
-                  >
-                    추가
-                  </button>
-                </div>
-              )}
-
               {/* Bottom Section */}
               <div className="flex justify-between items-center w-[340px] h-[44px]">
                 {/* Total Price */}

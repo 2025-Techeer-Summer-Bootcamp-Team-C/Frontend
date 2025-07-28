@@ -27,13 +27,32 @@ const ProductCard = memo(
       boolean | null
     >(null); // null로 초기화
 
+    // 호버 상태 및 프리패치된 이미지 관리
+    const [isHovering, setIsHovering] = useState(false);
+    const [prefetchedImages, setPrefetchedImages] = useState<string[] | null>(
+      null
+    );
+
     const getTextColor = () => {
       return variant === "viewed" ? "text-[#AAAAAA]" : "text-black";
     };
 
-    const handleMouseEnter = () => {
+    const handleMouseEnter = async () => {
+      setIsHovering(true);
+
       // 호버 시 상품 상세 정보 prefetch
-      prefetchProductDetail(product.product_id);
+      try {
+        const prefetchedData = await prefetchProductDetail(product.product_id);
+        if (prefetchedData?.product_images) {
+          setPrefetchedImages(prefetchedData.product_images);
+        }
+      } catch (error) {
+        console.error("Prefetch failed:", error);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      setIsHovering(false);
     };
 
     // showFitting 상태 변화 감지하여 이전 상태 저장
@@ -92,6 +111,11 @@ const ProductCard = memo(
         return product.image;
       }
 
+      // 호버 상태일 때 프리패치된 이미지의 세 번째 이미지(product_images[2]) 표시
+      if (isHovering && prefetchedImages && prefetchedImages[2]) {
+        return prefetchedImages[2];
+      }
+
       // 애니메이션 중이 아니면 현재 상태에 맞는 이미지 표시
       if (!isAnimating) {
         return showFitting && product.fittingImage
@@ -121,6 +145,7 @@ const ProductCard = memo(
       <div
         className="w-full max-w-[240px] min-w-[180px] sm:w-[240px]"
         onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {/* Product Image */}
         <div
@@ -144,7 +169,7 @@ const ProductCard = memo(
             key={`product-${product.product_id}`}
             src={foregroundImageUrl}
             alt={showFitting ? `${product.name} - 피팅 결과` : product.name}
-            className="w-full h-full object-contain absolute inset-0 hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-contain absolute inset-0 transition-transform duration-300"
             style={{
               imageRendering: "auto",
             }}

@@ -55,15 +55,15 @@ function OrderHistory() {
       {/* Main Content */}
       <div className="pt-[149px] px-4 pb-8">
         {/* Page Title */}
-        <div className="ml-[114px] mb-9">
+        <div className="mx-[114px] mb-9">
           <h1 className="text-black text-[20px] font-bold font-inter leading-[30px]">
-            결재 내역
+            결제 내역
           </h1>
           <div className="w-[77px] h-[1px] bg-black mt-1"></div>
         </div>
 
         {/* Order Content */}
-        <div className="ml-[109px] flex items-start gap-[66px]">
+        <div className="mx-[109px] flex items-start gap-[100px]">
           {/* Product Image */}
           <div className="w-[118px] h-[178px] bg-white rounded overflow-hidden">
             {firstProduct && (
@@ -76,13 +76,13 @@ function OrderHistory() {
           </div>
 
           {/* Order Details */}
-          <div className="w-[946px] flex flex-col gap-[59px]">
+          <div className="w-full flex flex-col gap-[59px]">
             {/* Header Row */}
             <div className="flex items-center">
-              <span className="text-black text-[20px] font-medium font-inter leading-[30px] w-[240px]">
+              <span className="text-black text-[20px] font-medium font-inter leading-[30px] w-[340px]">
                 날짜
               </span>
-              <span className="text-black text-[20px] font-medium font-inter leading-[30px] w-[400px]">
+              <span className="text-black text-[20px] font-medium font-inter leading-[30px] w-[500px]">
                 상품명
               </span>
               <span className="text-black text-[20px] font-medium font-inter leading-[30px] w-[100px]">
@@ -92,10 +92,10 @@ function OrderHistory() {
 
             {/* Data Row */}
             <div className="flex items-center">
-              <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[240px]">
+              <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[340px]">
                 {formatDate(latestOrder.orderDate)}
               </span>
-              <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[400px]">
+              <span className="text-black text-[17px] font-normal font-inter leading-[25px] w-[500px]">
                 {firstProduct?.name}
                 {latestOrder.products.length > 1 &&
                   ` 외 ${latestOrder.products.length - 1}개`}
@@ -139,7 +139,7 @@ function OrderHistory() {
         </div>
 
         {/* Bottom Line */}
-        <div className="ml-[105px] mt-[38px] w-[1198px] h-[1px] bg-[#C1BCBC]"></div>
+        <div className="mx-[105px] mt-[38px] w-[1275px] h-[1px] bg-[#C1BCBC]"></div>
 
         {/* Continue Shopping Button */}
         <div className="flex justify-end mr-[137px] mt-[115px]">

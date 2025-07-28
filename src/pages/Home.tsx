@@ -36,7 +36,6 @@ const Home = () => {
     setCurrentUserImageId,
     hasLastSelectedImage,
   } = useFittingContext();
-  const [buttonText, setButtonText] = useState<string>("피팅하기");
   const [viewedProducts, setViewedProducts] = useState<string[]>([]);
   const [categoryProducts, setCategoryProducts] =
     useState<CategoryResponse | null>(null);
@@ -70,7 +69,6 @@ const Home = () => {
 
   // 홈 페이지로 돌아올 때마다 피팅 모드 해제 (피팅 결과 ID는 보존)
   useEffect(() => {
-    setShowFitting(false);
     // setCurrentUserImageId(null); // ← 제거: 최근 피팅 결과 보존
     resetFittingResults();
   }, []); // 컴포넌트 마운트 시에만 실행
@@ -145,12 +143,9 @@ const Home = () => {
     }
 
     setIsFittingLoading(true);
-    setButtonText("피팅 중...");
 
     // 2초 후 완료 텍스트로 변경
-    setTimeout(() => {
-      setButtonText("완료!");
-    }, 2000);
+    setTimeout(() => {}, 2000);
 
     // 최소 3초 로딩 보장을 위한 타이머 시작
     const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 3000));
@@ -275,7 +270,6 @@ const Home = () => {
     } finally {
       // 로딩 상태 해제
       setIsFittingLoading(false);
-      setButtonText(showFitting ? "피팅 다시하기" : "피팅하기");
     }
   };
 
@@ -420,7 +414,7 @@ const Home = () => {
         )}
 
         {/* 바로 피팅하기 버튼 (이전 선택 이미지가 있는 경우) */}
-        {hasLastSelectedImage && !isFittingLoading && (
+        {!showFitting && hasLastSelectedImage && !isFittingLoading && (
           <button
             className="w-[240px] bg-white border border-black border-solid border-2 text-black px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition-colors font-inter text-sm"
             onClick={handleQuickFitting}
@@ -439,20 +433,7 @@ const Home = () => {
           onClick={handleFittingClick}
           disabled={isFittingLoading}
         >
-          {/* 진행 배경 애니메이션
-          {isFittingLoading && (
-            <div
-              className="absolute inset-0 bg-green-400"
-              style={{
-                animation: "slideRight 3s linear forwards",
-              }}
-            />
-          )} */}
-
-          {/* 버튼 텍스트 */}
-          <span className="relative z-10 font-medium">
-            {isFittingLoading ? buttonText : "피팅하기"}
-          </span>
+          <span className="relative z-10 font-medium">사진 선택하기</span>
         </button>
       </div>
     </div>

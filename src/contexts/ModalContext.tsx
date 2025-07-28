@@ -36,8 +36,8 @@ type Address = {
 
 type ModalContextType = {
   openModal: (
-    type: ModalType, 
-    initialData?: PersonalInfoData, 
+    type: ModalType,
+    initialData?: PersonalInfoData,
     onSubmitCallback?: (data: PersonalInfoData) => void,
     onAddressCallback?: (addresses: Address[]) => void,
     initialAddresses?: Address[],
@@ -52,14 +52,20 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [modalType, setModalType] = useState<ModalType>(null);
   const [initialData, setInitialData] = useState<PersonalInfoData | null>(null);
-  const [submitCallback, setSubmitCallback] = useState<((data: PersonalInfoData) => void) | null>(null);
-  const [addressCallback, setAddressCallback] = useState<((addresses: Address[]) => void) | null>(null);
+  const [submitCallback, setSubmitCallback] = useState<
+    ((data: PersonalInfoData) => void) | null
+  >(null);
+  const [addressCallback, setAddressCallback] = useState<
+    ((addresses: Address[]) => void) | null
+  >(null);
   const [initialAddresses, setInitialAddresses] = useState<Address[]>([]);
-  const [photoSelectionCallback, setPhotoSelectionCallback] = useState<((selectedPhoto: File | string | number) => void) | null>(null);
+  const [photoSelectionCallback, setPhotoSelectionCallback] = useState<
+    ((selectedPhoto: File | string | number) => void) | null
+  >(null);
 
   const openModal = (
-    type: ModalType, 
-    data?: PersonalInfoData, 
+    type: ModalType,
+    data?: PersonalInfoData,
     onSubmitCallback?: (data: PersonalInfoData) => void,
     onAddressCallback?: (addresses: Address[]) => void,
     initialAddressData?: Address[],
@@ -100,7 +106,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
           if (!open) closeModal();
         }}
       >
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[600px] overflow-y-auto">
           <VisuallyHidden>
             <DialogTitle>Modal</DialogTitle>
           </VisuallyHidden>
@@ -119,26 +125,26 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
                 onClose={closeModal}
                 onSubmit={async (data) => {
                   console.log("개인정보 업데이트:", data);
-                  
+
                   // ProfileSection의 setPersonalInfo 콜백 호출
                   if (submitCallback) {
                     submitCallback(data);
                   }
-                  
+
                   // Mock delay
                   await new Promise((resolve) => setTimeout(resolve, 1000));
                 }}
               />
             )}
             {modalType === "addresses" && (
-              <AddressManagement 
+              <AddressManagement
                 onClose={closeModal}
                 onAddressUpdate={addressCallback}
                 initialAddresses={initialAddresses}
               />
             )}
             {modalType === "photoSelection" && (
-              <PhotoSelectionModal 
+              <PhotoSelectionModal
                 onClose={closeModal}
                 onPhotoSelect={photoSelectionCallback}
               />

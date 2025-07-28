@@ -59,7 +59,7 @@ const VideoSection = memo(() => {
         ref={videoRef}
         autoPlay
         muted
-        className={`w-full h-[800px] object-cover object-top transition-opacity duration-300 ${
+        className={`w-full h-[900px] object-cover object-top transition-opacity duration-300 ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
         onEnded={handleVideoEnded}
