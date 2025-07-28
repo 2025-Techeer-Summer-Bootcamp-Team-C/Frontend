@@ -94,7 +94,7 @@ function OrderSummary() {
           </div>
         </div>
 
-        <div className="w-[493px] space-y-[109px]">
+        <div className="w-full space-y-[109px]">
           <div className="flex flex-col gap-28">
             {/* 배송 정보 */}
             <div className="space-y-3">
@@ -142,7 +142,7 @@ function OrderSummary() {
             </div>
 
             {/* 결제 정보 */}
-            <div className="w-[290px] space-y-3">
+            <div className="w-full space-y-3">
               <h2 className="text-[17px] font-bold text-black">결제 정보</h2>
               <div className="space-y-3">
                 <p className="text-[17px] font-medium text-black">크레딧</p>
