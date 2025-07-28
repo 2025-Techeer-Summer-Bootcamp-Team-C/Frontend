@@ -23,7 +23,7 @@ interface PaymentDialogProps {
     address: string;
     productName: string;
   };
-  onConfirm?: () => void; // '결재하기' 버튼 클릭 시 실행될 함수
+  onConfirm?: () => void; // '결제하기' 버튼 클릭 시 실행될 함수
   onClose?: () => void; // '확인' 버튼 클릭(완료 시) 또는 닫기 버튼 클릭 시 실행될 함수
 }
 
@@ -93,21 +93,21 @@ export const PaymentDialog = ({
         {/* --- 헤더 및 닫기 버튼 --- */}
         <DialogHeader className="p-0">
           <DialogTitle className="sr-only">
-            {currentVariant === "confirm" ? "상품 결재" : "결재 완료"}
+            {currentVariant === "confirm" ? "상품 결제" : "결제 완료"}
           </DialogTitle>
           <DialogClose className="absolute top-[25px] right-[18px] w-[18px] h-[18px] z-10 p-0 hover:bg-transparent">
             <X size={18} className="text-[#8A8A8A]" />
           </DialogClose>
         </DialogHeader>
 
-        {/* --- 결재 확인(confirm) 상태일 때의 UI --- */}
+        {/* --- 결제 확인(confirm) 상태일 때의 UI --- */}
         {currentVariant === "confirm" && (
           <div className="px-12 pt-9 pb-9">
             {/* Header */}
             <div className="pb-8 text-center">
-              <h1 className="mb-2.5 text-3xl font-bold">상품 결재</h1>
+              <h1 className="mb-2.5 text-3xl font-bold">상품 결제</h1>
               <p className="text-[15px]">
-                아래의 이용 크레딧으로 최종 결재를 진행합니다
+                아래의 이용 크레딧으로 최종 결제를 진행합니다
               </p>
             </div>
 
@@ -159,7 +159,7 @@ export const PaymentDialog = ({
             <div className="mb-9">
               <div className="bg-[#F7F7F7] p-4 mb-1 rounded-md text-[10px] leading-tight">
                 <h3 className="text-[13px] font-normal leading-loose mb-2">
-                  결재시 유의사항
+                  결제시 유의사항
                 </h3>
                 <div className="font-medium">
                   <p>
@@ -197,7 +197,7 @@ export const PaymentDialog = ({
                   className="w-3 h-3 border border-black"
                 />
                 <label htmlFor="terms" className="text-xs font-medium">
-                  결재시 유의 사항을 확인하였고 이에 동의합니다.
+                  결제시 유의 사항을 확인하였고 이에 동의합니다.
                 </label>
               </div>
             </div>
@@ -219,19 +219,19 @@ export const PaymentDialog = ({
           </div>
         )}
 
-        {/* --- 결재 완료(complete) 상태일 때의 UI --- */}
+        {/* --- 결제 완료(complete) 상태일 때의 UI --- */}
         {currentVariant === "complete" && (
           <div className="px-12 py-6 text-center flex flex-col items-center">
-            <h1 className="text-3xl font-bold mb-5">결재 완료</h1>
+            <h1 className="text-3xl font-bold mb-5">결제 완료</h1>
             <p className="text-lg text-gray-500 mb-9">
               주문번호 : {getLatestOrder()?.orderNumber || orderNumber}
             </p>
             <p className="text-base mb-16">
-              결재가 완료 되었습니다.
+              결제가 완료 되었습니다.
               <br />
               상품은 구매일로부터 3~7일 내에 출고 됩니다.
               <br />
-              주문은 결재 내역에서 확인하실 수 있습니다.
+              주문은 결제 내역에서 확인하실 수 있습니다.
             </p>
             <DialogClose asChild>
               <button
