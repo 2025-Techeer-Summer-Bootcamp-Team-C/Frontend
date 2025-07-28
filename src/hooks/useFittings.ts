@@ -65,20 +65,12 @@ export const useGenerateFittingVideoMutation = () => {
 };
 
 /**
- * 새로운 피팅 시작 + 폴링 뮤테이션 훅 
- * startFittingDetail 호출 후 개별 상품별로 피팅 결과 폴링
- * userImageId에 대한 모든 상품의 피팅 결과를 개별적으로 폴링
+ * 새로운 피팅 시작 뮤테이션 훅
+ * startFittingDetail을 한 번만 호출하여 비용 중복 방지
  */
-export const useFittingResultsPollingMutation = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation<{ userImageId: number; results: Record<number, ProductFittingImageResponse> }, Error, { 
-    imageFile: File;
-    productIds: number[];
-    onProgress?: (completedCount: number, totalCount: number) => void; 
-  }>({
-    mutationFn: async ({ imageFile, productIds, onProgress }) => {
-      // 1. 먼저 새로운 피팅 시작
+export const useStartFittingMutation = () => {
+  return useMutation<{ user_image_id: number }, Error, File>({
+    mutationFn: async (imageFile: File) => {
       console.log("새로운 피팅 시작 - startFittingDetail 호출");
       const fittingResponse = await startFittingDetail(imageFile);
       
@@ -86,13 +78,34 @@ export const useFittingResultsPollingMutation = () => {
         throw new Error("피팅 시작 실패: user_image_id가 없습니다");
       }
       
-      const userImageId = fittingResponse.user_image_id;
-      console.log("새 피팅 시작 - user_image_id:", userImageId);
-      
+      console.log("새 피팅 시작 - user_image_id:", fittingResponse.user_image_id);
+      return fittingResponse;
+    },
+    retry: false, // 🚨 중요: 재시도 금지 - 비용 중복 방지
+    onError: (error) => {
+      console.error("피팅 시작 실패:", error);
+    },
+  });
+};
+
+/**
+ * 피팅 결과 폴링 뮤테이션 훅 (재시도 안전)
+ * userImageId에 대한 모든 상품의 피팅 결과를 개별적으로 폴링
+ * startFittingDetail 호출 없이 결과만 확인하므로 재시도 시 비용 발생 없음
+ */
+export const useFittingResultsPollingMutation = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<{ userImageId: number; results: Record<number, ProductFittingImageResponse> }, Error, { 
+    userImageId: number;
+    productIds: number[];
+    onProgress?: (completedCount: number, totalCount: number) => void; 
+  }>({
+    mutationFn: async ({ userImageId, productIds, onProgress }) => {
       const results: Record<number, ProductFittingImageResponse> = {};
       let completedCount = 0;
       
-      // 2. 최소 3초 대기와 피팅 결과 폴링을 병렬로 실행
+      // 최소 3초 대기와 피팅 결과 폴링을 병렬로 실행
       const [fittingResults] = await Promise.all([
         (async () => {
           // 각 상품별로 피팅 결과 확인

@@ -9,9 +9,13 @@ import {
   useProductsQuery,
   useAllProductsFittingImages,
 } from "@/hooks/useProducts";
-import { fetchProductFittingImage, fetchCategoryProducts, type ProductFittingImageResponse } from "@/api/products";
+import {
+  fetchProductFittingImage,
+  fetchCategoryProducts,
+  type ProductFittingImageResponse,
+} from "@/api/products";
 import type { Product, CategoryResponse } from "@/types/product";
-import { useFittingResultsPollingMutation } from "@/hooks/useFittings";
+import { useStartFittingMutation, useFittingResultsPollingMutation } from "@/hooks/useFittings";
 import { getUserImages } from "@/api/users";
 import { useHeaderSticky } from "@/hooks/useHeaderSticky";
 import { useModal } from "@/contexts/ModalContext";
@@ -35,19 +39,22 @@ const Home = () => {
   } = useFittingContext();
   const [buttonText, setButtonText] = useState<string>("피팅하기");
   const [viewedProducts, setViewedProducts] = useState<string[]>([]);
-  const [categoryProducts, setCategoryProducts] = useState<CategoryResponse | null>(null);
+  const [categoryProducts, setCategoryProducts] =
+    useState<CategoryResponse | null>(null);
   const { openModal } = useModal();
   const isSticky = useHeaderSticky();
   const { data: products } = useProductsQuery();
 
+  const startFittingMutation = useStartFittingMutation();
   const fittingPollingMutation = useFittingResultsPollingMutation();
 
   // 피팅 모드일 때 개별 상품별 피팅 이미지 폴링
-  const { fittingResults, resetFittingResults, setManualFittingResults } = useAllProductsFittingImages(
-    products?.products?.map((p) => p.product_id) || [],
-    currentUserImageId,
-    showFitting && currentUserImageId !== null
-  );
+  const { fittingResults, resetFittingResults, setManualFittingResults } =
+    useAllProductsFittingImages(
+      products?.products?.map((p) => p.product_id) || [],
+      currentUserImageId,
+      showFitting && currentUserImageId !== null
+    );
 
   // localStorage에서 조회한 상품 목록 로드
   useEffect(() => {
@@ -107,7 +114,7 @@ const Home = () => {
   };
 
   const handleFittingClick = () => {
-    if (isFittingLoading || fittingPollingMutation.isPending) return;
+    if (isFittingLoading || startFittingMutation.isPending || fittingPollingMutation.isPending) return;
 
     openModal(
       "photoSelection",
@@ -119,14 +126,16 @@ const Home = () => {
     );
   };
 
-  const handlePhotoSelection = async (selectedPhoto: File | string | number) => {
+  const handlePhotoSelection = async (
+    selectedPhoto: File | string | number
+  ) => {
     console.log("선택된 사진:", selectedPhoto);
 
     // 선택된 이미지를 컨텍스트에 저장
     if (selectedPhoto instanceof File) {
       setLastSelectedImage(selectedPhoto);
       setLastSelectedUserImageId(null); // File 선택 시 user_image_id 초기화
-    } else if (typeof selectedPhoto === 'number') {
+    } else if (typeof selectedPhoto === "number") {
       setLastSelectedUserImageId(selectedPhoto);
       setLastSelectedImage(null); // user_image_id 선택 시 File 초기화
     }
@@ -144,25 +153,31 @@ const Home = () => {
 
     try {
       // 선택된 사진이 숫자(user_image_id)인 경우 - 기존 피팅 결과 불러오기
-      if (typeof selectedPhoto === 'number') {
+      if (typeof selectedPhoto === "number") {
         console.log("기존 피팅 결과 불러오기 - user_image_id:", selectedPhoto);
-        
+
         if (products?.products) {
           // 기존 피팅 결과 리셋
           resetFittingResults();
-          
+
           // 상태 업데이트
           setCurrentUserImageId(selectedPhoto);
           setShowFitting(true);
-          
+
           console.log("기존 피팅 결과 직접 조회 시작");
-          
+
           // 모든 상품에 대해 기존 피팅 결과를 병렬로 조회
           const existingResults = await Promise.allSettled(
             products.products.map(async (product) => {
               try {
-                const result = await fetchProductFittingImage(product.product_id, selectedPhoto);
-                console.log(`상품 ${product.product_id} 기존 피팅 결과 발견:`, result);
+                const result = await fetchProductFittingImage(
+                  product.product_id,
+                  selectedPhoto
+                );
+                console.log(
+                  `상품 ${product.product_id} 기존 피팅 결과 발견:`,
+                  result
+                );
                 return { productId: product.product_id, result };
               } catch (error) {
                 console.log(`상품 ${product.product_id} 기존 피팅 결과 없음`);
@@ -170,53 +185,60 @@ const Home = () => {
               }
             })
           );
-          
+
           // 성공한 결과들만 필터링해서 state에 반영
-          const successfulResults: Record<number, ProductFittingImageResponse> = {};
+          const successfulResults: Record<number, ProductFittingImageResponse> =
+            {};
           existingResults.forEach((promiseResult) => {
-            if (promiseResult.status === 'fulfilled' && promiseResult.value) {
+            if (promiseResult.status === "fulfilled" && promiseResult.value) {
               const { productId, result } = promiseResult.value;
               successfulResults[productId] = result;
             }
           });
-          
+
           console.log("기존 피팅 결과 조회 완료:", successfulResults);
-          
+
           // 조회한 결과를 state에 반영
           if (Object.keys(successfulResults).length > 0) {
             setManualFittingResults(successfulResults);
             console.log("기존 피팅 결과를 state에 반영 완료");
           }
         }
-        
+
         // 최소 3초 대기
         await minLoadingTime;
-        
       } else if (selectedPhoto instanceof File) {
-        // 새로운 파일 업로드인 경우 - 새 피팅 시작 + 폴링
+        // 새로운 파일 업로드인 경우 - 피팅 시작 후 폴링
         console.log("새로운 피팅 시작");
-        
+
         if (products?.products) {
           // 기존 피팅 결과 리셋
           resetFittingResults();
 
-          // useFittingResultsPollingMutation을 사용하여 피팅 시작 + 폴링
+          // 1. 먼저 피팅 시작 (비용 발생, 한 번만)
+          const startResult = await startFittingMutation.mutateAsync(selectedPhoto);
+          console.log("피팅 시작 완료:", startResult);
+
+          // 2. 피팅 결과 폴링 (재시도 안전)
           const fittingResults = await fittingPollingMutation.mutateAsync({
-            imageFile: selectedPhoto,
-            productIds: products.products.map(p => p.product_id),
+            userImageId: startResult.user_image_id,
+            productIds: products.products.map((p) => p.product_id),
             onProgress: (completed, total) => {
               console.log(`피팅 진행률: ${completed}/${total}`);
-            }
+            },
           });
 
           console.log("새 피팅 완료:", fittingResults);
-          
+
           // 상태 업데이트
           setCurrentUserImageId(fittingResults.userImageId);
           setShowFitting(true);
-          
+
           // 새로 생성된 피팅 결과를 state에 반영
-          if (fittingResults.results && Object.keys(fittingResults.results).length > 0) {
+          if (
+            fittingResults.results &&
+            Object.keys(fittingResults.results).length > 0
+          ) {
             setManualFittingResults(fittingResults.results);
             console.log("새 피팅 결과를 state에 반영 완료");
           }
@@ -225,7 +247,6 @@ const Home = () => {
         // 최소 3초 대기 (폴링 내부에서 이미 처리됨)
         await minLoadingTime;
       }
-      
     } catch (error) {
       // 에러가 발생해도 일단 피팅 모드로 전환 (이미 피팅된 결과가 있는 경우 등)
       console.log("피팅 처리 중 에러:", error);
@@ -257,6 +278,7 @@ const Home = () => {
     if (
       (!lastSelectedImage && !lastSelectedUserImageId) ||
       isFittingLoading ||
+      startFittingMutation.isPending ||
       fittingPollingMutation.isPending
     )
       return;
@@ -271,20 +293,21 @@ const Home = () => {
   // 검색어와 카테고리로 상품 필터링
   const filteredProducts = useMemo(() => {
     let sourceProducts: Product[] = [];
-    
+
     if (selectedCategoryId !== null && categoryProducts) {
       // 카테고리 상품의 경우 속성명을 통일 (id -> product_id)
-      sourceProducts = categoryProducts.data?.products?.map((product: any) => ({
-        ...product,
-        product_id: product.id || product.product_id, // id를 product_id로 매핑
-      })) || [];
+      sourceProducts =
+        categoryProducts.data?.products?.map((product: any) => ({
+          ...product,
+          product_id: product.id || product.product_id, // id를 product_id로 매핑
+        })) || [];
     } else {
       sourceProducts = products?.products || [];
     }
 
     const filtered = sourceProducts.filter((product: Product) => {
       if (!product || !product.name || !product.product_id) return false;
-      
+
       const matchesSearch = product.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -298,10 +321,12 @@ const Home = () => {
   // 필터링된 상품을 4개씩 그룹화하여 행으로 나눔
   const productRows = useMemo(() => {
     if (!filteredProducts || filteredProducts.length === 0) return [];
-    
+
     const rows = [];
     for (let i = 0; i < filteredProducts.length; i += 4) {
-      const row = filteredProducts.slice(i, i + 4).filter(product => product && product.product_id);
+      const row = filteredProducts
+        .slice(i, i + 4)
+        .filter((product) => product && product.product_id);
       if (row.length > 0) {
         rows.push(row);
       }
@@ -337,7 +362,7 @@ const Home = () => {
               >
                 {row?.map((product) => {
                   if (!product || !product.product_id) return null;
-                  
+
                   return (
                     <Suspense
                       key={product.product_id}
@@ -353,12 +378,8 @@ const Home = () => {
                         }
                         product={{
                           ...product,
-                          // 피팅 모드일 때 피팅 이미지를 사용, 아니면 원본 이미지 사용
-                          image:
-                            showFitting &&
-                            fittingResults[product.product_id]?.fitting_image
-                              ? fittingResults[product.product_id].fitting_image
-                              : product.image,
+                          // ProductCard에서 애니메이션 처리를 위해 피팅 이미지 정보 전달
+                          fittingImage: fittingResults[product.product_id]?.fitting_image || null,
                         }}
                         onProductClick={() =>
                           handleProductClick(product.product_id)

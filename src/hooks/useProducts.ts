@@ -88,6 +88,7 @@ export const useAllProductsFittingImages = (
         ...prev, 
         [productId]: error?.response?.data?.error || 'No existing fitting result' 
       }));
+      setCompletedProductIds(prev => new Set(prev).add(productId)); // 에러도 완료로 처리
       setLoadingStates(prev => ({ ...prev, [productId]: false }));
     }
   }, [userImageId, fittingMutation, completedProductIds]);
