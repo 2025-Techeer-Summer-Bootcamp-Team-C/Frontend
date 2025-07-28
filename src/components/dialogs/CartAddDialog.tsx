@@ -58,13 +58,13 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
             </div>
 
             {/* Product Info */}
-            <div className="h-full flex items-start pt-[76px]">
-              <div className="flex flex-col gap-[7px]">
-                <p className="text-black text-[14px] font-inter font-bold leading-[18px] tracking-[-0.013em]">
+            <div className="h-full flex items-start pt-[76px] w-[300px]">
+              <div className="flex flex-col gap-[7px] w-full">
+                <p className="text-black text-[14px] font-inter font-bold leading-[18px] tracking-[-0.013em] break-words">
                   {product.name}
                 </p>
-                <p className="text-black text-[12px] font-inter font-medium leading-[18px] tracking-[-0.013em]">
-                  {product.content}
+                <p className="text-black text-[12px] font-inter font-medium leading-[18px] tracking-[-0.013em] break-words">
+                  {product.content.split("/")[0]}
                 </p>
                 <p className="text-black text-[12px] font-inter font-medium leading-[18px] tracking-[-0.013em]">
                   {product.price}원
