@@ -285,26 +285,26 @@ const Detail = () => {
                 {/* Product Description */}
                 <div className="flex flex-col gap-[20px]">
                   <div className="flex flex-col gap-[5px]">
-                    <p className="text-black text-[16px] font-inter leading-tight whitespace-nowrap">
+                    <p className="text-black text-[16px] font-inter leading-tight">
                       상품설명
                     </p>
-                    <p className="text-black text-[14px] font-inter leading-tight whitespace-nowrap">
+                    <p className="text-black text-[14px] font-inter leading-tight break-words">
                       {productInfo[0] || ""}
                     </p>
                   </div>
                   <div className="flex flex-col gap-[5px]">
-                    <p className="text-black text-[16px] font-inter leading-tight whitespace-nowrap">
+                    <p className="text-black text-[16px] font-inter leading-tight">
                       구성 소재
                     </p>
-                    <p className="text-black text-[14px] font-inter leading-tight whitespace-nowrap">
+                    <p className="text-black text-[14px] font-inter leading-tight break-words">
                       {productInfo[1] || ""}
                     </p>
                   </div>
                   <div className="flex flex-col gap-[5px]">
-                    <p className="text-black text-[16px] font-inter leading-tight whitespace-nowrap">
+                    <p className="text-black text-[16px] font-inter leading-tight">
                       사이즈 정보
                     </p>
-                    <p className="text-black text-[14px] font-inter leading-tight whitespace-nowrap">
+                    <p className="text-black text-[14px] font-inter leading-tight">
                       프리 사이즈
                     </p>
                     {productInfo[2] && (
