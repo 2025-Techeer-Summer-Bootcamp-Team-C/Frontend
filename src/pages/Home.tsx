@@ -15,7 +15,10 @@ import {
   type ProductFittingImageResponse,
 } from "@/api/products";
 import type { Product, CategoryResponse } from "@/types/product";
-import { useStartFittingMutation, useFittingResultsPollingMutation } from "@/hooks/useFittings";
+import {
+  useStartFittingMutation,
+  useFittingResultsPollingMutation,
+} from "@/hooks/useFittings";
 import { getUserImages } from "@/api/users";
 import { useHeaderSticky } from "@/hooks/useHeaderSticky";
 import { useModal } from "@/contexts/ModalContext";
@@ -29,10 +32,6 @@ const Home = () => {
     setShowFitting,
     isFittingLoading,
     setIsFittingLoading,
-    lastSelectedImage,
-    setLastSelectedImage,
-    lastSelectedUserImageId,
-    setLastSelectedUserImageId,
     currentUserImageId,
     setCurrentUserImageId,
     hasLastSelectedImage,
@@ -69,10 +68,10 @@ const Home = () => {
     }
   }, []);
 
-  // 홈 페이지로 돌아올 때마다 피팅 모드 해제
+  // 홈 페이지로 돌아올 때마다 피팅 모드 해제 (피팅 결과 ID는 보존)
   useEffect(() => {
     setShowFitting(false);
-    setCurrentUserImageId(null);
+    // setCurrentUserImageId(null); // ← 제거: 최근 피팅 결과 보존
     resetFittingResults();
   }, []); // 컴포넌트 마운트 시에만 실행
 
@@ -114,7 +113,12 @@ const Home = () => {
   };
 
   const handleFittingClick = () => {
-    if (isFittingLoading || startFittingMutation.isPending || fittingPollingMutation.isPending) return;
+    if (
+      isFittingLoading ||
+      startFittingMutation.isPending ||
+      fittingPollingMutation.isPending
+    )
+      return;
 
     openModal(
       "photoSelection",
@@ -131,13 +135,13 @@ const Home = () => {
   ) => {
     console.log("선택된 사진:", selectedPhoto);
 
-    // 선택된 이미지를 컨텍스트에 저장
+    // 선택된 이미지 타입에 따른 로그만 출력 (상태는 피팅 완료 후 설정)
     if (selectedPhoto instanceof File) {
-      setLastSelectedImage(selectedPhoto);
-      setLastSelectedUserImageId(null); // File 선택 시 user_image_id 초기화
+      console.log("새로운 파일 선택:", selectedPhoto.name);
     } else if (typeof selectedPhoto === "number") {
-      setLastSelectedUserImageId(selectedPhoto);
-      setLastSelectedImage(null); // user_image_id 선택 시 File 초기화
+      console.log("기존 피팅 결과 선택:", selectedPhoto);
+      // 기존 결과 선택 시 즉시 currentUserImageId 설정
+      setCurrentUserImageId(selectedPhoto);
     }
 
     setIsFittingLoading(true);
@@ -216,7 +220,9 @@ const Home = () => {
           resetFittingResults();
 
           // 1. 먼저 피팅 시작 (비용 발생, 한 번만)
-          const startResult = await startFittingMutation.mutateAsync(selectedPhoto);
+          const startResult = await startFittingMutation.mutateAsync(
+            selectedPhoto
+          );
           console.log("피팅 시작 완료:", startResult);
 
           // 2. 피팅 결과 폴링 (재시도 안전)
@@ -276,17 +282,18 @@ const Home = () => {
   // 이전에 선택한 이미지로 바로 피팅하기
   const handleQuickFitting = async () => {
     if (
-      (!lastSelectedImage && !lastSelectedUserImageId) ||
       isFittingLoading ||
       startFittingMutation.isPending ||
       fittingPollingMutation.isPending
     )
       return;
 
-    // 마지막 선택된 이미지 우선 순위: File > user_image_id
-    const lastSelected = lastSelectedImage || lastSelectedUserImageId;
-    if (lastSelected) {
-      await handlePhotoSelection(lastSelected);
+    // currentUserImageId가 있으면 해당 피팅 결과 재사용
+    if (currentUserImageId) {
+      console.log("바로 피팅하기: 현재 피팅 결과 재사용", currentUserImageId);
+      await handlePhotoSelection(currentUserImageId);
+    } else {
+      console.log("바로 피팅하기: 이용 가능한 피팅 결과가 없습니다");
     }
   };
 
@@ -379,7 +386,9 @@ const Home = () => {
                         product={{
                           ...product,
                           // ProductCard에서 애니메이션 처리를 위해 피팅 이미지 정보 전달
-                          fittingImage: fittingResults[product.product_id]?.fitting_image || null,
+                          fittingImage:
+                            fittingResults[product.product_id]?.fitting_image ||
+                            null,
                         }}
                         onProductClick={() =>
                           handleProductClick(product.product_id)
@@ -402,7 +411,7 @@ const Home = () => {
             className="w-[240px] bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-700 transition-colors font-inter text-sm"
             onClick={() => {
               setShowFitting(false);
-              setCurrentUserImageId(null);
+              // setCurrentUserImageId(null); // ← 제거: 피팅 결과 ID 보존하여 바로 피팅하기 활성화
               resetFittingResults();
             }}
           >
