@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   image: string;
   content: string;
+  fittingImage?: string | null; // 피팅 이미지 URL (선택적)
 }
 
 // 상품 상세 정보
