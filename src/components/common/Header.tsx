@@ -70,7 +70,7 @@ const Header = memo(
     const handleCategoryClick = useCallback(
       (categoryName: string) => {
         let categoryId: number | null = null;
-        
+
         switch (categoryName) {
           case "상의":
             categoryId = 1;
@@ -143,7 +143,7 @@ const Header = memo(
                   // Category Menu (Home 페이지)
                   <div className="flex flex-wrap items-center gap-4 md:gap-6">
                     {categoryItems.map((item, index) => {
-                      const isSelected = 
+                      const isSelected =
                         (item === "모두 보기" && selectedCategoryId === null) ||
                         (item === "상의" && selectedCategoryId === 1) ||
                         (item === "하의" && selectedCategoryId === 2) ||
@@ -205,7 +205,7 @@ const Header = memo(
                         className="text-black hover:opacity-70 transition-opacity bg-transparent border-none outline-none cursor-pointer"
                         aria-label="검색"
                       >
-                        <Search size={25} strokeWidth={1.5} />
+                        <Search size={22} strokeWidth={1.5} />
                       </button>
                     </div>
                   )}
@@ -221,13 +221,13 @@ const Header = memo(
                           onClick={() => navigate("/mypage")}
                           aria-label="마이페이지로 이동"
                         >
-                          <User size={25} strokeWidth={1.5} />
+                          <User size={22} strokeWidth={1.5} />
                         </button>
                       ) : (
                         <Suspense
                           fallback={
                             <div className="text-black w-auto h-4 flex items-center justify-center">
-                              <User size={25} strokeWidth={1.5} />
+                              <User size={22} strokeWidth={1.5} />
                             </div>
                           }
                         >
@@ -237,7 +237,7 @@ const Header = memo(
                               className="text-black w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
                               aria-label="로그인 창 열기"
                             >
-                              <User size={25} strokeWidth={1.5} />
+                              <User size={22} strokeWidth={1.5} />
                             </button>
                           </LoginDialog>
                         </Suspense>
@@ -255,7 +255,7 @@ const Header = memo(
                         aria-label={`장바구니 (상품 ${cartCount}개)`}
                       >
                         <div className="relative">
-                          <ShoppingCart size={25} strokeWidth={1.5} />
+                          <ShoppingCart size={22} strokeWidth={1.5} />
                           {cartCount > 0 && (
                             <span className="absolute -top-1 -right-1 bg-black text-white text-[8px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                               {cartCount > 99 ? "99+" : cartCount}

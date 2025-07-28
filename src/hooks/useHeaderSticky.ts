@@ -11,7 +11,7 @@ export const useHeaderSticky = () => {
       const isHomePage = location.pathname === "/";
 
       if (isHomePage) {
-        const videoSectionHeight = 800;
+        const videoSectionHeight = 900;
         const onBoardingHeight = 1000;
         const stickyThreshold = videoSectionHeight + onBoardingHeight;
         setIsSticky(currentScrollY >= stickyThreshold);
