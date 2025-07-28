@@ -11,15 +11,21 @@ interface ProductCardProps {
   onProductClick?: () => void;
 }
 
+const ANIMATION_DURATION = 0.8;
+
 const ProductCard = memo(
   ({ variant = "default", product, onProductClick }: ProductCardProps) => {
     const { prefetchProductDetail } = usePrefetch();
     const { showFitting, isFittingLoading } = useFittingContext();
-    
+
     // 애니메이션 상태 관리
     const [isAnimating, setIsAnimating] = useState(false);
-    const [animationDirection, setAnimationDirection] = useState<'left-to-right' | 'right-to-left'>('left-to-right');
-    const [previousShowFitting, setPreviousShowFitting] = useState<boolean | null>(null); // null로 초기화
+    const [animationDirection, setAnimationDirection] = useState<
+      "left-to-right" | "right-to-left"
+    >("left-to-right");
+    const [previousShowFitting, setPreviousShowFitting] = useState<
+      boolean | null
+    >(null); // null로 초기화
 
     const getTextColor = () => {
       return variant === "viewed" ? "text-[#AAAAAA]" : "text-black";
@@ -38,30 +44,46 @@ const ProductCard = memo(
         setIsAnimating(false);
         return;
       }
-      
+
       // 로딩 시작 시에만 이전 상태 저장
       if (isFittingLoading && previousShowFitting === null) {
         setPreviousShowFitting(!showFitting); // 현재와 반대 상태를 저장
       }
-    }, [showFitting, isFittingLoading, previousShowFitting, product.product_id]);
+    }, [
+      showFitting,
+      isFittingLoading,
+      previousShowFitting,
+      product.product_id,
+    ]);
 
     // 로딩 완료 시 애니메이션 트리거
     useEffect(() => {
-      if (!isFittingLoading && previousShowFitting !== null && previousShowFitting !== showFitting && !isAnimating) {
+      if (
+        !isFittingLoading &&
+        previousShowFitting !== null &&
+        previousShowFitting !== showFitting &&
+        !isAnimating
+      ) {
         // 애니메이션 방향 결정
-        const direction = showFitting ? 'left-to-right' : 'right-to-left';
+        const direction = showFitting ? "left-to-right" : "right-to-left";
         setAnimationDirection(direction);
         setIsAnimating(true);
-        
+
         // 애니메이션 완료 후 상태 리셋
         const timer = setTimeout(() => {
           setIsAnimating(false);
           setPreviousShowFitting(showFitting); // 애니메이션 완료 후 상태 동기화
-        }, 800);
-        
+        }, ANIMATION_DURATION * 1000);
+
         return () => clearTimeout(timer);
       }
-    }, [isFittingLoading, showFitting, previousShowFitting, isAnimating, product.product_id]);
+    }, [
+      isFittingLoading,
+      showFitting,
+      previousShowFitting,
+      isAnimating,
+      product.product_id,
+    ]);
 
     // 이미지 URL 결정 로직
     const getDisplayImage = () => {
@@ -69,28 +91,31 @@ const ProductCard = memo(
       if (isFittingLoading) {
         return product.image;
       }
-      
+
       // 애니메이션 중이 아니면 현재 상태에 맞는 이미지 표시
       if (!isAnimating) {
-        return (showFitting && product.fittingImage) ? product.fittingImage : product.image;
+        return showFitting && product.fittingImage
+          ? product.fittingImage
+          : product.image;
       }
-      
+
       // 애니메이션 중일 때는 각각 다른 이미지 사용
       return product.image; // 기본값 (전경 이미지용)
     };
-    
+
     // 배경 이미지: 애니메이션 시 드러날 새로운 이미지
-    const backgroundImageUrl = isAnimating 
-      ? (showFitting && product.fittingImage ? product.fittingImage : product.image)
+    const backgroundImageUrl = isAnimating
+      ? showFitting && product.fittingImage
+        ? product.fittingImage
+        : product.image
       : getDisplayImage();
-      
-    // 전경 이미지: 애니메이션 시 지워질 이전 이미지  
-    const foregroundImageUrl = isAnimating 
-      ? (animationDirection === 'left-to-right' 
-          ? product.image                    // 피팅하기: 원본이 지워짐
-          : (product.fittingImage || product.image))  // 원본보기: 피팅이 지워짐
+
+    // 전경 이미지: 애니메이션 시 지워질 이전 이미지
+    const foregroundImageUrl = isAnimating
+      ? animationDirection === "left-to-right"
+        ? product.image // 피팅하기: 원본이 지워짐
+        : product.fittingImage || product.image // 원본보기: 피팅이 지워짐
       : getDisplayImage();
-      
 
     return (
       <div
@@ -113,7 +138,7 @@ const ProductCard = memo(
               }}
             />
           )}
-          
+
           {/* 전경 이미지 (지워질 이미지) - clip-path 애니메이션 적용 */}
           <motion.img
             key={`product-${product.product_id}`}
@@ -123,16 +148,21 @@ const ProductCard = memo(
             style={{
               imageRendering: "auto",
             }}
-            animate={isAnimating ? {
-              clipPath: animationDirection === 'left-to-right' 
-                ? "inset(0 0 0 100%)" // 좌→우로 지워짐 (피팅하기)
-                : "inset(0 100% 0 0)" // 우→좌로 지워짐 (원본 보기)
-            } : {
-              clipPath: "inset(0 0 0 0)"
-            }}
+            animate={
+              isAnimating
+                ? {
+                    clipPath:
+                      animationDirection === "left-to-right"
+                        ? "inset(0 0 0 100%)" // 좌→우로 지워짐 (피팅하기)
+                        : "inset(0 100% 0 0)", // 우→좌로 지워짐 (원본 보기)
+                  }
+                : {
+                    clipPath: "inset(0 0 0 0)",
+                  }
+            }
             transition={{
-              duration: 0.8,
-              ease: "easeInOut"
+              duration: ANIMATION_DURATION,
+              ease: "easeInOut",
             }}
           />
         </div>
