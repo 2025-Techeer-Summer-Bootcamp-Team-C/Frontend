@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, lazy, Suspense } from "react";
 import type { ReactNode } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 // Lazy load modal components for better performance
 const PersonalInfoForm = lazy(
@@ -100,6 +101,9 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
         }}
       >
         <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <VisuallyHidden>
+            <DialogTitle>Modal</DialogTitle>
+          </VisuallyHidden>
           <Suspense
             fallback={
               <>

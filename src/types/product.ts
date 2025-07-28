@@ -11,6 +11,7 @@ export interface Product {
 // 상품 상세 정보
 export interface ProductDetail {
   product_id: number;
+  category_id: number;
   name: string;
   content: string;
   price: number;
