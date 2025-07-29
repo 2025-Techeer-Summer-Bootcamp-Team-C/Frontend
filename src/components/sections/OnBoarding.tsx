@@ -95,7 +95,7 @@ const OnBoarding = ({
       />
       {/* 텍스트 영역 - 동적 애니메이션 */}
       <div
-        className="absolute top-[50px] left-0 w-full h-full text-white text-center font-bold flex flex-col items-center justify-center"
+        className="absolute top-[80px] left-0 w-full h-full text-white text-center font-bold flex flex-col items-center justify-center"
         style={{
           opacity: textOpacity,
           transform: `translateY(${textTransformY}px)`,

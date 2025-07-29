@@ -406,10 +406,13 @@ const Home = () => {
             onClick={() => {
               setShowFitting(false);
               // setCurrentUserImageId(null); // ← 제거: 피팅 결과 ID 보존하여 바로 피팅하기 활성화
-              resetFittingResults();
+              // 애니메이션 완료 후 피팅 결과 리셋 (0.8초 후)
+              setTimeout(() => {
+                resetFittingResults();
+              }, 800);
             }}
           >
-            원본 상품 보기
+            원본 보기
           </button>
         )}
 
@@ -419,7 +422,7 @@ const Home = () => {
             className="w-[240px] bg-white border border-black border-solid border-2 text-black px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition-colors font-inter text-sm"
             onClick={handleQuickFitting}
           >
-            바로 피팅하기
+            결과 보기
           </button>
         )}
 

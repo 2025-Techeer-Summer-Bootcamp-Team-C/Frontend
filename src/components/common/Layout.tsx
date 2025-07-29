@@ -96,7 +96,7 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
       const scrollY = window.scrollY;
 
       // 애니메이션 구간 정의
-      const videoSectionHeight = 900;
+      const videoSectionHeight = 800;
       const onboardingHeight = 1000;
       const onboardingTopMargin = 100; // pt-[100px]
 
