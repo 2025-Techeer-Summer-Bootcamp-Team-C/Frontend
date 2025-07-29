@@ -6,9 +6,9 @@ const MorphLogo = () => {
     "fixed" | "absolute" | "scaling"
   >("fixed");
 
-  const absoluteStartPoint = 850; // absolute 구간 시작 지점 (비디오 높이 증가에 맞춰 조정)
-  const scalingStartPoint = 1050; // 축소 시작 지점 (200px 구간 후)
-  const scalingEndPoint = 2050; // 축소 완료 지점
+  const absoluteStartPoint = 800; // absolute 구간 시작 지점 (비디오 높이 증가에 맞춰 조정)
+  const scalingStartPoint = 1000; // 축소 시작 지점 (200px 구간 후)
+  const scalingEndPoint = 2000; // 축소 완료 지점
   const rafRef = useRef<number>(0);
 
   // Easing 함수 - ease-out 곡선 (부드러운 감속)
@@ -62,7 +62,7 @@ const MorphLogo = () => {
   const getLogoStyles = () => {
     const baseSize = 200;
     const headerSize = 60;
-    const baseTop = 350;
+    const baseTop = 300;
     const headerTop = 40;
 
     switch (positionState) {

@@ -124,7 +124,7 @@ const ProductCard = memo(
       }
 
       // 애니메이션 중일 때는 각각 다른 이미지 사용
-      return product.image; // 기본값 (전경 이미지용)
+      return showFitting ? product.image : product.fittingImage; // 기본값 (전경 이미지용)
     };
 
     // 배경 이미지: 애니메이션 시 드러날 새로운 이미지
@@ -155,7 +155,7 @@ const ProductCard = memo(
           {/* 배경 이미지 (새로 나타날 이미지) - 애니메이션 중일 때만 표시 */}
           {isAnimating && (
             <img
-              src={backgroundImageUrl}
+              src={backgroundImageUrl || ""}
               alt={showFitting ? `${product.name} - 피팅 결과` : product.name}
               className="w-full h-full object-contain absolute inset-0"
               style={{
@@ -167,7 +167,7 @@ const ProductCard = memo(
           {/* 전경 이미지 (지워질 이미지) - clip-path 애니메이션 적용 */}
           <motion.img
             key={`product-${product.product_id}`}
-            src={foregroundImageUrl}
+            src={foregroundImageUrl || ""}
             alt={showFitting ? `${product.name} - 피팅 결과` : product.name}
             className="w-full h-full object-contain absolute inset-0 transition-transform duration-300"
             style={{
