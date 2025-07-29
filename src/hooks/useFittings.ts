@@ -11,8 +11,16 @@ import { AxiosError } from "axios";
  * status가 pending 또는 processing인 경우 자동 재시도
  */
 export const useGenerateFittingVideoMutation = () => {
+  let isFirstAttempt = true;
+  
   return useMutation<FittingVideoStatusResponse, Error, { product_id: number, user_image_id: number }>({
     mutationFn: async ({ product_id, user_image_id }) => {
+      // 첫 번째 시도일 때만 3초 딜레이 적용
+      if (isFirstAttempt) {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        isFirstAttempt = false;
+      }
+      
       try {
         // 먼저 영상 생성 요청
         await generateFittingVideo(product_id, user_image_id);
