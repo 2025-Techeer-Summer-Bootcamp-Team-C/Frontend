@@ -353,7 +353,7 @@ const Home = () => {
           isSticky ? "pt-[200px]" : ""
         }`}
       >
-        <div className="w-full mx-15">
+        <div className="w-full mx-40">
           {/* Product Grid */}
           <div className="flex flex-col gap-[60px] md:gap-[80px]">
             {productRows.map((row, rowIndex) => (
