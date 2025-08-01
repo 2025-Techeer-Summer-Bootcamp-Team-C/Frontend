@@ -404,12 +404,14 @@ const Detail = () => {
                       <div className="w-[240px] h-[360px] bg-gray-100 animate-pulse rounded-lg"></div>
                     }
                   >
-                    <ProductCard
-                      product={product}
-                      onProductClick={() => {
-                        navigate(`/product/${product.product_id}`);
-                      }}
-                    />
+                    <div className="scale-75 origin-top">
+                      <ProductCard
+                        product={product}
+                        onProductClick={() => {
+                          navigate(`/product/${product.product_id}`);
+                        }}
+                      />
+                    </div>
                   </Suspense>
                 ))}
             </div>
