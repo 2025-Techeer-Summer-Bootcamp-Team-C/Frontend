@@ -99,7 +99,7 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
                 .map((item) => (
                   <div
                     key={item.product_id}
-                    className="[&>div]:w-[134.4px] [&>div>div:first-child]:!w-[134.4px] [&>div>div:first-child]:!h-[201.6px]"
+                    className="[&>div]:w-[134.4px] [&>div>div:first-child]:!w-[134.4px] [&>div>div:first-child]:!h-[201.6px] [&>div>div:last-child_span]:!text-[12px] [&>div>div:last-child_span]:!leading-tight"
                   >
                     <Suspense
                       fallback={
