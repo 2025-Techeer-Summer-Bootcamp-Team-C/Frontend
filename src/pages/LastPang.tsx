@@ -139,7 +139,6 @@ const LastPang = () => {
                         showVideo ? "opacity-100" : "opacity-0"
                       }`}
                       muted
-                      loop
                       playsInline
                       preload="metadata"
                     />
