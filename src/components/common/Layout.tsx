@@ -185,13 +185,17 @@ const Layout = ({ children, totalPrice: propTotalPrice }: LayoutProps) => {
             <MorphLogo />
           </div>
         )}
-        <Header
-          showSearch={layoutConfig.showSearch}
-          showUserActions={layoutConfig.showUserActions}
-          showCategoryMenu={layoutConfig.showCategoryMenu}
-        />
+        {layoutConfig.header !== "none" && (
+          <Header
+            showSearch={layoutConfig.showSearch}
+            showUserActions={layoutConfig.showUserActions}
+            showCategoryMenu={layoutConfig.showCategoryMenu}
+          />
+        )}
         <main className="mb-100">{children}</main>
-        <Footer variant={finalFooterVariant} totalPrice={totalPrice} />
+        {layoutConfig.footer !== "none" && (
+          <Footer variant={finalFooterVariant} totalPrice={totalPrice} />
+        )}
       </div>
     </Suspense>
   );

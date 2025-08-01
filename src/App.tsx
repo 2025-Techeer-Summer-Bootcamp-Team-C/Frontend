@@ -13,26 +13,28 @@ const OrderSummary = lazy(() => import("./pages/OrderSummary"));
 const OrderHistory = lazy(() => import("./pages/OrderHistory"));
 const Cart = lazy(() => import("./pages/Cart"));
 const MyPage = lazy(() => import("./pages/MyPage"));
-
+const LastPang = lazy(() => import("./pages/LastPang"));
 function App() {
   // 컴포넌트 마운트 시 스크롤을 맨 위로 이동 및 HTML 로딩 스피너 숨기기
   useEffect(() => {
     window.scrollTo(0, 0);
-    
+
     // React 앱이 로드되면 HTML 로딩 스피너 숨기기
-    document.body.classList.add('app-loaded');
+    document.body.classList.add("app-loaded");
   }, []);
 
   return (
     <AllProviders>
       <Analytics />
-      <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center bg-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-2 border-transparent border-b-2 border-gray-900">
-            <span className="sr-only">Loading...</span>
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center bg-white">
+            <div className="animate-spin rounded-full h-12 w-12 border-2 border-transparent border-b-2 border-gray-900">
+              <span className="sr-only">Loading...</span>
+            </div>
           </div>
-        </div>
-      }>
+        }
+      >
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -42,6 +44,7 @@ function App() {
             <Route path="/summary" element={<OrderSummary />} />
             <Route path="/history" element={<OrderHistory />} />
             <Route path="/mypage" element={<MyPage />} />
+            <Route path="/lastpang" element={<LastPang />} />
           </Routes>
         </Layout>
       </Suspense>
