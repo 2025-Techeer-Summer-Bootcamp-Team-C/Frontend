@@ -66,6 +66,14 @@ export const STATIC_LAYOUT_CONFIG: Record<string, LayoutConfig> = {
     requiresAuth: true,
     title: "마이페이지",
   },
+  "/lastpang": {
+    header: "none",
+    footer: "none",
+    showSearch: false,
+    showUserActions: false,
+    showCategoryMenu: false,
+    title: "라스트팡",
+  },
 } as const;
 
 // 동적 경로 설정 (패턴 매칭)
