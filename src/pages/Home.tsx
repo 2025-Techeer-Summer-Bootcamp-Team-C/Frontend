@@ -353,13 +353,13 @@ const Home = () => {
           isSticky ? "pt-[200px]" : ""
         }`}
       >
-        <div className="w-full max-w-[1201px] px-4 lg:px-8 xl:px-0">
+        <div className="w-full mx-15">
           {/* Product Grid */}
           <div className="flex flex-col gap-[60px] md:gap-[80px]">
             {productRows.map((row, rowIndex) => (
               <div
                 key={rowIndex}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[80px] justify-items-center"
+                className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-10 justify-items-center"
               >
                 {row?.map((product) => {
                   if (!product || !product.product_id) return null;
@@ -372,11 +372,6 @@ const Home = () => {
                       }
                     >
                       <ProductCard
-                        variant={
-                          viewedProducts.includes(product.product_id.toString())
-                            ? "viewed"
-                            : "default"
-                        }
                         product={{
                           ...product,
                           // ProductCard에서 애니메이션 처리를 위해 피팅 이미지 정보 전달

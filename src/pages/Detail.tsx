@@ -405,7 +405,6 @@ const Detail = () => {
                     }
                   >
                     <ProductCard
-                      variant="viewed"
                       product={product}
                       onProductClick={() => {
                         navigate(`/product/${product.product_id}`);

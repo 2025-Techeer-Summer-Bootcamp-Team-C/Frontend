@@ -135,7 +135,7 @@ const Header = memo(
       >
         {/* Main Header */}
         <div className="flex items-center h-[100px] justify-center py-5">
-          <div className="w-full max-w-[1300px] px-4 lg:px-8 xl:px-0">
+          <div className="w-full max-w-[1600px] px-4 lg:px-8 xl:px-0">
             <div className="flex items-center justify-between">
               {/* Left Section - Category Menu 또는 Logo */}
               <div className="flex items-center">
@@ -153,7 +153,7 @@ const Header = memo(
                         <span
                           key={index}
                           onClick={() => handleCategoryClick(item)}
-                          className={`text-black text-[15px] font-inter leading-4 cursor-pointer hover:opacity-70 transition-all whitespace-nowrap ${
+                          className={`text-black text-[20px] font-inter leading-4 cursor-pointer hover:opacity-70 transition-all whitespace-nowrap ${
                             isSelected ? "font-bold" : "font-light"
                           }`}
                         >
@@ -205,7 +205,7 @@ const Header = memo(
                         className="text-black hover:opacity-70 transition-opacity bg-transparent border-none outline-none cursor-pointer"
                         aria-label="검색"
                       >
-                        <Search size={22} strokeWidth={1.5} />
+                        <Search size={25} strokeWidth={1.5} />
                       </button>
                     </div>
                   )}
@@ -221,13 +221,13 @@ const Header = memo(
                           onClick={() => navigate("/mypage")}
                           aria-label="마이페이지로 이동"
                         >
-                          <User size={22} strokeWidth={1.5} />
+                          <User size={25} strokeWidth={1.5} />
                         </button>
                       ) : (
                         <Suspense
                           fallback={
                             <div className="text-black w-auto h-4 flex items-center justify-center">
-                              <User size={22} strokeWidth={1.5} />
+                              <User size={25} strokeWidth={1.5} />
                             </div>
                           }
                         >
@@ -237,7 +237,7 @@ const Header = memo(
                               className="text-black w-auto h-4 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity bg-transparent border-none outline-none"
                               aria-label="로그인 창 열기"
                             >
-                              <User size={22} strokeWidth={1.5} />
+                              <User size={25} strokeWidth={1.5} />
                             </button>
                           </LoginDialog>
                         </Suspense>
@@ -255,7 +255,7 @@ const Header = memo(
                         aria-label={`장바구니 (상품 ${cartCount}개)`}
                       >
                         <div className="relative">
-                          <ShoppingCart size={22} strokeWidth={1.5} />
+                          <ShoppingCart size={25} strokeWidth={1.5} />
                           {cartCount > 0 && (
                             <span className="absolute -top-1 -right-1 bg-black text-white text-[8px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                               {cartCount > 99 ? "99+" : cartCount}

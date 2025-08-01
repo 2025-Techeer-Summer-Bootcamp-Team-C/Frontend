@@ -107,7 +107,6 @@ const CartAddDialog = ({ isOpen, onClose, product }: CartAddDialogProps) => {
                       }
                     >
                       <ProductCard
-                        variant="viewed"
                         product={item}
                         onProductClick={() => {
                           navigate(`/product/${item.product_id}`);
