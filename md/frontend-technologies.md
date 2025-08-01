@@ -1,15 +1,59 @@
-# 프론트엔드 기술 스택 분석
+# 프론트엔드 기술 스택 README
 
-## 핵심 프레임워크 & 라이브러리
+## 🔧 기술 스택
+
+### 1단계: 핵심 프레임워크 설정
+- **React 19.1.0**: 컴포넌트 기반 UI 라이브러리
+  - 함수형 컴포넌트와 Hooks 활용
+  - Virtual DOM으로 효율적인 렌더링
+  - 재사용 가능한 컴포넌트 구조
+- **TypeScript 5.8.3**: 정적 타입 시스템
+  - 컴파일 시점 에러 검출로 런타임 버그 방지
+  - IDE 자동완성과 리팩토링 지원
+  - 인터페이스와 타입 정의로 코드 문서화
+- **Vite 7.0.3**: 차세대 빌드 도구
+  - ES 모듈 기반 빠른 개발 서버 (HMR)
+  - Rollup 기반 최적화된 프로덕션 빌드
+  - TypeScript, JSX 기본 지원
+
+### 2단계: UI 스타일링 시스템
+- **Tailwind CSS 4.1.11**: 유틸리티 우선 CSS 프레임워크
+  - 클래스명으로 즉시 스타일링 (`flex`, `bg-blue-500`, `text-center`)
+  - 반응형 디자인 (`sm:`, `md:`, `lg:` 접두사)
+  - 다크모드 지원 (`dark:` 접두사)
+  - 커스텀 디자인 시스템 구축 가능
+  - Tree-shaking으로 사용하지 않는 CSS 자동 제거
+
+### 3단계: 데이터 관리 아키텍처
+- **TanStack React Query 5.82.0**: 서버 상태 관리
+  - 서버 데이터 캐싱 및 동기화 자동화
+  - Background refetch, Optimistic updates
+  - 로딩/에러/성공 상태 자동 관리
+  - Infinite queries, Parallel queries 지원
+- **Axios 1.10.0**: HTTP 클라이언트
+  - Promise 기반 HTTP 요청 라이브러리
+  - 요청/응답 인터셉터로 공통 로직 처리
+  - 자동 JSON 파싱, 에러 핸들링
+  - TypeScript와 완벽 호환
+
+### 4단계: 전역 상태 관리
+- **React Context**: React 내장 상태 관리
+  - Provider-Consumer 패턴으로 컴포넌트 트리 전체에 상태 공유
+  - Props drilling 문제 해결
+  - 여러 Context로 관심사 분리 (AuthContext, CartContext 등)
+  - useContext Hook으로 간편한 상태 접근
+  - 가벼운 전역 상태에 적합 (복잡한 상태는 React Query 활용)
+
+## 핵심 프레임워크 & 라이브러리 ✅
 
 - **React 19.1.0** - 최신 React 버전의 사용자 인터페이스 라이브러리
-- **TypeScript 5.8.3** - JavaScript의 정적 타입 확장 언어
+- **TypeScript 5.8.3** - JavaScript의 정적 타입 확장 언어 
 - **Vite 7.0.3** - 빠른 빌드 도구 및 개발 서버
 - **React Router DOM 7.6.3** - React 애플리케이션의 클라이언트 사이드 라우팅
 
 ## UI 및 스타일링
 
-- **Tailwind CSS 4.1.11** - 유틸리티 우선 CSS 프레임워크
+- **Tailwind CSS 4.1.11** - 유틸리티 우선 CSS 프레임워크 ✅
 - **Framer Motion 12.23.9** - React용 프로덕션 레디 모션 라이브러리
 - **shadcn/ui with Radix UI** - 접근성을 고려한 React 컴포넌트 라이브러리
 - **Lucide React 0.525.0** - 아름다운 오픈소스 아이콘 라이브러리
@@ -22,11 +66,11 @@
 - **Zod 4.0.5** - TypeScript 우선 스키마 검증 라이브러리
 - **@hookform/resolvers 5.1.1** - React Hook Form과 검증 라이브러리 연결
 
-## 상태 관리 및 데이터 페칭
+## 상태 관리 및 데이터 페칭 ✅
 
 - **TanStack React Query 5.82.0** - 서버 상태 관리 라이브러리
-- **React Context** - React 내장 전역 상태 관리
 - **Axios 1.10.0** - HTTP 클라이언트 라이브러리
+- **React Context** - React 내장 전역 상태 관리
 
 ## 특수 기능 라이브러리
 
