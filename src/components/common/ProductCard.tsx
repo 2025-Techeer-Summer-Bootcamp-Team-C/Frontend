@@ -131,13 +131,13 @@ const ProductCard = memo(({ product, onProductClick }: ProductCardProps) => {
 
   return (
     <div
-      className="w-full h-full max-w-[400px] min-w-[240px] sm:w-[400px]"
+      className="w-full h-full max-w-[335px] min-w-[240px] sm:w-[335px]"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* Product Image */}
       <div
-        className="w-full h-full sm:h-[600px] bg-white mb-4 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow relative"
+        className="w-full h-full sm:h-[500px] bg-white mb-4 cursor-pointer overflow-hidden hover:shadow-lg transition-shadow relative"
         onClick={onProductClick}
       >
         {/* 배경 이미지 (새로 나타날 이미지) - 애니메이션 중일 때만 표시 */}
@@ -188,7 +188,7 @@ const ProductCard = memo(({ product, onProductClick }: ProductCardProps) => {
             {/* Product Name and Color Options */}
             <div className="flex items-center justify-between">
               <span
-                className={`text-[20px] sm:text-[20px] font-inter leading-tight text-black`}
+                className={`text-[18px] sm:text-[18px] font-inter leading-tight text-gray-600`}
               >
                 {product.name}
               </span>
@@ -196,7 +196,7 @@ const ProductCard = memo(({ product, onProductClick }: ProductCardProps) => {
 
             {/* Price */}
             <span
-              className={`text-[20px] sm:text-[20px] font-inter leading-tight font-medium text-black`}
+              className={`text-[18px] sm:text-[18px] font-inter leading-tight font-medium text-gray-600`}
             >
               ₩ {product.price.toLocaleString()}
             </span>
